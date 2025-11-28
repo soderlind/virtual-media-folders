@@ -1,0 +1,13 @@
+/build/
+/node_modules/
+/vendor/
+.DS_Store
+.idea/
+.vscode/
+npm-debug.log*
+yarn-error.log*
+coverage/
+.phpunit.result.cache
+.env
+.env.local
+*.log
