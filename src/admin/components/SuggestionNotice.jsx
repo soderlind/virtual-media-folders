@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Button, Notice } from '@wordpress/components';
 
 export function SuggestionNotice({ attachmentId, suggestions, onApply, onDismiss }) {

@@ -27,6 +27,8 @@ class TaxonomyTest extends TestCase
             ->with('init', [Taxonomy::class, 'register_taxonomy']);
 
         Taxonomy::init();
+
+        $this->assertTrue(true); // Expectation verified by Brain\Monkey
     }
 
     public function test_register_taxonomy_registers_media_folder(): void
@@ -38,5 +40,7 @@ class TaxonomyTest extends TestCase
         Monkey\Functions\when('__')->alias(static fn($text) => $text);
 
         Taxonomy::register_taxonomy();
+
+        $this->assertTrue(true); // Expectation verified by Brain\Monkey
     }
 }

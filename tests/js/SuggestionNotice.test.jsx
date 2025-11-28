@@ -4,6 +4,13 @@ import { SuggestionNotice } from '../../src/admin/components/SuggestionNotice.js
 
 vi.mock('@wordpress/i18n', () => ({
 	__: (text) => text,
+	sprintf: (format, ...args) => {
+		let result = format;
+		args.forEach((arg) => {
+			result = result.replace('%s', arg);
+		});
+		return result;
+	},
 }));
 
 vi.mock('@wordpress/components', () => ({
