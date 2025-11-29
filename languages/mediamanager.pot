@@ -1,0 +1,549 @@
+# Copyright (C) 2025 Your Name
+# This file is distributed under the same license as the Media Manager plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Media Manager 0.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/mediamanager\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-11-28T23:27:41+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: mediamanager\n"
+
+#. Plugin Name of the plugin
+#: mediamanager.php
+msgid "Media Manager"
+msgstr ""
+
+#. Description of the plugin
+#: mediamanager.php
+msgid "Virtual folder organization and smart management for the WordPress Media Library."
+msgstr ""
+
+#. Author of the plugin
+#: mediamanager.php
+msgid "Your Name"
+msgstr ""
+
+#: includes/class-admin.php:21
+msgid "Invalid security token."
+msgstr ""
+
+#: includes/class-admin.php:26
+msgid "Permission denied."
+msgstr ""
+
+#: includes/class-admin.php:33
+msgid "Invalid media ID."
+msgstr ""
+
+#: includes/class-admin.php:39
+msgid "Attachment not found."
+msgstr ""
+
+#: includes/class-admin.php:47
+msgid "Media removed from all folders."
+msgstr ""
+
+#: includes/class-admin.php:57
+#: includes/class-rest-api.php:372
+#: includes/class-rest-api.php:424
+#: includes/class-rest-api.php:481
+#: includes/class-rest-api.php:524
+#: includes/class-rest-api.php:676
+msgid "Folder not found."
+msgstr ""
+
+#. translators: %s: folder name
+#: includes/class-admin.php:70
+#, php-format
+msgid "Media moved to \"%s\"."
+msgstr ""
+
+#: includes/class-rest-api.php:69
+#: includes/class-rest-api.php:114
+msgid "The folder name."
+msgstr ""
+
+#: includes/class-rest-api.php:75
+#: includes/class-rest-api.php:119
+msgid "Parent folder ID."
+msgstr ""
+
+#: includes/class-rest-api.php:96
+#: includes/class-rest-api.php:109
+#: includes/class-rest-api.php:132
+#: includes/class-rest-api.php:159
+#: includes/class-rest-api.php:178
+msgid "The folder ID."
+msgstr ""
+
+#: includes/class-rest-api.php:137
+msgid "Whether to bypass trash and force deletion."
+msgstr ""
+
+#: includes/class-rest-api.php:165
+#: includes/class-rest-api.php:184
+#: includes/class-rest-api.php:205
+#: includes/class-rest-api.php:225
+#: includes/class-rest-api.php:251
+msgid "The media attachment ID."
+msgstr ""
+
+#: includes/class-rest-api.php:231
+msgid "The folder ID to apply."
+msgstr ""
+
+#: includes/class-rest-api.php:269
+msgid "You do not have permission to view folders."
+msgstr ""
+
+#: includes/class-rest-api.php:286
+msgid "You do not have permission to create folders."
+msgstr ""
+
+#: includes/class-rest-api.php:303
+msgid "You do not have permission to update folders."
+msgstr ""
+
+#: includes/class-rest-api.php:320
+msgid "You do not have permission to delete folders."
+msgstr ""
+
+#: includes/class-rest-api.php:442
+msgid "A folder cannot be its own parent."
+msgstr ""
+
+#: includes/class-rest-api.php:495
+#: src/admin/components/FolderManager.jsx:139
+msgid "Failed to delete folder."
+msgstr ""
+
+#: includes/class-rest-api.php:534
+#: includes/class-rest-api.php:574
+#: includes/class-rest-api.php:610
+#: includes/class-rest-api.php:666
+#: includes/class-rest-api.php:717
+msgid "Media not found."
+msgstr ""
+
+#: includes/class-rest-api.php:553
+msgid "Media added to folder."
+msgstr ""
+
+#: includes/class-rest-api.php:590
+msgid "Media removed from folder."
+msgstr ""
+
+#: includes/class-rest-api.php:697
+msgid "Folder suggestion applied."
+msgstr ""
+
+#: includes/class-rest-api.php:729
+msgid "Suggestions dismissed."
+msgstr ""
+
+#: includes/class-rest-api.php:776
+msgid "Unique identifier for the folder."
+msgstr ""
+
+#: includes/class-rest-api.php:782
+msgid "The name of the folder."
+msgstr ""
+
+#: includes/class-rest-api.php:788
+msgid "The slug of the folder."
+msgstr ""
+
+#: includes/class-rest-api.php:793
+msgid "The description of the folder."
+msgstr ""
+
+#: includes/class-rest-api.php:798
+msgid "The parent folder ID."
+msgstr ""
+
+#: includes/class-rest-api.php:804
+msgid "Number of media items in this folder."
+msgstr ""
+
+#: includes/class-rest-api.php:821
+msgid "Whether to hide folders with no media."
+msgstr ""
+
+#: includes/class-rest-api.php:826
+msgid "Filter by parent folder ID."
+msgstr ""
+
+#: includes/class-settings.php:69
+msgid "Media Manager Settings"
+msgstr ""
+
+#: includes/class-settings.php:70
+msgid "Folder Settings"
+msgstr ""
+
+#: includes/class-settings.php:96
+msgid "Smart Suggestions"
+msgstr ""
+
+#: includes/class-settings.php:103
+msgid "Enable Suggestions"
+msgstr ""
+
+#: includes/class-settings.php:109
+msgid "Show folder suggestions when uploading new media."
+msgstr ""
+
+#: includes/class-settings.php:115
+msgid "MIME Type Matching"
+msgstr ""
+
+#: includes/class-settings.php:121
+msgid "Suggest folders based on file type (images, videos, documents)."
+msgstr ""
+
+#: includes/class-settings.php:127
+msgid "EXIF Date Matching"
+msgstr ""
+
+#: includes/class-settings.php:133
+msgid "Suggest folders based on photo creation date from EXIF data."
+msgstr ""
+
+#: includes/class-settings.php:139
+msgid "IPTC Keywords Matching"
+msgstr ""
+
+#: includes/class-settings.php:145
+msgid "Suggest folders based on embedded IPTC keywords."
+msgstr ""
+
+#: includes/class-settings.php:152
+msgid "Default Behavior"
+msgstr ""
+
+#: includes/class-settings.php:159
+msgid "Default Folder"
+msgstr ""
+
+#: includes/class-settings.php:165
+msgid "Automatically assign new uploads to this folder (0 = none)."
+msgstr ""
+
+#: includes/class-settings.php:171
+msgid "Show Uncategorized"
+msgstr ""
+
+#: includes/class-settings.php:177
+msgid "Show the \"Uncategorized\" virtual folder in the sidebar."
+msgstr ""
+
+#: includes/class-settings.php:184
+msgid "User Interface"
+msgstr ""
+
+#: includes/class-settings.php:191
+msgid "Enable Drag & Drop"
+msgstr ""
+
+#: includes/class-settings.php:197
+msgid "Allow drag and drop to organize media into folders."
+msgstr ""
+
+#: includes/class-settings.php:203
+msgid "Sidebar Default Visible"
+msgstr ""
+
+#: includes/class-settings.php:209
+msgid "Show the folder sidebar by default when opening Media Library."
+msgstr ""
+
+#: includes/class-settings.php:280
+msgid "Settings saved."
+msgstr ""
+
+#: includes/class-settings.php:293
+msgid "Save Settings"
+msgstr ""
+
+#: includes/class-settings.php:306
+msgid "Configure how Media Manager suggests folders for newly uploaded files."
+msgstr ""
+
+#: includes/class-settings.php:315
+msgid "Set default behavior for folder organization."
+msgstr ""
+
+#: includes/class-settings.php:324
+msgid "Customize the Media Manager user interface."
+msgstr ""
+
+#: includes/class-settings.php:367
+msgid "None"
+msgstr ""
+
+#: includes/class-taxonomy.php:19
+msgctxt "taxonomy general name"
+msgid "Media Folders"
+msgstr ""
+
+#: includes/class-taxonomy.php:20
+msgctxt "taxonomy singular name"
+msgid "Media Folder"
+msgstr ""
+
+#: includes/class-taxonomy.php:21
+msgid "Search Folders"
+msgstr ""
+
+#: includes/class-taxonomy.php:22
+#: src/editor/components/FolderFilter.jsx:67
+msgid "All Folders"
+msgstr ""
+
+#: includes/class-taxonomy.php:23
+#: src/admin/components/FolderManager.jsx:219
+msgid "Parent Folder"
+msgstr ""
+
+#: includes/class-taxonomy.php:24
+msgid "Parent Folder:"
+msgstr ""
+
+#: includes/class-taxonomy.php:25
+msgid "Edit Folder"
+msgstr ""
+
+#: includes/class-taxonomy.php:26
+msgid "Update Folder"
+msgstr ""
+
+#: includes/class-taxonomy.php:27
+msgid "Add New Folder"
+msgstr ""
+
+#: includes/class-taxonomy.php:28
+msgid "New Folder Name"
+msgstr ""
+
+#: includes/class-taxonomy.php:29
+msgid "Media Folders"
+msgstr ""
+
+#: mediamanager.php:18
+msgid "Media Manager requires PHP 8.3 or higher."
+msgstr ""
+
+#: mediamanager.php:25
+msgid "Media Manager requires WordPress 6.8 or higher."
+msgstr ""
+
+#: src/admin/components/BulkFolderAction.jsx:121
+#: src/admin/components/BulkFolderAction.jsx:173
+#: src/admin/components/FolderTree.jsx:209
+#: src/editor/components/FolderFilter.jsx:68
+msgid "Uncategorized"
+msgstr ""
+
+#. translators: 1: number of items, 2: folder name
+#: src/admin/components/BulkFolderAction.jsx:127
+#, js-format
+msgid "%1$d items moved to \"%2$s\"."
+msgstr ""
+
+#: src/admin/components/BulkFolderAction.jsx:141
+msgid "Failed to move some items."
+msgstr ""
+
+#: src/admin/components/BulkFolderAction.jsx:172
+msgid "Move to folder…"
+msgstr ""
+
+#: src/admin/components/BulkFolderAction.jsx:186
+msgid "Moving…"
+msgstr ""
+
+#: src/admin/components/BulkFolderAction.jsx:186
+#: src/admin/components/SuggestionNotice.jsx:23
+msgid "Apply"
+msgstr ""
+
+#. translators: %d: number of selected items
+#: src/admin/components/BulkFolderAction.jsx:191
+#, js-format
+msgid "%d selected"
+msgstr ""
+
+#: src/admin/components/DndContext.jsx:91
+msgid "Media"
+msgstr ""
+
+#: src/admin/components/DroppableFolder.jsx:82
+msgid "Drop here to move media to this folder"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:38
+msgid "None (top level)"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:53
+#: src/admin/components/FolderManager.jsx:87
+msgid "Please enter a folder name."
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:73
+msgid "Folder created."
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:76
+msgid "Failed to create folder."
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:109
+msgid "Folder renamed."
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:112
+msgid "Failed to rename folder."
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:136
+msgid "Folder deleted."
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:175
+#: src/admin/components/FolderManager.jsx:208
+msgid "Create Folder"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:185
+#: src/admin/components/FolderManager.jsx:247
+msgid "Rename Folder"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:193
+#: src/admin/components/FolderManager.jsx:280
+msgid "Delete Folder"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:213
+msgid "Folder Name"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:216
+msgid "Enter folder name"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:231
+#: src/admin/components/FolderManager.jsx:264
+#: src/admin/components/FolderManager.jsx:301
+msgid "Cancel"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:238
+msgid "Creating…"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:238
+msgid "Create"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:252
+msgid "New Name"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:255
+msgid "Enter new name"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:271
+msgid "Renaming…"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:271
+msgid "Rename"
+msgstr ""
+
+#. translators: %s: folder name
+#: src/admin/components/FolderManager.jsx:287
+#, js-format
+msgid "Are you sure you want to delete the folder \"%s\"?"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:292
+msgid "Media items in this folder will not be deleted, only the folder organization."
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:309
+msgid "Deleting…"
+msgstr ""
+
+#: src/admin/components/FolderManager.jsx:309
+msgid "Delete"
+msgstr ""
+
+#: src/admin/components/FolderTree.jsx:47
+msgid "Collapse"
+msgstr ""
+
+#: src/admin/components/FolderTree.jsx:47
+msgid "Expand"
+msgstr ""
+
+#: src/admin/components/FolderTree.jsx:174
+msgid "Loading folders…"
+msgstr ""
+
+#: src/admin/components/FolderTree.jsx:196
+msgid "All Media"
+msgstr ""
+
+#: src/admin/components/MoveToFolderMenu.jsx:108
+#: src/admin/components/MoveToFolderMenu.jsx:113
+msgid "Move to folder"
+msgstr ""
+
+#: src/admin/components/MoveToFolderMenu.jsx:116
+#: src/editor/components/FolderFilter.jsx:93
+msgid "Loading…"
+msgstr ""
+
+#: src/admin/components/MoveToFolderMenu.jsx:128
+msgid "Remove from folder"
+msgstr ""
+
+#: src/admin/components/MoveToFolderMenu.jsx:136
+msgid "No folders yet"
+msgstr ""
+
+#. translators: %s: list of suggested folders
+#: src/admin/components/SuggestionNotice.jsx:11
+#, js-format
+msgid "Suggested folders: %s"
+msgstr ""
+
+#: src/admin/components/SuggestionNotice.jsx:29
+msgid "Dismiss"
+msgstr ""
+
+#: src/admin/media-library.js:53
+#: src/admin/media-library.js:57
+msgid "Failed to move media."
+msgstr ""
+
+#: src/admin/media-library.js:178
+#: src/admin/media-library.js:179
+#: src/admin/media-library.js:205
+#: src/admin/media-library.js:206
+msgid "Toggle Folders"
+msgstr ""
+
+#: src/editor/components/FolderFilter.jsx:91
+#: src/editor/components/FolderFilter.jsx:101
+msgid "Folder"
+msgstr ""

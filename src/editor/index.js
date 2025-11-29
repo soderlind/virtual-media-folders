@@ -2,96 +2,97 @@
  * Gutenberg Editor Integration for Media Manager.
  *
  * Entry point for block editor integration, including:
- * - Media library folder filtering
+ * - Media library folder filtering via sidebar
  * - Enhanced MediaUpload component
  */
 
-import { registerMediaUploadFilter } from './components/MediaUploadFilter.jsx';
+import { createRoot, createElement } from '@wordpress/element';
+import FolderSidebar from './components/FolderSidebar.jsx';
 import './styles/editor.css';
 
 /**
  * Initialize Gutenberg integration.
  */
 function initGutenbergIntegration() {
-	// Register the MediaUpload filter to add folder support
-	registerMediaUploadFilter();
-
-	// Add folder filter to media modal when it opens
-	if (window.wp?.media) {
-		const originalMediaFrame = window.wp.media.view.MediaFrame;
-
-		if (originalMediaFrame) {
-			// Extend the media frame to inject our folder filter
-			window.wp.media.view.MediaFrame = originalMediaFrame.extend({
-				initialize: function () {
-					originalMediaFrame.prototype.initialize.apply(this, arguments);
-
-					// Listen for the frame to be ready
-					this.on('ready', () => {
-						this.injectFolderFilter();
-					});
-				},
-
-				injectFolderFilter: function () {
-					// Find the toolbar and inject our folder filter
-					const toolbar = this.$('.media-toolbar-secondary');
-					if (toolbar.length && !toolbar.find('.mm-folder-filter-wrap').length) {
-						const filterWrap = document.createElement('div');
-						filterWrap.className = 'mm-folder-filter-wrap';
-						toolbar.prepend(filterWrap);
-
-						// The filter will be rendered by React
-						this.renderFolderFilter(filterWrap);
-					}
-				},
-
-				renderFolderFilter: function (container) {
-					// Import and render the FolderFilter component
-					import('./components/FolderFilter.jsx').then(({ FolderFilter }) => {
-						const { createRoot } = wp.element;
-						const root = createRoot(container);
-
-						const frame = this;
-						root.render(
-							wp.element.createElement(FolderFilter, {
-								value: '',
-								onFilterChange: (folderId) => {
-									frame.applyFolderFilter(folderId);
-								},
-							})
-						);
-					});
-				},
-
-				applyFolderFilter: function (folderId) {
-					const state = this.state();
-					if (!state) return;
-
-					const library = state.get('library');
-					if (!library) return;
-
-					// Build query based on folder selection
-					const props = library.props.toJSON();
-
-					if (folderId === '') {
-						// All folders - remove filter
-						delete props.media_folder;
-						delete props.media_folder_exclude;
-					} else if (folderId === 'uncategorized') {
-						// Uncategorized - exclude all folders
-						delete props.media_folder;
-						props.media_folder_exclude = 'all';
-					} else {
-						// Specific folder
-						props.media_folder = parseInt(folderId, 10);
-						delete props.media_folder_exclude;
-					}
-
-					library.props.set(props);
-				},
-			});
-		}
+	// Wait for wp.media to be fully available
+	if (!window.wp?.media?.view?.AttachmentsBrowser) {
+		// Retry after a short delay
+		setTimeout(initGutenbergIntegration, 100);
+		return;
 	}
+
+	// Extend AttachmentsBrowser to add folder sidebar in block editor media modals
+	const originalRender = wp.media.view.AttachmentsBrowser.prototype.render;
+
+	wp.media.view.AttachmentsBrowser.prototype.render = function () {
+		originalRender.apply(this, arguments);
+
+		// Only add sidebar if not already present
+		if (!this.$el.find('.mm-editor-folder-sidebar').length) {
+			// Find the attachments container
+			const $attachmentsWrapper = this.$el.find('.attachments-wrapper').first();
+			const $attachments = this.$el.find('.attachments').first();
+			
+			if ($attachmentsWrapper.length || $attachments.length) {
+				const sidebarContainer = document.createElement('div');
+				sidebarContainer.className = 'mm-editor-folder-sidebar';
+				
+				// Insert at the beginning of attachments-wrapper
+				if ($attachmentsWrapper.length) {
+					$attachmentsWrapper.prepend(sidebarContainer);
+				} else {
+					$attachments.before(sidebarContainer);
+				}
+
+				const collection = this.collection;
+				const browser = this;
+
+				const root = createRoot(sidebarContainer);
+				root.render(
+					createElement(FolderSidebar, {
+						onFolderSelect: (folderId) => {
+							if (!collection) return;
+
+							// Add loading state
+							const $attachmentsEl = browser.$el.find('.attachments');
+							$attachmentsEl.addClass('mm-loading');
+							
+							// Hide/show uploader based on folder selection
+							if (folderId !== null) {
+								browser.$el.addClass('mm-folder-filtered');
+							} else {
+								browser.$el.removeClass('mm-folder-filtered');
+							}
+
+							// Reset existing filters
+							collection.props.unset('media_folder');
+							collection.props.unset('media_folder_exclude');
+
+							if (folderId === 'uncategorized') {
+								collection.props.set({ media_folder_exclude: 'all' });
+							} else if (folderId && folderId !== '') {
+								collection.props.set({ media_folder: parseInt(folderId, 10) });
+							}
+							// null = All Media, no filter needed
+							
+							// Refresh the collection
+							collection.reset();
+							collection.more({ remove: false }).then(() => {
+								$attachmentsEl.removeClass('mm-loading');
+							}).catch(() => {
+								$attachmentsEl.removeClass('mm-loading');
+							});
+						},
+					})
+				);
+				
+				// Add class to browser for CSS styling
+				this.$el.addClass('mm-has-folder-sidebar');
+			}
+		}
+
+		return this;
+	};
 }
 
 // Initialize when DOM is ready

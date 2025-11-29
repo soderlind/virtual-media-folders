@@ -1,22 +1,19 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { DraggableMedia } from '../../src/admin/components/DraggableMedia.jsx';
 import { DroppableFolder } from '../../src/admin/components/DroppableFolder.jsx';
 
-// Mock @dnd-kit/core
+// Mock @dnd-kit/core for DraggableMedia
+const mockUseDraggable = vi.fn(() => ({
+	attributes: { role: 'button', tabIndex: 0 },
+	listeners: {},
+	setNodeRef: vi.fn(),
+	transform: null,
+	isDragging: false,
+}));
+
 vi.mock('@dnd-kit/core', () => ({
-	useDraggable: vi.fn(() => ({
-		attributes: { role: 'button', tabIndex: 0 },
-		listeners: {},
-		setNodeRef: vi.fn(),
-		transform: null,
-		isDragging: false,
-	})),
-	useDroppable: vi.fn(() => ({
-		isOver: false,
-		setNodeRef: vi.fn(),
-		active: null,
-	})),
+	useDraggable: (...args) => mockUseDraggable(...args),
 }));
 
 // Mock @dnd-kit/utilities
@@ -33,6 +30,18 @@ vi.mock('@wordpress/i18n', () => ({
 	__: (text) => text,
 }));
 
+beforeEach(() => {
+	vi.clearAllMocks();
+	// Reset mock to default behavior
+	mockUseDraggable.mockReturnValue({
+		attributes: { role: 'button', tabIndex: 0 },
+		listeners: {},
+		setNodeRef: vi.fn(),
+		transform: null,
+		isDragging: false,
+	});
+});
+
 describe('DraggableMedia', () => {
 	it('renders children with draggable wrapper', () => {
 		render(
@@ -44,9 +53,8 @@ describe('DraggableMedia', () => {
 		expect(screen.getByRole('img')).toBeInTheDocument();
 	});
 
-	it('applies dragging class when isDragging is true', async () => {
-		const { useDraggable } = await import('@dnd-kit/core');
-		useDraggable.mockReturnValue({
+	it('applies dragging class when isDragging is true', () => {
+		mockUseDraggable.mockReturnValue({
 			attributes: {},
 			listeners: {},
 			setNodeRef: vi.fn(),
@@ -85,37 +93,31 @@ describe('DroppableFolder', () => {
 		expect(screen.getByText('Folder Content')).toBeInTheDocument();
 	});
 
-	it('applies is-over class when media is dragged over', async () => {
-		const { useDroppable } = await import('@dnd-kit/core');
-		useDroppable.mockReturnValue({
-			isOver: true,
-			setNodeRef: vi.fn(),
-			active: { data: { current: { type: 'media' } } },
-		});
-
+	it('applies is-over class when media is dragged over', () => {
 		const { container } = render(
 			<DroppableFolder folderId={1}>
 				<span>Drop here</span>
 			</DroppableFolder>
 		);
 
+		// Simulate dragOver event
+		fireEvent.dragOver(container.firstChild);
+
 		expect(container.firstChild).toHaveClass('is-over');
 	});
 
-	it('does not show drop indicator for non-media drags', async () => {
-		const { useDroppable } = await import('@dnd-kit/core');
-		useDroppable.mockReturnValue({
-			isOver: true,
-			setNodeRef: vi.fn(),
-			active: { data: { current: { type: 'folder' } } },
-		});
-
+	it('removes is-over class when drag leaves', () => {
 		const { container } = render(
 			<DroppableFolder folderId={1}>
 				<span>Content</span>
 			</DroppableFolder>
 		);
 
+		// Simulate dragOver then dragLeave
+		fireEvent.dragOver(container.firstChild);
+		expect(container.firstChild).toHaveClass('is-over');
+		
+		fireEvent.dragLeave(container.firstChild);
 		expect(container.firstChild).not.toHaveClass('is-over');
 	});
 

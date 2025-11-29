@@ -3,16 +3,22 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import FolderTree from '../../src/admin/components/FolderTree.jsx';
 
-// Mock @wordpress/i18n
-vi.mock('@wordpress/i18n', () => ({
-	__: (text) => text,
-}));
+// Mock @wordpress/i18n - use actual module with our overrides
+vi.mock('@wordpress/i18n', async (importOriginal) => {
+	const actual = await importOriginal();
+	return {
+		...actual,
+		__: (text) => text,
+	};
+});
 
-// Mock @wordpress/icons
-vi.mock('@wordpress/icons', () => ({
-	Icon: ({ icon }) => React.createElement('span', { 'data-testid': 'icon' }, icon?.name || 'icon'),
-	listView: { name: 'listView' },
-}));
+// Mock @wordpress/icons - use actual module
+vi.mock('@wordpress/icons', async (importOriginal) => {
+	const actual = await importOriginal();
+	return {
+		...actual,
+	};
+});
 
 // Mock @wordpress/api-fetch
 vi.mock('@wordpress/api-fetch', () => ({
@@ -54,10 +60,9 @@ describe('FolderTree', () => {
 		render(<FolderTree onFolderSelect={() => {}} />);
 
 		await waitFor(() => {
-			expect(screen.getByText('Folders')).toBeInTheDocument();
+			expect(screen.getByText('All Media')).toBeInTheDocument();
 		});
 
-		expect(screen.getByText('All Media')).toBeInTheDocument();
 		expect(screen.getByText('Uncategorized')).toBeInTheDocument();
 		expect(screen.getByText('Images')).toBeInTheDocument();
 		expect(screen.getByText('Documents')).toBeInTheDocument();

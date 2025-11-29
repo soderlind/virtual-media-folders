@@ -33,11 +33,47 @@ This document tracks the evolving design of the Media Manager plugin.
   - Tests in `tests/js/editor/FolderFilter.test.jsx` and `tests/js/editor/MediaUploadFilter.test.jsx`.
   - PHP tests in `tests/php/EditorTest.php`.
 
+- **REST API**:
+  - `includes/class-rest-api.php`: Custom REST API endpoints under `mediamanager/v1` namespace.
+  - Folder endpoints: `GET/POST /folders`, `GET/PUT/DELETE /folders/{id}`, `POST/DELETE /folders/{id}/media`.
+  - Suggestion endpoints: `GET /suggestions/{media_id}`, `POST /suggestions/{media_id}/apply`, `POST /suggestions/{media_id}/dismiss`.
+  - Permission checks for `upload_files` and `manage_categories` capabilities.
+  - Tests in `tests/php/RestApiTest.php`.
+
+- **CI Workflow**:
+  - `.github/workflows/ci.yml`: GitHub Actions workflow.
+  - PHP tests on PHP 8.3 and 8.4 with Composer caching.
+  - JavaScript tests on Node.js 20 and 22 with npm caching.
+  - Build job that produces artifacts after tests pass.
+
+- **Bulk Folder Assignment**:
+  - `src/admin/components/BulkFolderAction.jsx`: Dropdown to assign multiple selected media to a folder.
+  - Integrated into FolderTree sidebar, shows when media items are selected.
+  - Supports moving to any folder or removing from all folders (Uncategorized).
+
+- **Folder Management UI**:
+  - `src/admin/components/FolderManager.jsx`: Create, rename, delete folder buttons.
+  - Uses WordPress Modal component for confirmation dialogs.
+  - Integrated into FolderTree sidebar header.
+  - Uses REST API endpoints for CRUD operations.
+
+- **Settings Page**:
+  - `includes/class-settings.php`: Plugin settings page under Media menu.
+  - Smart Suggestions options: enable/disable, MIME type matching, EXIF date, IPTC keywords.
+  - Default behavior: default folder assignment, show/hide Uncategorized.
+  - UI preferences: enable/disable drag-drop, sidebar default visibility.
+
+- **Internationalization**:
+  - `languages/mediamanager.pot`: Generated POT file for translations.
+  - All user-facing strings use `__()` or `sprintf()` with translator comments.
+  - npm scripts: `i18n:make-pot` and `i18n:make-json` for translation workflow.
+
 ## In Progress
 
 - None.
 
 ## Next
 
-- Custom REST API endpoints for folders and suggestions.
-- CI workflow running PHPUnit and Vitest.
+- User documentation / README.
+- Plugin release workflow (GitHub releases, version bumping).
+- Integration with third-party DAM (Digital Asset Management) systems.

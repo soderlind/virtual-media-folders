@@ -9,59 +9,66 @@
  * Text Domain: mediamanager
  */
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-if (version_compare(PHP_VERSION, '8.3', '<')) {
-    add_action('admin_notices', static function () {
-        echo '<div class="notice notice-error"><p>' . esc_html__('Media Manager requires PHP 8.3 or higher.', 'mediamanager') . '</p></div>';
-    });
-    return;
+if ( version_compare( PHP_VERSION, '8.3', '<' ) ) {
+	add_action( 'admin_notices', static function () {
+		echo '<div class="notice notice-error"><p>' . esc_html__( 'Media Manager requires PHP 8.3 or higher.', 'mediamanager' ) . '</p></div>';
+	} );
+	return;
 }
 
-if (version_compare(get_bloginfo('version'), '6.8', '<')) {
-    add_action('admin_notices', static function () {
-        echo '<div class="notice notice-error"><p>' . esc_html__('Media Manager requires WordPress 6.8 or higher.', 'mediamanager') . '</p></div>';
-    });
-    return;
+if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
+	add_action( 'admin_notices', static function () {
+		echo '<div class="notice notice-error"><p>' . esc_html__( 'Media Manager requires WordPress 6.8 or higher.', 'mediamanager' ) . '</p></div>';
+	} );
+	return;
 }
 
-define('MEDIAMANAGER_VERSION', '0.1.0');
-define('MEDIAMANAGER_FILE', __FILE__);
-define('MEDIAMANAGER_PATH', __DIR__ . '/');
-define('MEDIAMANAGER_URL', plugin_dir_url(__FILE__));
+define( 'MEDIAMANAGER_VERSION', strval( time() ) ); // Random version for cache busting during development
+define( 'MEDIAMANAGER_FILE', __FILE__ );
+define( 'MEDIAMANAGER_PATH', __DIR__ . '/' );
+define( 'MEDIAMANAGER_URL', plugin_dir_url( __FILE__ ) );
 
 require_once MEDIAMANAGER_PATH . 'includes/class-taxonomy.php';
-if (file_exists(MEDIAMANAGER_PATH . 'includes/class-admin.php')) {
-    require_once MEDIAMANAGER_PATH . 'includes/class-admin.php';
+if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-admin.php' ) ) {
+	require_once MEDIAMANAGER_PATH . 'includes/class-admin.php';
 }
-if (file_exists(MEDIAMANAGER_PATH . 'includes/class-rest-api.php')) {
-    require_once MEDIAMANAGER_PATH . 'includes/class-rest-api.php';
+if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-rest-api.php' ) ) {
+	require_once MEDIAMANAGER_PATH . 'includes/class-rest-api.php';
 }
-if (file_exists(MEDIAMANAGER_PATH . 'includes/class-suggestions.php')) {
-    require_once MEDIAMANAGER_PATH . 'includes/class-suggestions.php';
+if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-suggestions.php' ) ) {
+	require_once MEDIAMANAGER_PATH . 'includes/class-suggestions.php';
 }
-if (file_exists(MEDIAMANAGER_PATH . 'includes/class-editor.php')) {
-    require_once MEDIAMANAGER_PATH . 'includes/class-editor.php';
+if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-editor.php' ) ) {
+	require_once MEDIAMANAGER_PATH . 'includes/class-editor.php';
+}
+if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-settings.php' ) ) {
+	require_once MEDIAMANAGER_PATH . 'includes/class-settings.php';
 }
 
-add_action('plugins_loaded', static function () {
-    \MediaManager\Taxonomy::init();
+add_action( 'plugins_loaded', static function () {
+	\MediaManager\Taxonomy::init();
 
-    if (class_exists('MediaManager\\Admin')) {
-        \MediaManager\Admin::init();
-    }
+	if ( class_exists( 'MediaManager\\Admin' ) ) {
+		\MediaManager\Admin::init();
+	}
 
-    if (class_exists('MediaManager\\REST_API')) {
-        \MediaManager\REST_API::init();
-    }
+	if ( class_exists( 'MediaManager\\REST_API' ) ) {
+		\MediaManager\REST_API::init();
+	}
 
-    if (class_exists('MediaManager\\Suggestions')) {
-        \MediaManager\Suggestions::init();
-    }
+	if ( class_exists( 'MediaManager\\Suggestions' ) ) {
+		\MediaManager\Suggestions::init();
+	}
 
-    if (class_exists('MediaManager\\Editor')) {
-        \MediaManager\Editor::boot();
-    }
-});
+	if ( class_exists( 'MediaManager\\Editor' ) ) {
+		\MediaManager\Editor::boot();
+	}
+
+	if ( class_exists( 'MediaManager\\Settings' ) ) {
+		\MediaManager\Settings::init();
+	}
+} );

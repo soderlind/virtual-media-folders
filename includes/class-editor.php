@@ -30,7 +30,7 @@ final class Editor {
 	 */
 	public static function boot(): void {
 		add_action( 'enqueue_block_editor_assets', [ self::class, 'enqueue_editor_assets' ] );
-		add_filter( 'ajax_query_attachments_args', [ self::class, 'filter_ajax_query_args' ] );
+		add_filter( 'ajax_query_attachments_args', [ self::class, 'filter_ajax_query_args' ], 10, 1 );
 	}
 
 	/**
@@ -60,8 +60,8 @@ final class Editor {
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
 			MEDIAMANAGER_URL . 'build/editor.js',
-			$asset['dependencies'],
-			$asset['version'],
+			$asset[ 'dependencies' ],
+			$asset[ 'version' ],
 			true
 		);
 
@@ -69,7 +69,7 @@ final class Editor {
 			self::SCRIPT_HANDLE,
 			MEDIAMANAGER_URL . 'build/editor.css',
 			[ 'wp-components' ],
-			$asset['version']
+			$asset[ 'version' ]
 		);
 
 		// Pass folder data to JavaScript.
@@ -128,26 +128,73 @@ final class Editor {
 	 *
 	 * Handles folder filtering for media library AJAX requests.
 	 *
-	 * @param array<string, mixed> $query_args Query arguments.
-	 * @return array<string, mixed>
+	 * @param mixed $query_args Query arguments.
+	 * @return mixed
 	 */
-	public static function filter_ajax_query_args( array $query_args ): array {
+	public static function filter_ajax_query_args( $query_args ) {
+		// Ensure we have an array
+		if ( ! is_array( $query_args ) ) {
+			return $query_args;
+		}
+
+		// Bail early if taxonomy doesn't exist yet.
+		if ( ! function_exists( 'taxonomy_exists' ) || ! taxonomy_exists( 'media_folder' ) ) {
+			return $query_args;
+		}
+
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_REQUEST['query']['media_folder'] ) ) {
-			$folder_id = absint( $_REQUEST['query']['media_folder'] );
+
+		// Check both the query_args (passed by WordPress) and $_REQUEST['query'] (raw POST data)
+		$folder_value   = null;
+		$folder_exclude = null;
+
+		// First check if it's in the query_args directly (props from Backbone collection)
+		if ( ! empty( $query_args[ 'media_folder' ] ) ) {
+			$folder_value = $query_args[ 'media_folder' ];
+			unset( $query_args[ 'media_folder' ] ); // Remove so it doesn't interfere
+		} elseif ( ! empty( $_REQUEST[ 'query' ][ 'media_folder' ] ) ) {
+			$folder_value = sanitize_text_field( wp_unslash( $_REQUEST[ 'query' ][ 'media_folder' ] ) );
+		}
+
+		if ( ! empty( $query_args[ 'media_folder_exclude' ] ) ) {
+			$folder_exclude = $query_args[ 'media_folder_exclude' ];
+			unset( $query_args[ 'media_folder_exclude' ] );
+		} elseif ( ! empty( $_REQUEST[ 'query' ][ 'media_folder_exclude' ] ) ) {
+			$folder_exclude = sanitize_text_field( wp_unslash( $_REQUEST[ 'query' ][ 'media_folder_exclude' ] ) );
+		}
+
+		// Handle specific folder filtering
+		if ( $folder_value !== null && is_numeric( $folder_value ) ) {
+			$folder_id = absint( $folder_value );
 			if ( $folder_id > 0 ) {
-				$query_args['tax_query'] = [
-					[
-						'taxonomy' => 'media_folder',
-						'field'    => 'term_id',
-						'terms'    => $folder_id,
-					],
+				if ( ! isset( $query_args[ 'tax_query' ] ) || ! is_array( $query_args[ 'tax_query' ] ) ) {
+					$query_args[ 'tax_query' ] = [];
+				}
+
+				/**
+				 * Filter whether to include child folders when filtering by a folder.
+				 *
+				 * By default, only items directly assigned to the selected folder are shown.
+				 * Return true to also include items from child folders.
+				 *
+				 * @since 1.0.0
+				 *
+				 * @param bool $include_children Whether to include child folders. Default false.
+				 * @param int  $folder_id        The folder term ID being filtered.
+				 */
+				$include_children = apply_filters( 'mediamanager_include_child_folders', false, $folder_id );
+
+				$query_args[ 'tax_query' ][] = [
+					'taxonomy'         => 'media_folder',
+					'field'            => 'term_id',
+					'terms'            => [ $folder_id ],
+					'include_children' => $include_children,
 				];
 			}
 		}
 
-		if ( isset( $_REQUEST['query']['media_folder_exclude'] ) && 'all' === $_REQUEST['query']['media_folder_exclude'] ) {
-			// Get all folder term IDs.
+		// Handle uncategorized (exclude all folders)
+		if ( $folder_exclude === 'all' ) {
 			$all_folders = get_terms(
 				[
 					'taxonomy'   => 'media_folder',
@@ -157,16 +204,18 @@ final class Editor {
 			);
 
 			if ( ! is_wp_error( $all_folders ) && ! empty( $all_folders ) ) {
-				$query_args['tax_query'] = [
-					[
-						'taxonomy' => 'media_folder',
-						'field'    => 'term_id',
-						'terms'    => $all_folders,
-						'operator' => 'NOT IN',
-					],
+				if ( ! isset( $query_args[ 'tax_query' ] ) || ! is_array( $query_args[ 'tax_query' ] ) ) {
+					$query_args[ 'tax_query' ] = [];
+				}
+				$query_args[ 'tax_query' ][] = [
+					'taxonomy' => 'media_folder',
+					'field'    => 'term_id',
+					'terms'    => $all_folders,
+					'operator' => 'NOT IN',
 				];
 			}
 		}
+
 		// phpcs:enable
 
 		return $query_args;
