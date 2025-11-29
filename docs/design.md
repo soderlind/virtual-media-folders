@@ -52,10 +52,26 @@ This document tracks the evolving design of the Media Manager plugin.
   - Supports moving to any folder or removing from all folders (Uncategorized).
 
 - **Folder Management UI**:
-  - `src/admin/components/FolderManager.jsx`: Create, rename, delete folder buttons.
-  - Uses WordPress Modal component for confirmation dialogs.
+  - `src/admin/components/FolderManager.jsx`: Create, rename, delete folder buttons with Modal dialogs.
+  - Icon-only buttons with screen reader text for accessibility.
+  - Uses SlotFillProvider for proper Modal rendering.
+  - Delete confirmation with warning when folder contains media.
   - Integrated into FolderTree sidebar header.
-  - Uses REST API endpoints for CRUD operations.
+
+- **Gutenberg Media Modal Sidebar**:
+  - `src/editor/components/FolderSidebar.jsx`: Folder tree sidebar for Gutenberg media modal.
+  - Replaces dropdown filter with full sidebar navigation.
+  - Integrated with wp.media.view.MediaFrame for modal context.
+  - Consistent UI with Media Library folder tree.
+
+- **UI/UX Improvements**:
+  - Folder toggle button: Shows folders (on only), positioned before view switcher.
+  - Grid icon click hides folder sidebar (document-level event handler).
+  - Auto-expand parent folders when child folder is selected.
+  - Smooth loading transitions when switching folders (opacity fade).
+  - Empty folder handling with min-height to prevent sidebar collapse.
+  - Hide uploader overlay when viewing filtered folders.
+  - Auto-select folder after drag-drop move operation.
 
 - **Settings Page**:
   - `includes/class-settings.php`: Plugin settings page under Media menu.
