@@ -6,6 +6,10 @@ The ImageManager plugin integrates the stand alone PHP ImageManager + Editor wit
 
 
 
+https://github.com/user-attachments/assets/13bd96db-5add-474b-a684-88e864a91513
+
+
+
 ## Feature list
 
 - Simple image editor (crop, rotate, flip, and scale).
