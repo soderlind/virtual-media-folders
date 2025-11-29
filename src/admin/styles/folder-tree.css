@@ -47,21 +47,18 @@
 	height: 20px;
 }
 
-/* Folder tree sidebar - hidden by default, absolute positioning inside attachments-wrapper */
+/* Folder tree sidebar - hidden by default, absolute positioning with JS sticky */
 .mm-folder-tree-sidebar {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 220px;
-	height: calc(100vh - 32px);
-	/* Viewport height minus admin bar */
-	max-height: calc(100vh - 32px);
+	max-height: calc(100vh - 32px); /* Viewport height minus admin bar */
 	border-right: 1px solid #dcdcde;
 	background: #f6f7f7;
 	overflow-y: auto;
 	z-index: 75;
 	display: none;
-	/* Use transform for smoother animations */
 	will-change: transform;
 	transform: translateY(0);
 }
@@ -71,22 +68,15 @@
 	display: block;
 }
 
-/* Ensure attachments-wrapper has minimum height when sidebar is visible */
+/* Ensure attachments-wrapper has proper positioning context */
 .attachments-browser.mm-sidebar-visible .attachments-wrapper {
+	position: relative;
 	min-height: 400px;
 }
 
-/* Push attachments content to make room for sidebar when visible */
-.attachments-browser.mm-sidebar-visible.has-load-more .attachments-wrapper {
-	left: 0 !important;
-	padding-left: 220px !important;
-	box-sizing: border-box !important;
-}
-
-.attachments-browser.mm-sidebar-visible:not(.has-load-more) .attachments {
-	left: 0 !important;
-	padding-left: 220px !important;
-	box-sizing: border-box !important;
+/* Push attachments content to make room for sidebar */
+.attachments-browser.mm-sidebar-visible .attachments {
+	margin-left: 220px !important;
 }
 
 /* Uploader positioning when sidebar is visible */
@@ -164,9 +154,29 @@
 }
 
 .mm-folder-toggle {
-	width: 16px;
+	width: 20px;
+	height: 20px;
 	flex-shrink: 0;
 	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	color: #50575e;
+	border-radius: 2px;
+	transition: background-color 0.1s;
+}
+
+.mm-folder-toggle:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+.mm-folder-button.is-selected .mm-folder-toggle {
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.mm-folder-button.is-selected .mm-folder-toggle:hover {
+	background-color: rgba(255, 255, 255, 0.2);
 }
 
 .mm-folder-name {

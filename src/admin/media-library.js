@@ -226,49 +226,54 @@ function alignSidebarWithGrid(browser) {
 
 /**
  * Setup sticky sidebar behavior using JavaScript.
- * Listens to scroll events and updates sidebar position using transform for smooth animation.
+ * Listens to scroll events and updates sidebar position using transform.
  */
 function setupStickySidebar(browser) {
 	// Wait for sidebar to be rendered by React
 	const waitForSidebar = () => {
 		const sidebar = document.querySelector('.mm-folder-tree-sidebar');
 		const attachmentsWrapper = browser.$el.find('.attachments-wrapper')[0];
+		const attachments = browser.$el.find('.attachments')[0];
 		
 		if (!sidebar) {
-			// Try again in 100ms
 			setTimeout(waitForSidebar, 100);
 			return;
 		}
 		
-		if (!attachmentsWrapper) {
+		if (!attachmentsWrapper || !attachments) {
 			return;
 		}
 		
-		// Admin bar height (sticky admin bar)
 		const adminBarHeight = 32;
-		
-		// Throttle for performance
 		let ticking = false;
+		
+		// Get the initial offset - how far below the wrapper top the attachments start
+		function getAttachmentsOffset() {
+			const wrapperRect = attachmentsWrapper.getBoundingClientRect();
+			const attachmentsRect = attachments.getBoundingClientRect();
+			return attachmentsRect.top - wrapperRect.top;
+		}
+		
+		// Cache initial offset (recalculate on resize)
+		let initialOffset = getAttachmentsOffset();
 		
 		function updateSidebarPosition() {
 			const wrapperRect = attachmentsWrapper.getBoundingClientRect();
-			
-			// How far is the wrapper from the top of viewport?
 			const wrapperTop = wrapperRect.top;
 			
-			// If wrapper top is at or below admin bar, sidebar at natural position
-			if (wrapperTop >= adminBarHeight) {
-				sidebar.style.transform = 'translateY(0)';
+			// The sidebar should align with the attachments, not the wrapper top
+			// So we add initialOffset to the sidebar's natural position
+			const targetTop = adminBarHeight;
+			const currentNaturalTop = wrapperTop + initialOffset;
+			
+			if (currentNaturalTop >= targetTop) {
+				// Attachments haven't scrolled past the target position yet
+				// Keep sidebar at its natural offset position
+				sidebar.style.transform = `translateY(${initialOffset}px)`;
 			} else {
-				// Wrapper has scrolled up past admin bar
-				// Move sidebar down to stay visible below admin bar
-				const offset = adminBarHeight - wrapperTop;
-				
-				// Don't let sidebar go past bottom of wrapper
-				const maxOffset = wrapperRect.height - sidebar.offsetHeight;
-				const clampedOffset = Math.min(offset, Math.max(0, maxOffset));
-				
-				sidebar.style.transform = `translateY(${clampedOffset}px)`;
+				// Attachments have scrolled past target - stick sidebar
+				const offset = targetTop - wrapperTop;
+				sidebar.style.transform = `translateY(${offset}px)`;
 			}
 			
 			ticking = false;
@@ -281,21 +286,30 @@ function setupStickySidebar(browser) {
 			}
 		}
 		
-		// Listen to window scroll and resize
-		window.addEventListener('scroll', onScroll, { passive: true });
-		window.addEventListener('resize', onScroll, { passive: true });
+		function onResize() {
+			// Recalculate initial offset on resize
+			initialOffset = getAttachmentsOffset();
+			onScroll();
+		}
 		
-		// Initial position
+		window.addEventListener('scroll', onScroll, { passive: true });
+		window.addEventListener('resize', onResize, { passive: true });
 		updateSidebarPosition();
 		
-		// Store cleanup function
 		sidebar._cleanupSticky = () => {
 			window.removeEventListener('scroll', onScroll);
-			window.removeEventListener('resize', onScroll);
+			window.removeEventListener('resize', onResize);
 		};
 	};
 	
 	waitForSidebar();
+}
+
+/**
+ * Remove 'current' class from view-switch icons.
+ */
+function removeViewSwitchCurrent() {
+	jQuery('.view-switch a').removeClass('current');
 }
 
 /**
@@ -312,6 +326,10 @@ function toggleFolderView(browser, show) {
 		document.body.classList.add('mm-folder-view-active');
 		// Add class to the browser element itself
 		browser.$el.addClass('mm-sidebar-visible');
+		// Remove 'current' class from grid/list icons (with delay to ensure DOM is ready)
+		removeViewSwitchCurrent();
+		setTimeout(removeViewSwitchCurrent, 100);
+		setTimeout(removeViewSwitchCurrent, 500);
 		// Setup drag and drop when showing
 		setupDragAndDrop(browser);
 		// Align sidebar with grid
@@ -324,6 +342,8 @@ function toggleFolderView(browser, show) {
 		document.body.classList.remove('mm-folder-view-active');
 		// Remove the class
 		browser.$el.removeClass('mm-sidebar-visible');
+		// Restore 'current' class to grid icon (we're in grid mode)
+		jQuery('.view-switch a.view-grid').addClass('current');
 	}
 	
 	// Save preference

@@ -95,7 +95,12 @@ function FolderItem({ folder, selectedId, onSelect, level = 0 }) {
 							tabIndex={0}
 							aria-label={expanded ? __('Collapse', 'mediamanager') : __('Expand', 'mediamanager')}
 						>
-							{expanded ? '▾' : '▸'}
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+								{expanded 
+									? <polyline points="6 9 12 15 18 9" />
+									: <polyline points="9 6 15 12 9 18" />
+								}
+							</svg>
 						</span>
 					)}
 					<span className="mm-folder-name">{folder.name}</span>
