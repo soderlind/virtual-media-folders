@@ -32,17 +32,46 @@ export default function FolderManager({ folders = [], selectedId, onRefresh }) {
 	const currentFolder = folders.find(f => f.id === selectedId);
 
 	/**
-	 * Build parent folder options.
+	 * Build hierarchical folder options with indentation.
+	 *
+	 * @param {Array}   folderList  All folders.
+	 * @param {number}  parentId    Parent folder ID to start from.
+	 * @param {number}  depth       Current nesting depth.
+	 * @param {number}  excludeId   Folder ID to exclude (and its descendants).
+	 * @return {Array} Flattened array of options with visual hierarchy.
+	 */
+	function buildHierarchicalOptions(folderList, parentId = 0, depth = 0, excludeId = null) {
+		let options = [];
+		const children = folderList.filter(f => f.parent === parentId);
+
+		for (const folder of children) {
+			// Skip excluded folder and its descendants (for move operations)
+			if (excludeId !== null && folder.id === excludeId) {
+				continue;
+			}
+			const indent = depth > 0 ? '— '.repeat(depth) : '';
+			options.push({
+				label: indent + folder.name,
+				value: String(folder.id),
+			});
+			options = options.concat(
+				buildHierarchicalOptions(folderList, folder.id, depth + 1, excludeId)
+			);
+		}
+
+		return options;
+	}
+
+	/**
+	 * Build parent folder options for creating a new folder.
+	 * Includes all folders since we're creating a new one.
+	 * Note: SelectControl requires string values.
 	 */
 	function getParentOptions() {
-		const options = [{ label: __('None (top level)', 'mediamanager'), value: 0 }];
-		folders.forEach(folder => {
-			// Don't allow selecting current folder or its children as parent
-			if (folder.id !== selectedId) {
-				options.push({ label: folder.name, value: folder.id });
-			}
-		});
-		return options;
+		return [
+			{ label: __('None (top level)', 'mediamanager'), value: '0' },
+			...buildHierarchicalOptions(folders),
+		];
 	}
 
 	/**
@@ -176,6 +205,9 @@ export default function FolderManager({ folders = [], selectedId, onRefresh }) {
 					onClick={(e) => {
 						e.stopPropagation();
 						setError('');
+						// Pre-select the currently selected folder as parent if it's a valid folder
+						const isValidFolder = folders.some(f => f.id === selectedId);
+						setNewFolderParent(isValidFolder ? selectedId : 0);
 						setIsCreateOpen(true);
 					}}
 					className="mm-folder-manager-button"
@@ -227,7 +259,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh }) {
 					/>
 					<SelectControl
 						label={__('Parent Folder', 'mediamanager')}
-						value={newFolderParent}
+						value={String(newFolderParent)}
 						options={getParentOptions()}
 						onChange={(value) => setNewFolderParent(parseInt(value, 10))}
 						__next40pxDefaultSize
