@@ -1,5 +1,5 @@
 {
-	"name": "persoderlind/mediamanager",
+	"name": "soderlind/mediamanager",
 	"description": "Virtual folder organization and smart management for the WordPress Media Library.",
 	"type": "wordpress-plugin",
 	"require": {
