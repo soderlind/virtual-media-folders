@@ -280,6 +280,7 @@ function setupStickySidebar(browser) {
 			// Get current scroll-aware position of attachments
 			const attachmentsRect = attachments.getBoundingClientRect();
 			const attachmentsTop = attachmentsRect.top;
+			const wrapperRect = attachmentsWrapper.getBoundingClientRect();
 			
 			// Target position: just below admin bar
 			const targetTop = adminBarHeight;
@@ -287,13 +288,16 @@ function setupStickySidebar(browser) {
 			if (attachmentsTop >= targetTop) {
 				// Attachments haven't scrolled past the admin bar yet
 				// Position sidebar at the attachments level using stable offset
+				sidebar.style.position = 'absolute';
+				sidebar.style.top = '0';
+				sidebar.style.left = '0';
 				sidebar.style.transform = `translateY(${initialOffset}px)`;
 			} else {
-				// Attachments have scrolled past - make sidebar sticky
-				// Calculate how much the wrapper has scrolled past the target
-				const wrapperRect = attachmentsWrapper.getBoundingClientRect();
-				const stickyOffset = targetTop - wrapperRect.top;
-				sidebar.style.transform = `translateY(${stickyOffset}px)`;
+				// Attachments have scrolled past - make sidebar fixed at admin bar
+				sidebar.style.position = 'fixed';
+				sidebar.style.top = `${adminBarHeight}px`;
+				sidebar.style.left = `${wrapperRect.left}px`;
+				sidebar.style.transform = 'translateY(0)';
 			}
 			
 			ticking = false;

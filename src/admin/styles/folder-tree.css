@@ -404,22 +404,38 @@ body.mm-internal-drag .uploader-window {
 .mm-bulk-folder-action {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
 	padding: 8px 12px;
-	background: #f6f7f7;
+	background: #fff8e5;
 	border-bottom: 1px solid #dcdcde;
+	flex-wrap: wrap;
 }
 
 .mm-bulk-folder-select {
-	min-width: 150px;
+	flex: 1;
+	min-width: 100px;
+	max-width: 140px;
 }
 
 .mm-bulk-folder-apply {
 	flex-shrink: 0;
+	padding: 4px 8px !important;
+	min-height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.mm-bulk-folder-apply svg {
+	display: block;
+}
+
+.mm-bulk-folder-apply:disabled {
+	opacity: 0.5;
 }
 
 .mm-bulk-folder-count {
-	font-size: 12px;
+	font-size: 11px;
 	color: #757575;
-	margin-left: auto;
+	white-space: nowrap;
 }

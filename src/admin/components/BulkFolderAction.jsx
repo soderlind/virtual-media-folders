@@ -182,8 +182,16 @@ export default function BulkFolderAction({ onComplete }) {
 				className="button mm-bulk-folder-apply"
 				onClick={handleBulkMove}
 				disabled={!selectedFolder || isProcessing}
+				title={isProcessing ? __('Moving…', 'mediamanager') : __('Apply', 'mediamanager')}
+				aria-label={isProcessing ? __('Moving…', 'mediamanager') : __('Apply', 'mediamanager')}
 			>
-				{isProcessing ? __('Moving…', 'mediamanager') : __('Apply', 'mediamanager')}
+				{isProcessing ? (
+					<span className="spinner is-active" style={{ margin: 0 }} />
+				) : (
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+						<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+					</svg>
+				)}
 			</button>
 			<span className="mm-bulk-folder-count">
 				{sprintf(
