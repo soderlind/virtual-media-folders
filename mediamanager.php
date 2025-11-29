@@ -39,24 +39,19 @@ add_action( 'init', static function () {
 	load_plugin_textdomain( 'mediamanager', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 } );
 
-require_once MEDIAMANAGER_PATH . 'includes/class-taxonomy.php';
-if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-admin.php' ) ) {
-	require_once MEDIAMANAGER_PATH . 'includes/class-admin.php';
-}
-if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-rest-api.php' ) ) {
-	require_once MEDIAMANAGER_PATH . 'includes/class-rest-api.php';
-}
-if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-suggestions.php' ) ) {
-	require_once MEDIAMANAGER_PATH . 'includes/class-suggestions.php';
-}
-if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-editor.php' ) ) {
-	require_once MEDIAMANAGER_PATH . 'includes/class-editor.php';
-}
-if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-settings.php' ) ) {
-	require_once MEDIAMANAGER_PATH . 'includes/class-settings.php';
-}
+
+require_once MEDIAMANAGER_PATH . 'vendor/autoload.php';
+
 
 add_action( 'plugins_loaded', static function () {
+
+	\MediaManager\GitHub_Plugin_Updater::create_with_assets(
+		'https://github.com/soderlind/mediamanager',
+		MEDIAMANAGER_FILE,
+		'mediamanager',
+		'/mediamanager\.zip/',
+		'main'
+	);
 	\MediaManager\Taxonomy::init();
 
 	if ( class_exists( 'MediaManager\\Admin' ) ) {
