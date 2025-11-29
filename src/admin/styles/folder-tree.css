@@ -53,7 +53,8 @@
 	top: 0;
 	left: 0;
 	width: 220px;
-	max-height: calc(100vh - 32px); /* Viewport height minus admin bar */
+	max-height: calc(100vh - 32px);
+	/* Viewport height minus admin bar */
 	border-right: 1px solid #dcdcde;
 	background: #f6f7f7;
 	overflow-y: auto;

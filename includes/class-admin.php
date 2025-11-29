@@ -115,6 +115,6 @@ class Admin {
 			'nonce'   => wp_create_nonce( 'mm_move_media' ),
 		] );
 
-		wp_set_script_translations( 'mediamanager-admin', 'mediamanager' );
+		wp_set_script_translations( 'mediamanager-admin', 'mediamanager', MEDIAMANAGER_PATH . 'languages' );
 	}
 }

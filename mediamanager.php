@@ -32,6 +32,13 @@ define( 'MEDIAMANAGER_FILE', __FILE__ );
 define( 'MEDIAMANAGER_PATH', __DIR__ . '/' );
 define( 'MEDIAMANAGER_URL', plugin_dir_url( __FILE__ ) );
 
+/**
+ * Load plugin text domain for translations.
+ */
+add_action( 'init', static function () {
+	load_plugin_textdomain( 'mediamanager', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+} );
+
 require_once MEDIAMANAGER_PATH . 'includes/class-taxonomy.php';
 if ( file_exists( MEDIAMANAGER_PATH . 'includes/class-admin.php' ) ) {
 	require_once MEDIAMANAGER_PATH . 'includes/class-admin.php';

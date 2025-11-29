@@ -1,18 +1,15 @@
-# Norwegian Bokmål translation for Media Manager
-# Copyright (C) 2025 Your Name
-# This file is distributed under the same license as the Media Manager plugin.
 msgid ""
 msgstr ""
 "Project-Id-Version: Media Manager 0.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/mediamanager\n"
 "Last-Translator: Per Søderlind <per@soderlind.no>\n"
 "Language-Team: Norwegian Bokmål\n"
-"Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2025-11-29T13:44:11+00:00\n"
 "PO-Revision-Date: 2025-11-29T14:00:00+00:00\n"
+"Language: nb_NO\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: mediamanager\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
