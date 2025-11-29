@@ -6,7 +6,7 @@ Virtual folder organization and smart management for the WordPress Media Library
 ![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-purple)
 ![License: GPL v2+](https://img.shields.io/badge/License-GPL%20v2%2B-green)
 
-> As of January 2026, it has been 20 years since I released [ImageManager 2.0](https://github.com/soderlind/mediamanager/raw/refs/heads/main/assets/imagemanager-2006.mp4), which was for WordPress 2.0 at the time. Media Manager is my modern take on virtual folder organization for WordPress, built with React and modern tooling.
+> As of January 2026, it has been 20 years since I released [ImageManager 2.0](https://github.com/soderlind/mediamanager/raw/refs/heads/main/assets/imagemanager-2006.mp4), which was for WordPress 2.0 at the time. Media Manager is my modern take on media organization for WordPress, built with React and modern tooling.
 
 ## Description
 
@@ -34,13 +34,20 @@ https://github.com/user-attachments/assets/1a6d353c-3803-48c8-987d-7057777b6b5b
 
 ## Installation
 
-### From Source
+- **Quick Install**
 
-1. Clone or download this repository to your `wp-content/plugins` directory
-2. Run `composer install` to install PHP dependencies
-3. Run `npm install` to install JavaScript dependencies
-4. Run `npm run build` to build the assets
-5. Activate the plugin in WordPress
+   - Download [`mediamanager.zip`](https://github.com/soderlind/mediamanager/releases/latest/download/mediamanager.zip)
+   - Upload via  Plugins > Add New > Upload Plugin
+   - Activate the plugin.
+
+- **Composer Install**
+
+   ```bash
+   composer require soderlind/mediamanager
+   ```
+
+- **Updates**
+   * Plugin [updates are handled automatically](https://github.com/soderlind/wordpress-plugin-github-updater#readme) via GitHub. No need to manually download and install updates.
 
 ### Development
 
