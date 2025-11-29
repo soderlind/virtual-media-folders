@@ -12,6 +12,10 @@ Virtual folder organization and smart management for the WordPress Media Library
 
 Media Manager brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders without moving files on disk—folders are virtual, so your URLs never change.
 
+
+https://github.com/user-attachments/assets/1a6d353c-3803-48c8-987d-7057777b6b5b
+
+
 ### Features
 
 - **Virtual Folders**: Create hierarchical folder structures to organize media
