@@ -5,6 +5,17 @@ All notable changes to MediaManager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2025-11-30
+
+### Changed
+- Refactored folder sidebar components to share code between Media Library and Gutenberg modal
+- Created shared `useFolderData` hook and `BaseFolderTree`/`BaseFolderItem` components
+- Reduced code duplication by ~60% in folder tree implementation
+
+### Added
+- After deleting a folder, focus moves to Uncategorized (if it has items) or All Media
+- Comprehensive JSDoc and PHPDoc comments throughout codebase
+
 ## [0.1.1] - 2025-11-30
 
 ### Fixed
@@ -77,5 +88,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
+[0.1.2]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.2
 [0.1.1]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.1
 [0.1.0]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.0

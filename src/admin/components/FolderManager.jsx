@@ -17,8 +17,9 @@ import { plus, pencil, trash } from '@wordpress/icons';
  * @param {Array}    props.folders      Current folder list.
  * @param {number}   props.selectedId   Currently selected folder ID.
  * @param {Function} props.onRefresh    Called after folder changes.
+ * @param {Function} props.onDelete     Called after folder deletion (receives new folder to select).
  */
-export default function FolderManager({ folders = [], selectedId, onRefresh }) {
+export default function FolderManager({ folders = [], selectedId, onRefresh, onDelete }) {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const [isRenameOpen, setIsRenameOpen] = useState(false);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -163,6 +164,9 @@ export default function FolderManager({ folders = [], selectedId, onRefresh }) {
 
 			setIsDeleteOpen(false);
 			showNotice(__('Folder deleted.', 'mediamanager'), 'success');
+			
+			// Move focus to Uncategorized if it has items, otherwise All Media
+			onDelete?.();
 			onRefresh?.();
 		} catch (err) {
 			setError(err.message || __('Failed to delete folder.', 'mediamanager'));

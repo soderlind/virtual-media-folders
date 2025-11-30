@@ -1,18 +1,37 @@
 <?php
 /**
+ * Media Manager WordPress Plugin
+ *
+ * Provides virtual folder organization and smart management features
+ * for the WordPress Media Library. Includes a folder sidebar in both
+ * the Media Library grid view and Gutenberg block editor media modals.
+ *
+ * @package     MediaManager
+ * @author      Per Søderlind
+ * @copyright   2024 Per Søderlind
+ * @license     GPL-2.0-or-later
+ *
+ * @wordpress-plugin
  * Plugin Name: Media Manager
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Your Name
  * Text Domain: mediamanager
  */
 
+/*
+ * Security: Prevent direct file access.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/*
+ * Check PHP version compatibility.
+ * Media Manager requires PHP 8.3+ for modern language features.
+ */
 if ( version_compare( PHP_VERSION, '8.3', '<' ) ) {
 	add_action( 'admin_notices', static function () {
 		echo '<div class="notice notice-error"><p>' . esc_html__( 'Media Manager requires PHP 8.3 or higher.', 'mediamanager' ) . '</p></div>';
@@ -20,6 +39,10 @@ if ( version_compare( PHP_VERSION, '8.3', '<' ) ) {
 	return;
 }
 
+/*
+ * Check WordPress version compatibility.
+ * Media Manager requires WP 6.8+ for modern block editor features.
+ */
 if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 	add_action( 'admin_notices', static function () {
 		echo '<div class="notice notice-error"><p>' . esc_html__( 'Media Manager requires WordPress 6.8 or higher.', 'mediamanager' ) . '</p></div>';
@@ -27,6 +50,9 @@ if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 	return;
 }
 
+/*
+ * Define plugin constants.
+ */
 define( 'MEDIAMANAGER_VERSION', strval( time() ) ); // Random version for cache busting during development
 define( 'MEDIAMANAGER_FILE', __FILE__ );
 define( 'MEDIAMANAGER_PATH', __DIR__ . '/' );
@@ -34,15 +60,32 @@ define( 'MEDIAMANAGER_URL', plugin_dir_url( __FILE__ ) );
 
 /**
  * Load plugin text domain for translations.
+ *
+ * @since 0.1.0
  */
 add_action( 'init', static function () {
 	load_plugin_textdomain( 'mediamanager', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 } );
 
-
+/*
+ * Load Composer autoloader.
+ */
 require_once MEDIAMANAGER_PATH . 'vendor/autoload.php';
 
-
+/**
+ * Initialize plugin components after all plugins are loaded.
+ *
+ * Components initialized:
+ * - GitHub_Plugin_Updater: Auto-update from GitHub releases
+ * - Taxonomy: Register 'media-folder' custom taxonomy
+ * - Admin: Media Library UI enhancements and folder tree
+ * - REST_API: Custom endpoints for folder management
+ * - Suggestions: AI-powered folder suggestions
+ * - Editor: Gutenberg block editor integration
+ * - Settings: Plugin settings page
+ *
+ * @since 0.1.0
+ */
 add_action( 'plugins_loaded', static function () {
 
 	\MediaManager\GitHub_Plugin_Updater::create_with_assets(

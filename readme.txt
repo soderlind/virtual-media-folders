@@ -3,7 +3,7 @@ Contributors: persoderlind
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -83,6 +83,12 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 
 == Changelog ==
 
+= 0.1.2 =
+* Changed: Refactored folder sidebar to share code between Media Library and Gutenberg modal
+* Changed: Created shared hooks and base components for folder tree
+* Added: Focus moves to Uncategorized or All Media after deleting a folder
+* Added: Comprehensive code documentation throughout
+
 = 0.1.1 =
 * Fixed: Sticky sidebar now works correctly in Gutenberg media modal
 * Fixed: Improved scroll detection for modal attachments wrapper
@@ -99,6 +105,9 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 * Norwegian Bokmål translation
 
 == Upgrade Notice ==
+
+= 0.1.2 =
+Refactored folder sidebar with shared components. Better UX after folder deletion.
 
 = 0.1.1 =
 Fixes sticky sidebar in Gutenberg media modal.

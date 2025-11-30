@@ -3,128 +3,21 @@
  *
  * Renders a hierarchical tree of media folders with an "Uncategorized"
  * virtual folder for media without any folder assignment.
+ * 
+ * Uses shared components for the base tree structure, adding:
+ * - DroppableFolder for drag-and-drop
+ * - FolderManager for folder CRUD operations
+ * - BulkFolderAction for bulk operations
+ * - URL state management
+ * - Global refresh function
  */
 
-import { useState, useEffect, useCallback } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import apiFetch from '@wordpress/api-fetch';
-import { Icon, listView } from '@wordpress/icons';
+import { useEffect, useCallback } from '@wordpress/element';
+import useFolderData from '../../shared/hooks/useFolderData';
+import { BaseFolderTree } from '../../shared/components';
 import { DroppableFolder } from './DroppableFolder';
 import FolderManager from './FolderManager';
 import BulkFolderAction from './BulkFolderAction';
-
-/**
- * Folder item component.
- *
- * @param {Object}   props
- * @param {Object}   props.folder
- * @param {number}   props.selectedId
- * @param {Function} props.onSelect
- * @param {number}   props.level
- */
-function FolderItem({ folder, selectedId, onSelect, level = 0 }) {
-	// Check if any child (recursively) is selected
-	const isChildSelected = (f) => {
-		if (!f.children || f.children.length === 0) return false;
-		return f.children.some(child => 
-			child.id === selectedId || isChildSelected(child)
-		);
-	};
-	
-	// Auto-expand if a child is selected OR if this folder itself is selected (to keep siblings visible)
-	const shouldAutoExpand = isChildSelected(folder);
-	const [manualExpanded, setManualExpanded] = useState(shouldAutoExpand);
-	const expanded = manualExpanded || shouldAutoExpand;
-	
-	const hasChildren = folder.children && folder.children.length > 0;
-	const isSelected = selectedId === folder.id;
-	
-	// Keep expanded state in sync when child gets selected
-	useEffect(() => {
-		if (shouldAutoExpand && !manualExpanded) {
-			setManualExpanded(true);
-		}
-	}, [shouldAutoExpand]);
-
-	// Handle keyboard navigation
-	const handleKeyDown = (e) => {
-		if (e.key === 'ArrowRight' && hasChildren && !expanded) {
-			e.preventDefault();
-			setManualExpanded(true);
-		} else if (e.key === 'ArrowLeft' && hasChildren && expanded) {
-			e.preventDefault();
-			setManualExpanded(false);
-		} else if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			onSelect(folder.id);
-		}
-	};
-
-	return (
-		<li 
-			className="mm-folder-item"
-			role="treeitem"
-			aria-expanded={hasChildren ? expanded : undefined}
-			aria-selected={isSelected}
-		>
-			<DroppableFolder folderId={folder.id}>
-				<button
-					type="button"
-					className={`mm-folder-button ${isSelected ? 'is-selected' : ''}`}
-					style={{ paddingLeft: `${level * 16 + 8}px` }}
-					onClick={() => onSelect(folder.id)}
-					onKeyDown={handleKeyDown}
-					aria-current={isSelected ? 'true' : undefined}
-					title={folder.name}
-				>
-					{hasChildren && (
-						<span
-							className="mm-folder-toggle"
-							onClick={(e) => {
-								e.stopPropagation();
-								setManualExpanded(!expanded);
-							}}
-							onKeyDown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') {
-									e.preventDefault();
-									e.stopPropagation();
-									setManualExpanded(!expanded);
-								}
-							}}
-							role="button"
-							tabIndex={0}
-							aria-label={expanded ? __('Collapse', 'mediamanager') : __('Expand', 'mediamanager')}
-						>
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-								{expanded 
-									? <polyline points="6 9 12 15 18 9" />
-									: <polyline points="9 6 15 12 9 18" />
-								}
-							</svg>
-						</span>
-					)}
-					<span className="mm-folder-name">{folder.name}</span>
-					{typeof folder.count === 'number' && (
-						<span className="mm-folder-count" aria-label={`${folder.count} ${__('items', 'mediamanager')}`}>({folder.count})</span>
-					)}
-				</button>
-			</DroppableFolder>
-			{hasChildren && expanded && (
-				<ul className="mm-folder-children" role="group">
-					{folder.children.map((child) => (
-						<FolderItem
-							key={child.id}
-							folder={child}
-							selectedId={selectedId}
-							onSelect={onSelect}
-							level={level + 1}
-						/>
-					))}
-				</ul>
-			)}
-		</li>
-	);
-}
 
 /**
  * FolderTree component.
@@ -133,82 +26,34 @@ function FolderItem({ folder, selectedId, onSelect, level = 0 }) {
  * @param {Function} props.onFolderSelect Called when a folder is selected.
  */
 export default function FolderTree({ onFolderSelect }) {
-	const [folders, setFolders] = useState([]);
-	const [flatFolders, setFlatFolders] = useState([]);
-	const [selectedId, setSelectedId] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const [uncategorizedCount, setUncategorizedCount] = useState(0);
+	const {
+		folders,
+		flatFolders,
+		selectedId,
+		setSelectedId,
+		loading,
+		uncategorizedCount,
+		fetchFolders,
+		handleSelect: baseHandleSelect,
+	} = useFolderData({ 
+		trackUrl: true, 
+		onFolderSelect 
+	});
 
-	/**
-	 * Build a hierarchical tree from flat taxonomy terms.
-	 *
-	 * @param {Array} terms Flat array of term objects with parent property.
-	 * @return {Array} Nested tree structure.
-	 */
-	function buildTree(terms) {
-		const map = {};
-		const roots = [];
+	// Extended select handler that also exposes globally
+	const handleSelect = useCallback((folderId) => {
+		baseHandleSelect(folderId);
+	}, [baseHandleSelect]);
 
-		// Create map
-		terms.forEach((term) => {
-			map[term.id] = { ...term, children: [] };
-		});
-
-		// Build tree
-		terms.forEach((term) => {
-			if (term.parent && map[term.parent]) {
-				map[term.parent].children.push(map[term.id]);
-			} else {
-				roots.push(map[term.id]);
-			}
-		});
-
-		return roots;
-	}
-
-	// Fetch folders from REST API
-	const fetchFolders = useCallback(async () => {
-		try {
-			const response = await apiFetch({
-				path: '/wp/v2/media-folders?per_page=100&hierarchical=1',
-			});
-
-			// Store flat list for manager
-			setFlatFolders(response);
-
-			// Build tree structure
-			const tree = buildTree(response);
-			setFolders(tree);
-
-			// Fetch total media count to calculate uncategorized
-			const totalResponse = await apiFetch({ path: '/wp/v2/media?per_page=1', parse: false });
-			const totalCount = parseInt(totalResponse.headers.get('X-WP-Total'), 10) || 0;
-
-			// Calculate uncategorized as total minus sum of folder counts
-			let categorizedCount = 0;
-			response.forEach((folder) => {
-				categorizedCount += folder.count || 0;
-			});
-
-			// Account for items in multiple folders (use max of 0)
-			setUncategorizedCount(Math.max(0, totalCount - categorizedCount));
-		} catch (error) {
-			console.error('Error fetching folders:', error);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+	// Handler for after folder deletion - move focus to Uncategorized or All Media
+	const handleDelete = useCallback(() => {
+		// Move focus to Uncategorized if it has items, otherwise All Media
+		const targetFolder = uncategorizedCount > 0 ? 'uncategorized' : null;
+		setSelectedId(targetFolder);
+		onFolderSelect?.(targetFolder);
+	}, [uncategorizedCount, setSelectedId, onFolderSelect]);
 
 	useEffect(() => {
-		// Get initial folder from URL
-		const params = new URLSearchParams(window.location.search);
-		const urlFolder = params.get('mm_folder');
-		if (urlFolder) {
-			setSelectedId(urlFolder === 'uncategorized' ? 'uncategorized' : parseInt(urlFolder, 10));
-		}
-
-		fetchFolders();
-		
 		// Expose refresh function globally
 		window.mediaManagerRefreshFolders = fetchFolders;
 		
@@ -222,67 +67,49 @@ export default function FolderTree({ onFolderSelect }) {
 			delete window.mediaManagerRefreshFolders;
 			delete window.mediaManagerSelectFolder;
 		};
-	}, [fetchFolders, onFolderSelect]);
+	}, [fetchFolders, onFolderSelect, setSelectedId]);
 
-	function handleSelect(folderId) {
-		setSelectedId(folderId);
-		onFolderSelect?.(folderId);
-	}
+	// Wrapper for folder items with DroppableFolder
+	const renderWrapper = useCallback(({ folderId, children }) => (
+		<DroppableFolder folderId={folderId}>
+			{children}
+		</DroppableFolder>
+	), []);
 
-	if (loading) {
-		return (
-			<nav className="mm-folder-tree mm-folder-tree--loading" aria-label={__('Media folders', 'mediamanager')}>
-				<p aria-live="polite">{__('Loading folders…', 'mediamanager')}</p>
-			</nav>
-		);
-	}
+	// Wrapper for uncategorized item
+	const renderUncategorizedWrapper = useCallback(({ children }) => (
+		<DroppableFolder folderId="uncategorized">
+			{children}
+		</DroppableFolder>
+	), []);
 
-	return (
-		<nav className="mm-folder-tree" aria-label={__('Media folders', 'mediamanager')}>
+	// Header with folder management controls
+	const renderHeader = useCallback(() => (
+		<>
 			<FolderManager
 				folders={flatFolders}
 				selectedId={selectedId}
 				onRefresh={fetchFolders}
+				onDelete={handleDelete}
 			/>
 			<BulkFolderAction onComplete={fetchFolders} />
-			<ul className="mm-folder-list" role="tree" aria-label={__('Folder tree', 'mediamanager')}>
-				{/* All Media */}
-				<li className="mm-folder-item" role="treeitem" aria-selected={selectedId === null}>
-					<button
-						type="button"
-						className={`mm-folder-button ${selectedId === null ? 'is-selected' : ''}`}
-						onClick={() => handleSelect(null)}
-						aria-current={selectedId === null ? 'true' : undefined}
-					>
-						<span className="mm-folder-name">{__('All Media', 'mediamanager')}</span>
-					</button>
-				</li>
+		</>
+	), [flatFolders, selectedId, fetchFolders, handleDelete]);
 
-				{/* Uncategorized (virtual) - droppable to remove from folders */}
-				<li className="mm-folder-item" role="treeitem" aria-selected={selectedId === 'uncategorized'}>
-					<DroppableFolder folderId="uncategorized">
-						<button
-							type="button"
-							className={`mm-folder-button ${selectedId === 'uncategorized' ? 'is-selected' : ''}`}
-							onClick={() => handleSelect('uncategorized')}
-							aria-current={selectedId === 'uncategorized' ? 'true' : undefined}
-						>
-							<span className="mm-folder-name">{__('Uncategorized', 'mediamanager')}</span>
-							<span className="mm-folder-count" aria-label={`${uncategorizedCount} ${__('items', 'mediamanager')}`}>({uncategorizedCount})</span>
-						</button>
-					</DroppableFolder>
-				</li>
-
-				{/* Folder tree */}
-				{folders.map((folder) => (
-					<FolderItem
-						key={folder.id}
-						folder={folder}
-						selectedId={selectedId}
-						onSelect={handleSelect}
-					/>
-				))}
-			</ul>
-		</nav>
+	return (
+		<BaseFolderTree
+			folders={folders}
+			selectedId={selectedId}
+			onSelect={handleSelect}
+			uncategorizedCount={uncategorizedCount}
+			loading={loading}
+			renderWrapper={renderWrapper}
+			renderUncategorizedWrapper={renderUncategorizedWrapper}
+			renderHeader={renderHeader}
+			enableKeyboardNav={true}
+			enableAutoExpand={true}
+			enableAria={true}
+			loadingText="Loading folders…"
+		/>
 	);
 }
