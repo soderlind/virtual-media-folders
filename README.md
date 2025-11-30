@@ -40,18 +40,15 @@ https://github.com/user-attachments/assets/1a6d353c-3803-48c8-987d-7057777b6b5b
    - Upload via  Plugins > Add New > Upload Plugin
    - Activate the plugin.
 
-- **Composer Install**
-
-   ```bash
-   composer require soderlind/mediamanager
-   ```
-
 - **Updates**
    * Plugin [updates are handled automatically](https://github.com/soderlind/wordpress-plugin-github-updater#readme) via GitHub. No need to manually download and install updates.
 
 ### Development
 
 ```bash
+# Add via Composer
+composer require soderlind/mediamanager
+
 # Install dependencies
 composer install
 npm install
