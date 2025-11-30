@@ -1,9 +1,9 @@
 === Media Manager ===
-Contributors: persoderlind
+Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -83,6 +83,9 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 
 == Changelog ==
 
+= 0.1.3 =
+* Housekeeping
+
 = 0.1.2 =
 * Changed: Refactored folder sidebar to share code between Media Library and Gutenberg modal
 * Changed: Created shared hooks and base components for folder tree
@@ -105,6 +108,9 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 * Norwegian Bokmål translation
 
 == Upgrade Notice ==
+
+= 0.1.3 =
+Housekeeping.
 
 = 0.1.2 =
 Refactored folder sidebar with shared components. Better UX after folder deletion.

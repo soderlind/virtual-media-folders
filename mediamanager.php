@@ -14,10 +14,12 @@
  * @wordpress-plugin
  * Plugin Name: Media Manager
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Requires at least: 6.8
  * Requires PHP: 8.3
- * Author: Your Name
+ * Author: Per Soderlind
+ * Author URI: https://soderlind.no/
+ * License: GPL-2.0-or-later
  * Text Domain: mediamanager
  */
 
