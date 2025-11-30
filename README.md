@@ -2,8 +2,7 @@
 
 Virtual folder organization and smart management for the WordPress Media Library.
 
-
-[![WordPress Playground](https://img.shields.io/badge/WordPress%20Playground-Try%20it%20now-3858e9?logo=wordpress)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/mediamanager/refs/heads/main/assets/blueprint.json)
+<a href="https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/mediamanager/refs/heads/main/assets/blueprint.json"><img src="https://img.shields.io/badge/▶_Try_in_WordPress_Playground-blue?style=for-the-badge" alt="Try in WordPress Playground" /></a>
 
 >Way back in 2006 (almost 20 years ago!), I released [ImageManager 2.0](assets/imagemnager-2006.md), a popular WordPress plugin for image management and editing. Media Manager is my modern take on media organization for WordPress, built with React and modern tooling.
 
