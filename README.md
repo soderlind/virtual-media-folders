@@ -2,9 +2,6 @@
 
 Virtual folder organization and smart management for the WordPress Media Library.
 
-![WordPress 6.8+](https://img.shields.io/badge/WordPress-6.8%2B-blue)
-![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-purple)
-![License: GPL v2+](https://img.shields.io/badge/License-GPL%20v2%2B-green)
 
 [![WordPress Playground](https://img.shields.io/badge/WordPress%20Playground-Try%20it%20now-3858e9?logo=wordpress)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/mediamanager/refs/heads/main/assets/blueprint.json)
 
