@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.1.6
+Stable tag: 0.1.7
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -83,6 +83,9 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 
 == Changelog ==
 
+= 0.1.7 =
+* Added: After bulk moving files, focus automatically switches to the target folder
+
 = 0.1.6 =
 * Fixed: Folder dropdowns now dynamically update when folders are added, renamed, or deleted
 * Changed: BulkFolderAction and MoveToFolderMenu now listen for folder change events
@@ -121,6 +124,9 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 * Norwegian Bokmål translation
 
 == Upgrade Notice ==
+
+= 0.1.7 =
+Bulk move now focuses on target folder to show moved files.
 
 = 0.1.6 =
 Folder dropdowns now update dynamically without page reload.

@@ -149,6 +149,17 @@ export default function BulkFolderAction({ onComplete }) {
 			if (window.mediaManagerRefreshFolders) {
 				window.mediaManagerRefreshFolders();
 			}
+			
+			// Select the target folder to show moved items (with delay to ensure refresh completes)
+			setTimeout(() => {
+				if (window.mediaManagerSelectFolder) {
+					const targetFolderId = selectedFolder === 'uncategorized' 
+						? 'uncategorized' 
+						: parseInt(selectedFolder, 10);
+					window.mediaManagerSelectFolder(targetFolderId);
+				}
+			}, 200);
+			
 			onComplete?.();
 		} catch (error) {
 			console.error('Bulk move error:', error);
