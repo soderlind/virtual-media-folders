@@ -7,7 +7,6 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	bottom: 0;
 	width: 220px;
 	border-right: 1px solid #dcdcde;
 	background: #f6f7f7;
@@ -15,6 +14,18 @@
 	overflow-x: hidden;
 	z-index: 10;
 	padding-top: 8px;
+	box-sizing: border-box;
+}
+
+/* When position is absolute, use full height of parent */
+.mm-editor-folder-sidebar:not([style*="position: fixed"]) {
+	height: 100%;
+}
+
+/* Push attachments to make room for sidebar */
+.mm-has-folder-sidebar .attachments-wrapper {
+	padding-left: 220px !important;
+	box-sizing: border-box !important;
 }
 
 .mm-editor-folder-sidebar .mm-folder-sidebar {
@@ -98,12 +109,7 @@
 	padding: 0;
 }
 
-/* Push attachments to make room for sidebar */
-.mm-has-folder-sidebar .attachments-wrapper {
-	padding-left: 220px !important;
-	box-sizing: border-box !important;
-}
-
+/* Attachments scroll independently, sidebar stays fixed */
 .mm-has-folder-sidebar .attachments {
 	left: 0 !important;
 }

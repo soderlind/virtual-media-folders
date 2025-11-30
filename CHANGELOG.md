@@ -5,6 +5,12 @@ All notable changes to MediaManager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-11-30
+
+### Fixed
+- Sticky sidebar now works correctly in Gutenberg media modal
+- Improved scroll detection using `scrollTop` on attachments wrapper element
+
 ## [0.1.0] - 2025-11-29
 
 ### Added
@@ -71,4 +77,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
-[0.1.0]: https://github.com/developer/mediamanager/releases/tag/v0.1.0
+[0.1.1]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.1
+[0.1.0]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.0

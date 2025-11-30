@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Media Manager
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Your Name
