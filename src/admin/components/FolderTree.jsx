@@ -53,9 +53,16 @@ export default function FolderTree({ onFolderSelect }) {
 		onFolderSelect?.(targetFolder);
 	}, [uncategorizedCount, setSelectedId, onFolderSelect]);
 
+	// Refresh handler that also dispatches event for other components
+	const handleRefresh = useCallback(() => {
+		fetchFolders();
+		// Dispatch custom event so other components can refresh their folder lists
+		window.dispatchEvent(new CustomEvent('mediamanager:folders-updated'));
+	}, [fetchFolders]);
+
 	useEffect(() => {
 		// Expose refresh function globally
-		window.mediaManagerRefreshFolders = fetchFolders;
+		window.mediaManagerRefreshFolders = handleRefresh;
 		
 		// Expose folder selection function globally (for drop-to-folder navigation)
 		window.mediaManagerSelectFolder = (folderId) => {
@@ -67,7 +74,7 @@ export default function FolderTree({ onFolderSelect }) {
 			delete window.mediaManagerRefreshFolders;
 			delete window.mediaManagerSelectFolder;
 		};
-	}, [fetchFolders, onFolderSelect, setSelectedId]);
+	}, [handleRefresh, onFolderSelect, setSelectedId]);
 
 	// Wrapper for folder items with DroppableFolder
 	const renderWrapper = useCallback(({ folderId, children }) => (
@@ -89,12 +96,12 @@ export default function FolderTree({ onFolderSelect }) {
 			<FolderManager
 				folders={flatFolders}
 				selectedId={selectedId}
-				onRefresh={fetchFolders}
+				onRefresh={handleRefresh}
 				onDelete={handleDelete}
 			/>
-			<BulkFolderAction onComplete={fetchFolders} />
+			<BulkFolderAction onComplete={handleRefresh} />
 		</>
-	), [flatFolders, selectedId, fetchFolders, handleDelete]);
+	), [flatFolders, selectedId, handleRefresh, handleDelete]);
 
 	return (
 		<BaseFolderTree

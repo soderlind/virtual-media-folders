@@ -2,10 +2,11 @@
  * Move to Folder menu component.
  *
  * Provides keyboard-accessible alternative to drag-and-drop
- * for moving media items to folders.
+ * for moving media items to folders. The folder list is
+ * dynamically updated when folders are added/deleted.
  */
 
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { Icon, folder as folderIcon } from '@wordpress/icons';
@@ -23,22 +24,35 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 	const [folders, setFolders] = useState([]);
 	const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		async function fetchFolders() {
-			try {
-				const response = await apiFetch({
-					path: '/wp/v2/media-folders?per_page=100',
-				});
-				setFolders(response);
-			} catch (error) {
-				console.error('Error fetching folders:', error);
-			} finally {
-				setLoading(false);
-			}
+	// Fetch folders function
+	const fetchFolders = useCallback(async () => {
+		try {
+			const response = await apiFetch({
+				path: '/wp/v2/media-folders?per_page=100',
+			});
+			setFolders(response);
+		} catch (error) {
+			console.error('Error fetching folders:', error);
+		} finally {
+			setLoading(false);
 		}
-
-		fetchFolders();
 	}, []);
+
+	// Fetch folders on mount and listen for refresh events
+	useEffect(() => {
+		fetchFolders();
+
+		// Listen for custom folder refresh event
+		const handleFolderRefresh = () => {
+			fetchFolders();
+		};
+
+		window.addEventListener('mediamanager:folders-updated', handleFolderRefresh);
+
+		return () => {
+			window.removeEventListener('mediamanager:folders-updated', handleFolderRefresh);
+		};
+	}, [fetchFolders]);
 
 	function handleSelect(folderId) {
 		onMove?.(mediaId, folderId);

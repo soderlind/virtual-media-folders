@@ -2,9 +2,10 @@
  * BulkFolderAction component.
  *
  * Provides a dropdown to assign multiple selected media items to a folder.
+ * The folder list is dynamically updated when folders are added/deleted.
  */
 
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 
@@ -20,20 +21,33 @@ export default function BulkFolderAction({ onComplete }) {
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [selectedCount, setSelectedCount] = useState(0);
 
-	// Fetch folders
-	useEffect(() => {
-		async function fetchFolders() {
-			try {
-				const response = await apiFetch({
-					path: '/wp/v2/media-folders?per_page=100',
-				});
-				setFolders(response);
-			} catch (error) {
-				console.error('Error fetching folders:', error);
-			}
+	// Fetch folders function
+	const fetchFolders = useCallback(async () => {
+		try {
+			const response = await apiFetch({
+				path: '/wp/v2/media-folders?per_page=100',
+			});
+			setFolders(response);
+		} catch (error) {
+			console.error('Error fetching folders:', error);
 		}
-		fetchFolders();
 	}, []);
+
+	// Fetch folders on mount and listen for refresh events
+	useEffect(() => {
+		fetchFolders();
+
+		// Listen for custom folder refresh event
+		const handleFolderRefresh = () => {
+			fetchFolders();
+		};
+
+		window.addEventListener('mediamanager:folders-updated', handleFolderRefresh);
+
+		return () => {
+			window.removeEventListener('mediamanager:folders-updated', handleFolderRefresh);
+		};
+	}, [fetchFolders]);
 
 	// Track selected media count
 	useEffect(() => {
