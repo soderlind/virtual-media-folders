@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name: Media Manager
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 0.1.3
+ * Version: 0.1.4
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Per Soderlind
@@ -55,7 +55,7 @@ if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 /*
  * Define plugin constants.
  */
-define( 'MEDIAMANAGER_VERSION', strval( time() ) ); // Random version for cache busting during development
+define( 'MEDIAMANAGER_VERSION', defined( 'WP_DEBUG' ) && WP_DEBUG ? strval( time() ) : '0.1.4' );
 define( 'MEDIAMANAGER_FILE', __FILE__ );
 define( 'MEDIAMANAGER_PATH', __DIR__ . '/' );
 define( 'MEDIAMANAGER_URL', plugin_dir_url( __FILE__ ) );
@@ -78,10 +78,10 @@ require_once MEDIAMANAGER_PATH . 'vendor/autoload.php';
  * Initialize plugin components after all plugins are loaded.
  *
  * Components initialized:
- * - GitHub_Plugin_Updater: Auto-update from GitHub releases
+ * - GitHubPluginUpdater: Auto-update from GitHub releases
  * - Taxonomy: Register 'media-folder' custom taxonomy
  * - Admin: Media Library UI enhancements and folder tree
- * - REST_API: Custom endpoints for folder management
+ * - RestApi: Custom endpoints for folder management
  * - Suggestions: AI-powered folder suggestions
  * - Editor: Gutenberg block editor integration
  * - Settings: Plugin settings page
@@ -90,7 +90,7 @@ require_once MEDIAMANAGER_PATH . 'vendor/autoload.php';
  */
 add_action( 'plugins_loaded', static function () {
 
-	\MediaManager\GitHub_Plugin_Updater::create_with_assets(
+	\MediaManager\GitHubPluginUpdater::create_with_assets(
 		'https://github.com/soderlind/mediamanager',
 		MEDIAMANAGER_FILE,
 		'mediamanager',
@@ -103,8 +103,8 @@ add_action( 'plugins_loaded', static function () {
 		\MediaManager\Admin::init();
 	}
 
-	if ( class_exists( 'MediaManager\\REST_API' ) ) {
-		\MediaManager\REST_API::init();
+	if ( class_exists( 'MediaManager\\RestApi' ) ) {
+		\MediaManager\RestApi::init();
 	}
 
 	if ( class_exists( 'MediaManager\\Suggestions' ) ) {

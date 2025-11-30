@@ -42,20 +42,16 @@ export function DroppableFolder({ folderId, children, className = '' }) {
 
 		try {
 			const rawData = e.dataTransfer.getData('text/plain');
-			console.log('Drop received, raw data:', rawData);
 			
 			if (!rawData) {
-				console.error('No data received in drop');
 				return;
 			}
 			
 			const data = JSON.parse(rawData);
-			console.log('Parsed drop data:', data, 'Target folder:', folderId);
 			
 			if (data.mediaId) {
 				// Get the move handler from the global scope
 				if (window.mediaManagerMoveToFolder) {
-					console.log('Calling mediaManagerMoveToFolder with:', data.mediaId, folderId);
 					window.mediaManagerMoveToFolder(data.mediaId, folderId);
 					
 					// After moving, select the target folder to show its contents
@@ -65,14 +61,10 @@ export function DroppableFolder({ folderId, children, className = '' }) {
 							window.mediaManagerSelectFolder(folderId);
 						}, 200);
 					}
-				} else {
-					console.error('window.mediaManagerMoveToFolder not found');
 				}
-			} else {
-				console.error('No mediaId in drop data');
 			}
 		} catch (error) {
-			console.error('Error handling drop:', error);
+			// Silently ignore drop errors
 		}
 	}, [folderId]);
 

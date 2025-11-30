@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -83,6 +83,11 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 
 == Changelog ==
 
+= 0.1.4 =
+* Changed: Refactored PHP classes to PSR-4 autoloading structure
+* Changed: Moved class files from includes/ to src/ directory
+* Changed: Renamed classes to follow PSR-4 naming conventions (REST_API → RestApi, GitHub_Plugin_Updater → GitHubPluginUpdater)
+
 = 0.1.3 =
 * Housekeeping
 
@@ -108,6 +113,9 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 * Norwegian Bokmål translation
 
 == Upgrade Notice ==
+
+= 0.1.4 =
+Refactored to PSR-4 autoloading for better Composer compatibility.
 
 = 0.1.3 =
 Housekeeping.

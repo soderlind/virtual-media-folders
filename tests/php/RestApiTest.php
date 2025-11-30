@@ -11,7 +11,7 @@ namespace MediaManager\Tests;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
-use MediaManager\REST_API;
+use MediaManager\RestApi;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +21,7 @@ class RestApiTest extends TestCase {
 	/**
 	 * Test instance.
 	 */
-	private REST_API $api;
+	private RestApi $api;
 
 	/**
 	 * Set up each test.
@@ -34,7 +34,7 @@ class RestApiTest extends TestCase {
 		Functions\when( '__' )->returnArg();
 		Functions\when( 'esc_html__' )->returnArg();
 
-		$this->api = new REST_API();
+		$this->api = new RestApi();
 	}
 
 	/**
@@ -46,10 +46,10 @@ class RestApiTest extends TestCase {
 	}
 
 	/**
-	 * Test that REST_API class can be instantiated.
+	 * Test that RestApi class can be instantiated.
 	 */
 	public function test_class_exists(): void {
-		$this->assertInstanceOf( REST_API::class, $this->api );
+		$this->assertInstanceOf( RestApi::class, $this->api );
 	}
 
 	/**

@@ -170,7 +170,6 @@ function refreshMediaLibrary() {
 		// Small delay to ensure the server has processed the move
 		setTimeout(() => {
 			$selectedFolder.trigger('click');
-			console.log('Refreshed via folder re-click');
 		}, 100);
 		return;
 	}
@@ -182,7 +181,6 @@ function refreshMediaLibrary() {
 			if (content && content.collection) {
 				content.collection.reset();
 				content.collection.more({ remove: false });
-				console.log('Refreshed via frame.content.collection');
 			}
 		}
 	} catch (e) {

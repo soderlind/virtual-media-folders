@@ -22,7 +22,7 @@ use WP_REST_Server;
 /**
  * REST API handler.
  */
-final class REST_API extends WP_REST_Controller {
+final class RestApi extends WP_REST_Controller {
 
 	/**
 	 * The namespace for the REST API.

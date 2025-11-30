@@ -128,8 +128,4 @@ if ( ! function_exists( 'rest_authorization_required_code' ) ) {
 }
 
 // Load plugin classes needed in tests.
-require dirname( __DIR__, 2 ) . '/includes/class-taxonomy.php';
-require dirname( __DIR__, 2 ) . '/includes/class-suggestions.php';
-require dirname( __DIR__, 2 ) . '/includes/class-admin.php';
-require dirname( __DIR__, 2 ) . '/includes/class-editor.php';
-require dirname( __DIR__, 2 ) . '/includes/class-rest-api.php';
+// With PSR-4 autoloading, classes are loaded automatically via Composer.

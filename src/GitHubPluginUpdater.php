@@ -1,53 +1,72 @@
 <?php
+/**
+ * Generic WordPress Plugin GitHub Updater
+ *
+ * A reusable class for handling WordPress plugin updates from GitHub repositories
+ * using the plugin-update-checker library.
+ *
+ * @package MediaManager
+ * @version 1.0.0
+ * @author Per Soderlind
+ * @license GPL-2.0+
+ */
+
+declare(strict_types=1);
+
 namespace MediaManager;
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 /**
- * Generic WordPress Plugin GitHub Updater
- * 
- * A reusable class for handling WordPress plugin updates from GitHub repositories
- * using the plugin-update-checker library.
- * 
- * @package Soderlind\WordPress
- * @version 1.0.0
- * @author Per Soderlind
- * @license GPL-2.0+
+ * GitHub Plugin Updater.
  */
-class GitHub_Plugin_Updater {
+class GitHubPluginUpdater {
+
 	/**
-	 * @var string GitHub repository URL
+	 * GitHub repository URL.
+	 *
+	 * @var string
 	 */
 	private $github_url;
 
 	/**
-	 * @var string Branch to check for updates
+	 * Branch to check for updates.
+	 *
+	 * @var string
 	 */
 	private $branch;
 
 	/**
-	 * @var string Regex pattern to match the plugin zip file name
+	 * Regex pattern to match the plugin zip file name.
+	 *
+	 * @var string
 	 */
 	private $name_regex;
 
 	/**
-	 * @var string The plugin slug
+	 * The plugin slug.
+	 *
+	 * @var string
 	 */
 	private $plugin_slug;
 
 	/**
-	 * @var string The main plugin file path
+	 * The main plugin file path.
+	 *
+	 * @var string
 	 */
 	private $plugin_file;
 
 	/**
-	 * @var bool Whether to enable release assets
+	 * Whether to enable release assets.
+	 *
+	 * @var bool
 	 */
 	private $enable_release_assets;
 
 	/**
-	 * Constructor
-	 * 
+	 * Constructor.
+	 *
 	 * @param array $config Configuration array with the following keys:
 	 *                     - github_url: GitHub repository URL (required)
 	 *                     - plugin_file: Main plugin file path (required)
@@ -79,9 +98,11 @@ class GitHub_Plugin_Updater {
 	}
 
 	/**
-	 * Set up the update checker using GitHub integration
+	 * Set up the update checker using GitHub integration.
+	 *
+	 * @return void
 	 */
-	public function setup_updater() {
+	public function setup_updater(): void {
 		try {
 			$update_checker = PucFactory::buildUpdateChecker(
 				$this->github_url,
@@ -105,16 +126,16 @@ class GitHub_Plugin_Updater {
 	}
 
 	/**
-	 * Create updater instance with minimal configuration
-	 * 
-	 * @param string $github_url GitHub repository URL
-	 * @param string $plugin_file Main plugin file path
-	 * @param string $plugin_slug Plugin slug
-	 * @param string $branch Branch name (default: 'main')
-	 * 
-	 * @return GitHub_Plugin_Updater
+	 * Create updater instance with minimal configuration.
+	 *
+	 * @param string $github_url  GitHub repository URL.
+	 * @param string $plugin_file Main plugin file path.
+	 * @param string $plugin_slug Plugin slug.
+	 * @param string $branch      Branch name (default: 'main').
+	 *
+	 * @return GitHubPluginUpdater
 	 */
-	public static function create( $github_url, $plugin_file, $plugin_slug, $branch = 'main' ) {
+	public static function create( $github_url, $plugin_file, $plugin_slug, $branch = 'main' ): self {
 		return new self( array(
 			'github_url'  => $github_url,
 			'plugin_file' => $plugin_file,
@@ -124,17 +145,17 @@ class GitHub_Plugin_Updater {
 	}
 
 	/**
-	 * Create updater instance for plugins with release assets
-	 * 
-	 * @param string $github_url GitHub repository URL
-	 * @param string $plugin_file Main plugin file path
-	 * @param string $plugin_slug Plugin slug
-	 * @param string $name_regex Regex pattern for release assets
-	 * @param string $branch Branch name (default: 'main')
-	 * 
-	 * @return GitHub_Plugin_Updater
+	 * Create updater instance for plugins with release assets.
+	 *
+	 * @param string $github_url  GitHub repository URL.
+	 * @param string $plugin_file Main plugin file path.
+	 * @param string $plugin_slug Plugin slug.
+	 * @param string $name_regex  Regex pattern for release assets.
+	 * @param string $branch      Branch name (default: 'main').
+	 *
+	 * @return GitHubPluginUpdater
 	 */
-	public static function create_with_assets( $github_url, $plugin_file, $plugin_slug, $name_regex, $branch = 'main' ) {
+	public static function create_with_assets( $github_url, $plugin_file, $plugin_slug, $name_regex, $branch = 'main' ): self {
 		return new self( array(
 			'github_url'  => $github_url,
 			'plugin_file' => $plugin_file,
