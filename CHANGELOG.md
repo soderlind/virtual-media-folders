@@ -5,6 +5,15 @@ All notable changes to MediaManager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2025-11-30
+
+### Changed
+- `MEDIAMANAGER_VERSION` now uses actual version number in production (when `WP_DEBUG` is false)
+- Version constant uses `time()` for cache busting only during development
+
+### Removed
+- Debug `console.log` statements from JavaScript files
+
 ## [0.1.4] - 2025-11-30
 
 ### Changed
@@ -103,6 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
+[0.1.5]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.5
 [0.1.4]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.4
 [0.1.3]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.3
 [0.1.2]: https://github.com/soderlind/mediamanager/releases/tag/v0.1.2

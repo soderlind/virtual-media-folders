@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name: Media Manager
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 0.1.4
+ * Version: 0.1.5
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Per Soderlind
@@ -55,7 +55,7 @@ if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 /*
  * Define plugin constants.
  */
-define( 'MEDIAMANAGER_VERSION', defined( 'WP_DEBUG' ) && WP_DEBUG ? strval( time() ) : '0.1.4' );
+define( 'MEDIAMANAGER_VERSION', defined( 'WP_DEBUG' ) && WP_DEBUG ? strval( time() ) : '0.1.5' );
 define( 'MEDIAMANAGER_FILE', __FILE__ );
 define( 'MEDIAMANAGER_PATH', __DIR__ . '/' );
 define( 'MEDIAMANAGER_URL', plugin_dir_url( __FILE__ ) );
