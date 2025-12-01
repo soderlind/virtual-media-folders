@@ -152,8 +152,9 @@ class Admin {
 
 		// Provide AJAX configuration to JavaScript.
 		wp_localize_script( 'mediamanager-admin', 'mediaManagerData', [
-			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'mm_move_media' ),
+			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
+			'nonce'                 => wp_create_nonce( 'mm_move_media' ),
+			'jumpToFolderAfterMove' => Settings::get( 'jump_to_folder_after_move', true ),
 		] );
 
 		// Enable translations for JavaScript strings.

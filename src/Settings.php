@@ -38,14 +38,15 @@ final class Settings {
 	 * @var array<string, mixed>
 	 */
 	private const DEFAULTS = [
-		'enable_suggestions'      => true,
-		'suggestions_mime_types'  => true,
-		'suggestions_exif_date'   => true,
-		'suggestions_iptc'        => true,
-		'default_folder'          => 0,
-		'show_uncategorized'      => true,
-		'enable_drag_drop'        => true,
-		'sidebar_default_visible' => false,
+		'enable_suggestions'        => true,
+		'suggestions_mime_types'    => true,
+		'suggestions_exif_date'     => true,
+		'suggestions_iptc'          => true,
+		'default_folder'            => 0,
+		'show_uncategorized'        => true,
+		'enable_drag_drop'          => true,
+		'sidebar_default_visible'   => false,
+		'jump_to_folder_after_move' => true,
 	];
 
 	/**
@@ -90,7 +91,9 @@ final class Settings {
 			]
 		);
 
-		// Suggestions section.
+		// Smart Suggestions section is hidden until the feature is fully implemented.
+		// @todo Uncomment when smart suggestions are ready.
+		/*
 		add_settings_section(
 			'mediamanager_suggestions',
 			__( 'Smart Suggestions', 'mediamanager' ),
@@ -145,6 +148,7 @@ final class Settings {
 				'description' => __( 'Suggest folders based on embedded IPTC keywords.', 'mediamanager' ),
 			]
 		);
+		*/
 
 		// Default behavior section.
 		add_settings_section(
@@ -209,6 +213,18 @@ final class Settings {
 				'description' => __( 'Show the folder sidebar by default when opening Media Library.', 'mediamanager' ),
 			]
 		);
+
+		add_settings_field(
+			'jump_to_folder_after_move',
+			__( 'Jump to Folder After Move', 'mediamanager' ),
+			[ self::class, 'render_checkbox_field' ],
+			self::PAGE_SLUG,
+			'mediamanager_ui',
+			[
+				'id'          => 'jump_to_folder_after_move',
+				'description' => __( 'Automatically switch to the target folder after moving files.', 'mediamanager' ),
+			]
+		);
 	}
 
 	/**
@@ -229,6 +245,7 @@ final class Settings {
 			'show_uncategorized',
 			'enable_drag_drop',
 			'sidebar_default_visible',
+			'jump_to_folder_after_move',
 		];
 
 		foreach ( $boolean_fields as $field ) {

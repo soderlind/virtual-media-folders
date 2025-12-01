@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.1.8
+Stable tag: 0.1.9
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -83,6 +83,12 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 
 == Changelog ==
 
+= 0.1.9 =
+* Added: New "Jump to Folder After Move" setting (enabled by default) to control whether view switches to target folder after moving files
+* Added: URL now uses `mode=folder` parameter when folder view is active
+* Changed: Bulk select mode is now automatically disabled after bulk moving files
+* Changed: Smart Suggestions settings hidden until feature is fully implemented
+
 = 0.1.8 =
 * Added: Folder item counts now reflect the selected media type filter (Images, Videos, Audio, Documents)
 * Added: New REST API endpoint for filtered folder counts
@@ -128,6 +134,9 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 * Norwegian Bokmål translation
 
 == Upgrade Notice ==
+
+= 0.1.9 =
+New setting to control jump-to-folder behavior after moving files. Bulk select now auto-disables after moves.
 
 = 0.1.8 =
 Folder counts now update based on the selected media type filter.

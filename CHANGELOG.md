@@ -5,6 +5,16 @@ All notable changes to MediaManager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.9] - 2025-12-01
+
+### Added
+- New "Jump to Folder After Move" setting in Settings → Folder Settings (enabled by default)
+- URL now uses `mode=folder` parameter when folder view is active, similar to `mode=grid` and `mode=list`
+
+### Changed
+- Bulk select mode is automatically disabled after bulk moving files
+- Smart Suggestions settings section hidden until feature is fully implemented
+
 ## [0.1.8] - 2025-11-30
 
 ### Added
@@ -135,6 +145,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leverages WordPress REST API for all operations
 
 
+[0.1.9]: https://github.com/soderlind/mediamanager/compare/0.1.8...0.1.9
 [0.1.8]: https://github.com/soderlind/mediamanager/compare/0.1.7...0.1.8
 [0.1.7]: https://github.com/soderlind/mediamanager/compare/0.1.6...0.1.7
 [0.1.6]: https://github.com/soderlind/mediamanager/compare/0.1.5...0.1.6

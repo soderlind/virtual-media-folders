@@ -55,7 +55,7 @@ function addFolderToggleButtonToPage() {
 	// Check if folder view should be active on load
 	const savedPref = localStorage.getItem('mm_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	const shouldBeActive = savedPref === '1' || urlParams.has('mm_folder');
+	const shouldBeActive = savedPref === '1' || urlParams.has('mm_folder') || urlParams.get('mode') === 'folder';
 	
 	// If button already exists, just update its state
 	const $existingButton = jQuery('.mm-folder-toggle-button');
@@ -405,7 +405,7 @@ function addFolderToggleButton(browser) {
 	// Check saved preference or URL param and apply
 	const savedPref = localStorage.getItem('mm_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	if (savedPref === '1' || urlParams.has('mm_folder')) {
+	if (savedPref === '1' || urlParams.has('mm_folder') || urlParams.get('mode') === 'folder') {
 		toggleFolderView(browser, true);
 	}
 }
@@ -445,13 +445,15 @@ function injectFolderTree(browser) {
 		<SlotFillProvider>
 			<FolderTree
 				onFolderSelect={(folderId) => {
-					// Update URL state
+					// Update URL state with mode=folder when folder view is active
 					const url = new URL(window.location);
 					if (folderId) {
 						url.searchParams.set('mm_folder', folderId);
 					} else {
 						url.searchParams.delete('mm_folder');
 					}
+					// Always use mode=folder when in folder view (sidebar visible)
+					url.searchParams.set('mode', 'folder');
 					window.history.pushState({}, '', url);
 
 					// Get the current collection from the browser

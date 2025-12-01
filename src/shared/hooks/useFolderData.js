@@ -140,8 +140,13 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 		if (trackUrl) {
 			const params = new URLSearchParams(window.location.search);
 			const urlFolder = params.get('mm_folder');
+			const urlMode = params.get('mode');
+			
 			if (urlFolder) {
 				setSelectedId(urlFolder === 'uncategorized' ? 'uncategorized' : parseInt(urlFolder, 10));
+			} else if (urlMode === 'folder') {
+				// mode=folder without specific folder means show folder view but no folder selected
+				setSelectedId(null);
 			}
 		}
 

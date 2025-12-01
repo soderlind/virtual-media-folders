@@ -150,15 +150,25 @@ export default function BulkFolderAction({ onComplete }) {
 				window.mediaManagerRefreshFolders();
 			}
 			
-			// Select the target folder to show moved items (with delay to ensure refresh completes)
-			setTimeout(() => {
-				if (window.mediaManagerSelectFolder) {
-					const targetFolderId = selectedFolder === 'uncategorized' 
-						? 'uncategorized' 
-						: parseInt(selectedFolder, 10);
-					window.mediaManagerSelectFolder(targetFolderId);
-				}
-			}, 200);
+			// Select the target folder to show moved items (if setting is enabled)
+			const { jumpToFolderAfterMove = true } = window.mediaManagerData || {};
+			if (jumpToFolderAfterMove) {
+				// Delay to ensure refresh completes
+				setTimeout(() => {
+					if (window.mediaManagerSelectFolder) {
+						const targetFolderId = selectedFolder === 'uncategorized' 
+							? 'uncategorized' 
+							: parseInt(selectedFolder, 10);
+						window.mediaManagerSelectFolder(targetFolderId);
+					}
+				}, 200);
+			}
+			
+			// Disable bulk select mode by triggering WordPress media library's bulk select toggle
+			const bulkSelectButton = document.querySelector('.select-mode-toggle-button');
+			if (bulkSelectButton) {
+				bulkSelectButton.click();
+			}
 			
 			onComplete?.();
 		} catch (error) {
