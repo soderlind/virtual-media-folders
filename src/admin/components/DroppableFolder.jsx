@@ -61,6 +61,15 @@ export function DroppableFolder({ folderId, children, className = '' }) {
 						setTimeout(() => {
 							window.mediaManagerSelectFolder(folderId);
 						}, 200);
+					} else {
+						// When not jumping to folder, remove the moved item from the current view
+						const attachment = document.querySelector(`.attachment[data-id="${data.mediaId}"]`);
+						if (attachment) {
+							// Small delay to let the move complete before removing
+							setTimeout(() => {
+								attachment.remove();
+							}, 300);
+						}
 					}
 				}
 			}
