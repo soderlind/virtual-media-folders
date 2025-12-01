@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.1.10
+Stable tag: 0.1.11
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -71,6 +71,9 @@ Only the folder organization is removed. Your media files are not deleted.
 Media Manager works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 0.1.11 =
+* Fixed: When "Jump to Folder After Move" is disabled, moved files are now removed from the source folder view
 
 = 0.1.10 =
 * Fixed: Sort order is now preserved after moving files between folders
