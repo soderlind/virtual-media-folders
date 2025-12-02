@@ -42,6 +42,7 @@ function ChevronIcon({ expanded }) {
  * @param {number|string|null} props.selectedId Currently selected folder ID.
  * @param {Function} props.onSelect Called when folder is selected.
  * @param {number}   props.level Nesting level (0 = root).
+ * @param {number|null} props.parentId Parent folder ID (null for root folders).
  * @param {Function} props.renderWrapper Optional wrapper for the button (e.g., DroppableFolder).
  * @param {boolean}  props.enableKeyboardNav Enable keyboard navigation (arrow keys).
  * @param {boolean}  props.enableAutoExpand Auto-expand when child is selected.
@@ -52,6 +53,7 @@ export default function BaseFolderItem({
 	selectedId,
 	onSelect,
 	level = 0,
+	parentId = null,
 	renderWrapper,
 	enableKeyboardNav = false,
 	enableAutoExpand = false,
@@ -87,9 +89,15 @@ export default function BaseFolderItem({
 		if (e.key === 'ArrowRight' && hasChildren && !expanded) {
 			e.preventDefault();
 			setManualExpanded(true);
-		} else if (e.key === 'ArrowLeft' && hasChildren && expanded) {
+		} else if (e.key === 'ArrowLeft') {
 			e.preventDefault();
-			setManualExpanded(false);
+			if (hasChildren && expanded) {
+				// If expanded, collapse first
+				setManualExpanded(false);
+			} else if (parentId !== null) {
+				// If collapsed or no children, move to parent folder
+				onSelect(parentId);
+			}
 		} else if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
 			onSelect(folder.id);
@@ -98,6 +106,10 @@ export default function BaseFolderItem({
 
 	const handleToggleClick = (e) => {
 		e.stopPropagation();
+		// If collapsing and a child is currently selected, move selection to this folder
+		if (expanded && isChildSelected(folder)) {
+			onSelect(folder.id);
+		}
 		setManualExpanded(!expanded);
 	};
 
@@ -105,6 +117,10 @@ export default function BaseFolderItem({
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
 			e.stopPropagation();
+			// If collapsing and a child is currently selected, move selection to this folder
+			if (expanded && isChildSelected(folder)) {
+				onSelect(folder.id);
+			}
 			setManualExpanded(!expanded);
 		}
 	};
@@ -170,6 +186,7 @@ export default function BaseFolderItem({
 							selectedId={selectedId}
 							onSelect={onSelect}
 							level={level + 1}
+							parentId={folder.id}
 							renderWrapper={renderWrapper}
 							enableKeyboardNav={enableKeyboardNav}
 							enableAutoExpand={enableAutoExpand}

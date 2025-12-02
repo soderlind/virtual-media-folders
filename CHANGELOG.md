@@ -5,6 +5,12 @@ All notable changes to MediaManager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.15] - 2025-12-02
+
+### Added
+- Collapsing a parent folder now automatically moves selection to the parent when a child folder was selected
+- ArrowLeft keyboard navigation moves to parent folder when current folder is collapsed or has no children
+
 ## [0.1.14] - 2025-12-02
 
 ### Added
@@ -185,6 +191,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leverages WordPress REST API for all operations
 
 
+[0.1.15]: https://github.com/soderlind/mediamanager/compare/0.1.14...0.1.15
+[0.1.14]: https://github.com/soderlind/mediamanager/compare/0.1.13...0.1.14
+[0.1.13]: https://github.com/soderlind/mediamanager/compare/0.1.12...0.1.13
 [0.1.12]: https://github.com/soderlind/mediamanager/compare/0.1.11...0.1.12
 [0.1.11]: https://github.com/soderlind/mediamanager/compare/0.1.10...0.1.11
 [0.1.10]: https://github.com/soderlind/mediamanager/compare/0.1.9...0.1.10

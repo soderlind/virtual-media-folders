@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.1.14
+Stable tag: 0.1.15
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -71,6 +71,10 @@ Only the folder organization is removed. Your media files are not deleted.
 Media Manager works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 0.1.15 =
+* Added: Collapsing a parent folder now moves selection to the parent when a child folder is selected
+* Added: ArrowLeft keyboard navigation moves to parent folder when subfolder is collapsed or has no children
 
 = 0.1.14 =
 * Added: Edit Folder modal now includes Parent Folder selector to move folders within hierarchy
