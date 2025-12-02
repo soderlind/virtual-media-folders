@@ -5,6 +5,22 @@ All notable changes to MediaManager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.13] - 2025-12-02
+
+### Added
+- New "Show All Media" setting to show/hide the All Media option in the folder sidebar (default: enabled)
+
+### Changed
+- Removed "Enable Drag & Drop" setting - drag & drop is now always enabled (bulk move provides an alternative)
+- Implemented all settings that were previously shown in UI but not functional:
+  - "Default Folder" now auto-assigns new uploads to the selected folder
+  - "Show Uncategorized" now controls visibility of the Uncategorized folder
+  - "Sidebar Default Visible" now controls initial sidebar state on first visit
+
+### Fixed
+- Sidebar position now properly resets when uploader visibility changes (e.g., clicking a folder after Add Media File)
+- Sidebar recalculation only triggers when uploader visibility actually changes, avoiding double resets
+
 ## [0.1.12] - 2025-12-01
 
 ### Changed

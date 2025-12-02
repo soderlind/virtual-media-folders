@@ -11,6 +11,7 @@
  * - URL state management
  * - Global refresh function
  * - Media type filter tracking for accurate counts
+ * - Settings integration (showUncategorized)
  */
 
 import { useEffect, useCallback, useState } from '@wordpress/element';
@@ -19,6 +20,9 @@ import { BaseFolderTree } from '../../shared/components';
 import { DroppableFolder } from './DroppableFolder';
 import FolderManager from './FolderManager';
 import BulkFolderAction from './BulkFolderAction';
+
+// Get settings from server
+const { showAllMedia = true, showUncategorized = true } = window.mediaManagerData || {};
 
 /**
  * FolderTree component.
@@ -135,14 +139,14 @@ export default function FolderTree({ onFolderSelect }) {
 		};
 	}, [handleRefresh, onFolderSelect, setSelectedId]);
 
-	// Wrapper for folder items with DroppableFolder
+	// Wrapper for folder items - uses DroppableFolder for drag-and-drop
 	const renderWrapper = useCallback(({ folderId, children }) => (
 		<DroppableFolder folderId={folderId}>
 			{children}
 		</DroppableFolder>
 	), []);
 
-	// Wrapper for uncategorized item
+	// Wrapper for uncategorized item - uses DroppableFolder for drag-and-drop
 	const renderUncategorizedWrapper = useCallback(({ children }) => (
 		<DroppableFolder folderId="uncategorized">
 			{children}
@@ -168,6 +172,8 @@ export default function FolderTree({ onFolderSelect }) {
 			selectedId={selectedId}
 			onSelect={handleSelect}
 			uncategorizedCount={uncategorizedCount}
+			showAllMedia={showAllMedia}
+			showUncategorized={showUncategorized}
 			loading={loading}
 			renderWrapper={renderWrapper}
 			renderUncategorizedWrapper={renderUncategorizedWrapper}

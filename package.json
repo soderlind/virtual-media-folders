@@ -1,6 +1,6 @@
 {
 	"name": "mediamanager",
-	"version": "0.1.12",
+	"version": "0.1.13",
 	"description": "Virtual folder organization and smart management for the WordPress Media Library.",
 	"scripts": {
 		"build": "wp-scripts build",

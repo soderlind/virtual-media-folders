@@ -53,9 +53,21 @@ jQuery(document).on('click', '.page-title-action', function() {
  */
 function addFolderToggleButtonToPage() {
 	// Check if folder view should be active on load
+	// Priority: URL params > localStorage > server setting
 	const savedPref = localStorage.getItem('mm_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	const shouldBeActive = savedPref === '1' || urlParams.has('mm_folder') || urlParams.get('mode') === 'folder';
+	const { sidebarDefaultVisible = false } = window.mediaManagerData || {};
+	
+	let shouldBeActive = urlParams.has('mm_folder') || urlParams.get('mode') === 'folder';
+	if (!shouldBeActive && savedPref !== null) {
+		// Use localStorage if set
+		shouldBeActive = savedPref === '1';
+	} else if (!shouldBeActive && savedPref === null) {
+		// First visit - use server setting
+		shouldBeActive = sidebarDefaultVisible;
+		// Store in localStorage for future visits
+		localStorage.setItem('mm_folder_view', shouldBeActive ? '1' : '0');
+	}
 	
 	// If button already exists, just update its state
 	const $existingButton = jQuery('.mm-folder-toggle-button');
@@ -325,6 +337,9 @@ function setupStickySidebar(browser) {
 		window.addEventListener('resize', onResize, { passive: true });
 		updateSidebarPosition();
 		
+		// Expose recalculate function for external use
+		sidebar._recalculateOffset = recalculateOffset;
+		
 		sidebar._cleanupSticky = () => {
 			window.removeEventListener('scroll', onScroll);
 			window.removeEventListener('resize', onResize);
@@ -479,10 +494,21 @@ function injectFolderTree(browser) {
 						
 						// Hide/show uploader based on folder selection
 						// Only show uploader for "All Media" (folderId === null)
-						if (folderId !== null) {
+						const wasFiltered = browser.$el.hasClass('mm-folder-filtered');
+						const willBeFiltered = folderId !== null;
+						
+						if (willBeFiltered) {
 							browser.$el.addClass('mm-folder-filtered');
 						} else {
 							browser.$el.removeClass('mm-folder-filtered');
+						}
+						
+						// Only recalculate sidebar if uploader visibility changed
+						if (wasFiltered !== willBeFiltered) {
+							const sidebar = document.querySelector('.mm-folder-tree-sidebar');
+							if (sidebar && sidebar._recalculateOffset) {
+								setTimeout(() => sidebar._recalculateOffset(), 50);
+							}
 						}
 						
 						// Clear existing folder filters

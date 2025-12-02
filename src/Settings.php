@@ -43,8 +43,8 @@ final class Settings {
 		'suggestions_exif_date'     => true,
 		'suggestions_iptc'          => true,
 		'default_folder'            => 0,
+		'show_all_media'            => true,
 		'show_uncategorized'        => true,
-		'enable_drag_drop'          => true,
 		'sidebar_default_visible'   => false,
 		'jump_to_folder_after_move' => false,
 	];
@@ -171,6 +171,18 @@ final class Settings {
 		);
 
 		add_settings_field(
+			'show_all_media',
+			__( 'Show All Media', 'mediamanager' ),
+			[ self::class, 'render_checkbox_field' ],
+			self::PAGE_SLUG,
+			'mediamanager_defaults',
+			[
+				'id'          => 'show_all_media',
+				'description' => __( 'Show the "All Media" option in the sidebar.', 'mediamanager' ),
+			]
+		);
+
+		add_settings_field(
 			'show_uncategorized',
 			__( 'Show Uncategorized', 'mediamanager' ),
 			[ self::class, 'render_checkbox_field' ],
@@ -188,18 +200,6 @@ final class Settings {
 			__( 'User Interface', 'mediamanager' ),
 			[ self::class, 'render_ui_section' ],
 			self::PAGE_SLUG
-		);
-
-		add_settings_field(
-			'enable_drag_drop',
-			__( 'Enable Drag & Drop', 'mediamanager' ),
-			[ self::class, 'render_checkbox_field' ],
-			self::PAGE_SLUG,
-			'mediamanager_ui',
-			[
-				'id'          => 'enable_drag_drop',
-				'description' => __( 'Allow drag and drop to organize media into folders.', 'mediamanager' ),
-			]
 		);
 
 		add_settings_field(
@@ -242,8 +242,8 @@ final class Settings {
 			'suggestions_mime_types',
 			'suggestions_exif_date',
 			'suggestions_iptc',
+			'show_all_media',
 			'show_uncategorized',
-			'enable_drag_drop',
 			'sidebar_default_visible',
 			'jump_to_folder_after_move',
 		];

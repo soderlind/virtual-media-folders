@@ -16,6 +16,8 @@ import BaseFolderItem from './BaseFolderItem';
  * @param {number|string|null} props.selectedId Currently selected folder ID.
  * @param {Function} props.onSelect Called when folder is selected.
  * @param {number}   props.uncategorizedCount Count of uncategorized media.
+ * @param {boolean}  props.showAllMedia Whether to show All Media option.
+ * @param {boolean}  props.showUncategorized Whether to show Uncategorized folder.
  * @param {boolean}  props.loading Whether folders are loading.
  * @param {Function} props.renderWrapper Optional wrapper for folder buttons.
  * @param {Function} props.renderUncategorizedWrapper Optional wrapper for Uncategorized item.
@@ -31,6 +33,8 @@ export default function BaseFolderTree({
 	selectedId,
 	onSelect,
 	uncategorizedCount,
+	showAllMedia = true,
+	showUncategorized = true,
 	loading,
 	renderWrapper,
 	renderUncategorizedWrapper,
@@ -105,23 +109,27 @@ export default function BaseFolderTree({
 				role={enableAria ? 'tree' : undefined}
 				aria-label={enableAria ? __('Folder tree', 'mediamanager') : undefined}
 			>
-				{/* All Media */}
-				<li 
-					className="mm-folder-item" 
-					role={enableAria ? 'treeitem' : undefined}
-					aria-selected={enableAria ? selectedId === null : undefined}
-				>
-					{allMediaButton}
-				</li>
+				{/* All Media - only shown if showAllMedia is true */}
+				{showAllMedia && (
+					<li 
+						className="mm-folder-item" 
+						role={enableAria ? 'treeitem' : undefined}
+						aria-selected={enableAria ? selectedId === null : undefined}
+					>
+						{allMediaButton}
+					</li>
+				)}
 
-				{/* Uncategorized */}
-				<li 
-					className="mm-folder-item" 
-					role={enableAria ? 'treeitem' : undefined}
-					aria-selected={enableAria ? selectedId === 'uncategorized' : undefined}
-				>
-					{wrappedUncategorized}
-				</li>
+				{/* Uncategorized - only shown if showUncategorized is true */}
+				{showUncategorized && (
+					<li 
+						className="mm-folder-item" 
+						role={enableAria ? 'treeitem' : undefined}
+						aria-selected={enableAria ? selectedId === 'uncategorized' : undefined}
+					>
+						{wrappedUncategorized}
+					</li>
+				)}
 
 				{/* Folder tree */}
 				{folders.map((folder) => (

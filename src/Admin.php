@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Responsible for:
  * - Enqueueing admin scripts and styles on media library pages
  * - Handling AJAX requests for moving media between folders
+ * - Auto-assigning new uploads to default folder
  * - Providing localized data for JavaScript components
  */
 class Admin {
@@ -35,6 +36,25 @@ class Admin {
 	public static function init(): void {
 		add_action( 'admin_enqueue_scripts', [ static::class, 'enqueue_scripts' ] );
 		add_action( 'wp_ajax_mm_move_to_folder', [ static::class, 'ajax_move_to_folder' ] );
+		add_action( 'add_attachment', [ static::class, 'assign_default_folder' ] );
+	}
+
+	/**
+	 * Assign new uploads to the default folder if configured.
+	 *
+	 * @param int $attachment_id The newly uploaded attachment ID.
+	 * @return void
+	 */
+	public static function assign_default_folder( int $attachment_id ): void {
+		$default_folder = Settings::get( 'default_folder', 0 );
+
+		if ( $default_folder > 0 ) {
+			// Verify the folder exists
+			$term = get_term( $default_folder, 'media_folder' );
+			if ( $term && ! is_wp_error( $term ) ) {
+				wp_set_object_terms( $attachment_id, [ $default_folder ], 'media_folder' );
+			}
+		}
 	}
 
 	/**
@@ -154,7 +174,10 @@ class Admin {
 		wp_localize_script( 'mediamanager-admin', 'mediaManagerData', [
 			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
 			'nonce'                 => wp_create_nonce( 'mm_move_media' ),
-			'jumpToFolderAfterMove' => Settings::get( 'jump_to_folder_after_move', true ),
+			'jumpToFolderAfterMove' => Settings::get( 'jump_to_folder_after_move', false ),
+			'showAllMedia'          => Settings::get( 'show_all_media', true ),
+			'showUncategorized'     => Settings::get( 'show_uncategorized', true ),
+			'sidebarDefaultVisible' => Settings::get( 'sidebar_default_visible', false ),
 		] );
 
 		// Enable translations for JavaScript strings.
