@@ -24,27 +24,27 @@ msgstr "Mediebehandler"
 msgid "Virtual folder organization and smart management for the WordPress Media Library."
 msgstr "Virtuell mappeorganisering og smart administrasjon for WordPress mediebibliotek."
 
-#: src/Admin.php:56
+#: src/Admin.php:76
 msgid "Invalid security token."
 msgstr "Ugyldig sikkerhetstoken."
 
-#: src/Admin.php:61
+#: src/Admin.php:81
 msgid "Permission denied."
 msgstr "Ingen tilgang."
 
-#: src/Admin.php:69
+#: src/Admin.php:89
 msgid "Invalid media ID."
 msgstr "Ugyldig medie-ID."
 
-#: src/Admin.php:75
+#: src/Admin.php:95
 msgid "Attachment not found."
 msgstr "Vedlegg ikke funnet."
 
-#: src/Admin.php:82
+#: src/Admin.php:102
 msgid "Media removed from all folders."
 msgstr "Media fjernet fra alle mapper."
 
-#: src/Admin.php:92
+#: src/Admin.php:112
 #: src/RestApi.php:392
 #: src/RestApi.php:444
 #: src/RestApi.php:501
@@ -54,7 +54,7 @@ msgid "Folder not found."
 msgstr "Mappe ikke funnet."
 
 #. translators: %s: folder name
-#: src/Admin.php:105
+#: src/Admin.php:125
 #, php-format
 msgid "Media moved to \"%s\"."
 msgstr "Media flyttet til «%s»."
@@ -114,7 +114,7 @@ msgid "A folder cannot be its own parent."
 msgstr "En mappe kan ikke være sin egen overordnet."
 
 #: src/RestApi.php:515
-#: src/admin/components/FolderManager.jsx:172
+#: src/admin/components/FolderManager.jsx:187
 msgid "Failed to delete folder."
 msgstr "Kunne ikke slette mappen."
 
@@ -194,25 +194,17 @@ msgstr "Standardmappe"
 msgid "Automatically assign new uploads to this folder (0 = none)."
 msgstr "Tildel automatisk nye opplastinger til denne mappen (0 = ingen)."
 
-#: src/Settings.php:175
+#: src/Settings.php:187
 msgid "Show Uncategorized"
 msgstr "Vis ukategorisert"
 
-#: src/Settings.php:181
+#: src/Settings.php:193
 msgid "Show the \"Uncategorized\" virtual folder in the sidebar."
 msgstr "Vis den virtuelle mappen «Ukategorisert» i sidepanelet."
 
-#: src/Settings.php:188
+#: src/Settings.php:200
 msgid "User Interface"
 msgstr "Brukergrensesnitt"
-
-#: src/Settings.php:195
-msgid "Enable Drag & Drop"
-msgstr "Aktiver dra og slipp"
-
-#: src/Settings.php:201
-msgid "Allow drag and drop to organize media into folders."
-msgstr "Tillat dra og slipp for å organisere media i mapper."
 
 #: src/Settings.php:207
 msgid "Sidebar Default Visible"
@@ -266,7 +258,8 @@ msgid "All Folders"
 msgstr "Alle mapper"
 
 #: src/Taxonomy.php:61
-#: src/admin/components/FolderManager.jsx:265
+#: src/admin/components/FolderManager.jsx:281
+#: src/admin/components/FolderManager.jsx:324
 msgid "Parent Folder"
 msgstr "Overordnet mappe"
 
@@ -275,6 +268,7 @@ msgid "Parent Folder:"
 msgstr "Overordnet mappe:"
 
 #: src/Taxonomy.php:63
+#: src/admin/components/FolderManager.jsx:311
 msgid "Edit Folder"
 msgstr "Rediger mappe"
 
@@ -303,9 +297,9 @@ msgid "Media Manager requires WordPress 6.8 or higher."
 msgstr "Mediebehandler krever WordPress 6.8 eller høyere."
 
 #: src/admin/components/BulkFolderAction.jsx:135
-#: src/admin/components/BulkFolderAction.jsx:208
+#: src/admin/components/BulkFolderAction.jsx:216
 #: src/editor/components/FolderFilter.jsx:68
-#: src/shared/components/BaseFolderTree.jsx:78
+#: src/shared/components/BaseFolderTree.jsx:82
 msgid "Uncategorized"
 msgstr "Ukategorisert"
 
@@ -315,27 +309,27 @@ msgstr "Ukategorisert"
 msgid "%1$d items moved to \"%2$s\"."
 msgstr "%1$d elementer flyttet til «%2$s»."
 
-#: src/admin/components/BulkFolderAction.jsx:176
+#: src/admin/components/BulkFolderAction.jsx:184
 msgid "Failed to move some items."
 msgstr "Kunne ikke flytte noen elementer."
 
-#: src/admin/components/BulkFolderAction.jsx:207
+#: src/admin/components/BulkFolderAction.jsx:215
 msgid "Move to folder…"
 msgstr "Flytt til mappe…"
 
-#: src/admin/components/BulkFolderAction.jsx:220
-#: src/admin/components/BulkFolderAction.jsx:221
+#: src/admin/components/BulkFolderAction.jsx:228
+#: src/admin/components/BulkFolderAction.jsx:229
 msgid "Moving…"
 msgstr "Flytter…"
 
-#: src/admin/components/BulkFolderAction.jsx:220
-#: src/admin/components/BulkFolderAction.jsx:221
+#: src/admin/components/BulkFolderAction.jsx:228
+#: src/admin/components/BulkFolderAction.jsx:229
 #: src/admin/components/SuggestionNotice.jsx:39
 msgid "Apply"
 msgstr "Bruk"
 
 #. translators: %d: number of selected items
-#: src/admin/components/BulkFolderAction.jsx:234
+#: src/admin/components/BulkFolderAction.jsx:242
 #, js-format
 msgid "%d selected"
 msgstr "%d valgt"
@@ -344,107 +338,85 @@ msgstr "%d valgt"
 msgid "Media"
 msgstr "Media"
 
-#: src/admin/components/DroppableFolder.jsx:83
+#: src/admin/components/DroppableFolder.jsx:92
 msgid "Drop here to move media to this folder"
 msgstr "Slipp her for å flytte media til denne mappen"
 
-#: src/admin/components/FolderManager.jsx:73
+#: src/admin/components/FolderManager.jsx:74
+#: src/admin/components/FolderManager.jsx:86
 msgid "None (top level)"
 msgstr "Ingen (toppnivå)"
 
-#: src/admin/components/FolderManager.jsx:83
-#: src/admin/components/FolderManager.jsx:117
+#: src/admin/components/FolderManager.jsx:96
+#: src/admin/components/FolderManager.jsx:130
 msgid "Please enter a folder name."
 msgstr "Vennligst skriv inn et mappenavn."
 
-#: src/admin/components/FolderManager.jsx:103
+#: src/admin/components/FolderManager.jsx:116
 msgid "Folder created."
 msgstr "Mappe opprettet."
 
-#: src/admin/components/FolderManager.jsx:106
+#: src/admin/components/FolderManager.jsx:119
 msgid "Failed to create folder."
 msgstr "Kunne ikke opprette mappen."
 
-#: src/admin/components/FolderManager.jsx:139
-msgid "Folder renamed."
-msgstr "Mappe omdøpt."
-
-#: src/admin/components/FolderManager.jsx:142
-msgid "Failed to rename folder."
-msgstr "Kunne ikke omdøpe mappen."
-
-#: src/admin/components/FolderManager.jsx:166
+#: src/admin/components/FolderManager.jsx:181
 msgid "Folder deleted."
 msgstr "Mappe slettet."
 
-#: src/admin/components/FolderManager.jsx:208
-#: src/admin/components/FolderManager.jsx:252
+#: src/admin/components/FolderManager.jsx:224
+#: src/admin/components/FolderManager.jsx:268
 msgid "Create Folder"
 msgstr "Opprett mappe"
 
-#: src/admin/components/FolderManager.jsx:223
-#: src/admin/components/FolderManager.jsx:295
+#: src/admin/components/FolderManager.jsx:239
 msgid "Rename Folder"
 msgstr "Gi nytt navn"
 
-#: src/admin/components/FolderManager.jsx:235
-#: src/admin/components/FolderManager.jsx:330
+#: src/admin/components/FolderManager.jsx:251
+#: src/admin/components/FolderManager.jsx:354
 msgid "Delete Folder"
 msgstr "Slett mappe"
 
-#: src/admin/components/FolderManager.jsx:257
+#: src/admin/components/FolderManager.jsx:273
+#: src/admin/components/FolderManager.jsx:316
 msgid "Folder Name"
 msgstr "Mappenavn"
 
-#: src/admin/components/FolderManager.jsx:260
+#: src/admin/components/FolderManager.jsx:276
+#: src/admin/components/FolderManager.jsx:319
 msgid "Enter folder name"
 msgstr "Skriv inn mappenavn"
 
-#: src/admin/components/FolderManager.jsx:279
-#: src/admin/components/FolderManager.jsx:314
-#: src/admin/components/FolderManager.jsx:351
+#: src/admin/components/FolderManager.jsx:295
+#: src/admin/components/FolderManager.jsx:338
+#: src/admin/components/FolderManager.jsx:375
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/admin/components/FolderManager.jsx:286
+#: src/admin/components/FolderManager.jsx:302
 msgid "Creating…"
 msgstr "Oppretter…"
 
-#: src/admin/components/FolderManager.jsx:286
+#: src/admin/components/FolderManager.jsx:302
 msgid "Create"
 msgstr "Opprett"
 
-#: src/admin/components/FolderManager.jsx:300
-msgid "New Name"
-msgstr "Nytt navn"
-
-#: src/admin/components/FolderManager.jsx:303
-msgid "Enter new name"
-msgstr "Skriv inn nytt navn"
-
-#: src/admin/components/FolderManager.jsx:321
-msgid "Renaming…"
-msgstr "Omdøper…"
-
-#: src/admin/components/FolderManager.jsx:321
-msgid "Rename"
-msgstr "Gi nytt navn"
-
 #. translators: %s: folder name
-#: src/admin/components/FolderManager.jsx:337
+#: src/admin/components/FolderManager.jsx:361
 #, js-format
 msgid "Are you sure you want to delete the folder \"%s\"?"
 msgstr "Er du sikker på at du vil slette mappen «%s»?"
 
-#: src/admin/components/FolderManager.jsx:342
+#: src/admin/components/FolderManager.jsx:366
 msgid "Media items in this folder will not be deleted, only the folder organization."
 msgstr "Mediefiler i denne mappen vil ikke bli slettet, bare mappeorganiseringen."
 
-#: src/admin/components/FolderManager.jsx:359
+#: src/admin/components/FolderManager.jsx:383
 msgid "Deleting…"
 msgstr "Sletter…"
 
-#: src/admin/components/FolderManager.jsx:359
+#: src/admin/components/FolderManager.jsx:383
 msgid "Delete"
 msgstr "Slett"
 
@@ -457,20 +429,20 @@ msgid "Expand"
 msgstr "Utvid"
 
 #: src/shared/components/BaseFolderItem.jsx:139
-#: src/shared/components/BaseFolderTree.jsx:81
+#: src/shared/components/BaseFolderTree.jsx:85
 msgid "items"
 msgstr "elementer"
 
-#: src/shared/components/BaseFolderTree.jsx:49
-#: src/shared/components/BaseFolderTree.jsx:100
+#: src/shared/components/BaseFolderTree.jsx:53
+#: src/shared/components/BaseFolderTree.jsx:104
 msgid "Media folders"
 msgstr "Mediemapper"
 
-#: src/shared/components/BaseFolderTree.jsx:106
+#: src/shared/components/BaseFolderTree.jsx:110
 msgid "Folder tree"
 msgstr "Mappestruktur"
 
-#: src/shared/components/BaseFolderTree.jsx:66
+#: src/shared/components/BaseFolderTree.jsx:70
 msgid "All Media"
 msgstr "Alle medier"
 
@@ -481,7 +453,7 @@ msgstr "Flytt til mappe"
 
 #: src/admin/components/MoveToFolderMenu.jsx:130
 #: src/editor/components/FolderFilter.jsx:93
-#: src/shared/components/BaseFolderTree.jsx:52
+#: src/shared/components/BaseFolderTree.jsx:56
 msgid "Loading…"
 msgstr "Laster…"
 
@@ -503,15 +475,15 @@ msgstr "Foreslåtte mapper: %s"
 msgid "Dismiss"
 msgstr "Avvis"
 
-#: src/admin/media-library.js:77
-#: src/admin/media-library.js:78
-#: src/admin/media-library.js:390
-#: src/admin/media-library.js:391
+#: src/admin/media-library.js:89
+#: src/admin/media-library.js:90
+#: src/admin/media-library.js:414
+#: src/admin/media-library.js:415
 msgid "Show Folders"
 msgstr "Vis mapper"
 
-#: src/admin/media-library.js:154
-#: src/admin/media-library.js:158
+#: src/admin/media-library.js:166
+#: src/admin/media-library.js:170
 msgid "Failed to move media."
 msgstr "Kunne ikke flytte media."
 
@@ -541,3 +513,27 @@ msgstr "Hopp til mappe etter flytting"
 #: src/Settings.php:225
 msgid "Automatically switch to the target folder after moving files."
 msgstr "Bytt automatisk til målmappen etter at filer er flyttet."
+
+#: src/Settings.php:175
+msgid "Show All Media"
+msgstr "Vis alle medier"
+
+#: src/Settings.php:181
+msgid "Show the \"All Media\" option in the sidebar."
+msgstr "Vis «Alle medier»-alternativet i sidepanelet."
+
+#: src/admin/components/FolderManager.jsx:154
+msgid "Folder updated."
+msgstr "Mappe oppdatert."
+
+#: src/admin/components/FolderManager.jsx:157
+msgid "Failed to update folder."
+msgstr "Kunne ikke oppdatere mappen."
+
+#: src/admin/components/FolderManager.jsx:345
+msgid "Saving…"
+msgstr "Lagrer…"
+
+#: src/admin/components/FolderManager.jsx:345
+msgid "Save"
+msgstr "Lagre"
