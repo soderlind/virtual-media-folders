@@ -5,7 +5,7 @@
  * A reusable class for handling WordPress plugin updates from GitHub repositories
  * using the plugin-update-checker library.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  * @version 1.0.0
  * @author Per Soderlind
  * @license GPL-2.0+
@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace MediaManager;
+namespace VirtualMediaFolders;
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 

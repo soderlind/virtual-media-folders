@@ -5,13 +5,13 @@
  * Registers the custom 'media_folder' taxonomy for organizing
  * WordPress media library attachments into virtual folders.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  * @since   1.0.0
  */
 
 declare(strict_types=1);
 
-namespace MediaManager;
+namespace VirtualMediaFolders;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -54,17 +54,17 @@ class Taxonomy {
 	 */
 	public static function register_taxonomy(): void {
 		$labels = [
-			'name'              => _x( 'Media Folders', 'taxonomy general name', 'mediamanager' ),
-			'singular_name'     => _x( 'Media Folder', 'taxonomy singular name', 'mediamanager' ),
-			'search_items'      => __( 'Search Folders', 'mediamanager' ),
-			'all_items'         => __( 'All Folders', 'mediamanager' ),
-			'parent_item'       => __( 'Parent Folder', 'mediamanager' ),
-			'parent_item_colon' => __( 'Parent Folder:', 'mediamanager' ),
-			'edit_item'         => __( 'Edit Folder', 'mediamanager' ),
-			'update_item'       => __( 'Update Folder', 'mediamanager' ),
-			'add_new_item'      => __( 'Add New Folder', 'mediamanager' ),
-			'new_item_name'     => __( 'New Folder Name', 'mediamanager' ),
-			'menu_name'         => __( 'Media Folders', 'mediamanager' ),
+			'name'              => _x( 'Media Folders', 'taxonomy general name', 'virtual-media-folders' ),
+			'singular_name'     => _x( 'Media Folder', 'taxonomy singular name', 'virtual-media-folders' ),
+			'search_items'      => __( 'Search Folders', 'virtual-media-folders' ),
+			'all_items'         => __( 'All Folders', 'virtual-media-folders' ),
+			'parent_item'       => __( 'Parent Folder', 'virtual-media-folders' ),
+			'parent_item_colon' => __( 'Parent Folder:', 'virtual-media-folders' ),
+			'edit_item'         => __( 'Edit Folder', 'virtual-media-folders' ),
+			'update_item'       => __( 'Update Folder', 'virtual-media-folders' ),
+			'add_new_item'      => __( 'Add New Folder', 'virtual-media-folders' ),
+			'new_item_name'     => __( 'New Folder Name', 'virtual-media-folders' ),
+			'menu_name'         => __( 'Media Folders', 'virtual-media-folders' ),
 		];
 
 		$args = [

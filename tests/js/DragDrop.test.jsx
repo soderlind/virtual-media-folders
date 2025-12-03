@@ -78,7 +78,7 @@ describe('DraggableMedia', () => {
 			</DraggableMedia>
 		);
 
-		expect(container.firstChild).toHaveClass('mm-draggable-media');
+		expect(container.firstChild).toHaveClass('vmf-draggable-media');
 	});
 });
 
@@ -128,6 +128,6 @@ describe('DroppableFolder', () => {
 			</DroppableFolder>
 		);
 
-		expect(container.firstChild).toHaveClass('mm-droppable-folder');
+		expect(container.firstChild).toHaveClass('vmf-droppable-folder');
 	});
 });

@@ -51,15 +51,15 @@ export function DroppableFolder({ folderId, children, className = '' }) {
 			
 			if (data.mediaId) {
 				// Get the move handler from the global scope
-				if (window.mediaManagerMoveToFolder) {
-					window.mediaManagerMoveToFolder(data.mediaId, folderId);
+				if (window.vmfMoveToFolder) {
+					window.vmfMoveToFolder(data.mediaId, folderId);
 					
 					// After moving, select the target folder (if setting is enabled)
-					const { jumpToFolderAfterMove = false } = window.mediaManagerData || {};
-					if (jumpToFolderAfterMove && window.mediaManagerSelectFolder) {
+					const { jumpToFolderAfterMove = false } = window.vmfData || {};
+					if (jumpToFolderAfterMove && window.vmfSelectFolder) {
 						// Small delay to let the move complete
 						setTimeout(() => {
-							window.mediaManagerSelectFolder(folderId);
+							window.vmfSelectFolder(folderId);
 						}, 200);
 					} else {
 						// When not jumping to folder, remove the moved item from the current view
@@ -80,7 +80,7 @@ export function DroppableFolder({ folderId, children, className = '' }) {
 
 	return (
 		<div
-			className={`mm-droppable-folder ${className} ${isOver ? 'is-over' : ''}`}
+			className={`vmf-droppable-folder ${className} ${isOver ? 'is-over' : ''}`}
 			onDragOver={handleDragOver}
 			onDragEnter={handleDragOver}
 			onDragLeave={handleDragLeave}
@@ -89,7 +89,7 @@ export function DroppableFolder({ folderId, children, className = '' }) {
 			{children}
 			{isOver && (
 				<span className="screen-reader-text">
-					{__('Drop here to move media to this folder', 'mediamanager')}
+					{__('Drop here to move media to this folder', 'virtual-media-folders')}
 				</span>
 			)}
 		</div>

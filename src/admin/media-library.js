@@ -20,15 +20,15 @@ let currentBrowser = null;
  */
 function hideFolderView() {
 	folderViewActive = false;
-	localStorage.setItem('mm_folder_view', '0');
+	localStorage.setItem('vmf_folder_view', '0');
 	
-	const $container = jQuery('#mm-folder-tree');
-	const $toggle = jQuery('.mm-folder-toggle-button');
+	const $container = jQuery('#vmf-folder-tree');
+	const $toggle = jQuery('.vmf-folder-toggle-button');
 	
 	$container.removeClass('is-visible');
 	$toggle.removeClass('is-active');
-	document.body.classList.remove('mm-folder-view-active');
-	jQuery('.attachments-browser').removeClass('mm-sidebar-visible');
+	document.body.classList.remove('vmf-folder-view-active');
+	jQuery('.attachments-browser').removeClass('vmf-sidebar-visible');
 }
 
 // Listen for clicks on view switcher at document level (before page load completes)
@@ -39,10 +39,10 @@ jQuery(document).on('click', '.view-switch a', function() {
 // When "Add Media File" button is clicked while a folder is selected, switch to All Media
 jQuery(document).on('click', '.page-title-action', function() {
 	// Check if a folder is currently selected (not All Media)
-	if (jQuery('.attachments-browser').hasClass('mm-folder-filtered')) {
+	if (jQuery('.attachments-browser').hasClass('vmf-folder-filtered')) {
 		// Select All Media via the global function
-		if (typeof window.mediaManagerSelectFolder === 'function') {
-			window.mediaManagerSelectFolder(null);
+		if (typeof window.vmfSelectFolder === 'function') {
+			window.vmfSelectFolder(null);
 		}
 	}
 });
@@ -54,11 +54,11 @@ jQuery(document).on('click', '.page-title-action', function() {
 function addFolderToggleButtonToPage() {
 	// Check if folder view should be active on load
 	// Priority: URL params > localStorage > server setting
-	const savedPref = localStorage.getItem('mm_folder_view');
+	const savedPref = localStorage.getItem('vmf_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	const { sidebarDefaultVisible = false } = window.mediaManagerData || {};
+	const { sidebarDefaultVisible = false } = window.vmfData || {};
 	
-	let shouldBeActive = urlParams.has('mm_folder') || urlParams.get('mode') === 'folder';
+	let shouldBeActive = urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder';
 	if (!shouldBeActive && savedPref !== null) {
 		// Use localStorage if set
 		shouldBeActive = savedPref === '1';
@@ -66,11 +66,11 @@ function addFolderToggleButtonToPage() {
 		// First visit - use server setting
 		shouldBeActive = sidebarDefaultVisible;
 		// Store in localStorage for future visits
-		localStorage.setItem('mm_folder_view', shouldBeActive ? '1' : '0');
+		localStorage.setItem('vmf_folder_view', shouldBeActive ? '1' : '0');
 	}
 	
 	// If button already exists, just update its state
-	const $existingButton = jQuery('.mm-folder-toggle-button');
+	const $existingButton = jQuery('.vmf-folder-toggle-button');
 	if ($existingButton.length) {
 		if (shouldBeActive) {
 			$existingButton.addClass('is-active');
@@ -86,8 +86,8 @@ function addFolderToggleButtonToPage() {
 	
 	if ($viewSwitcher.length) {
 		const $button = jQuery(`
-			<a href="#" class="mm-folder-toggle-button${shouldBeActive ? ' is-active' : ''}" title="${__('Show Folders', 'mediamanager')}">
-				<span class="screen-reader-text">${__('Show Folders', 'mediamanager')}</span>
+			<a href="#" class="vmf-folder-toggle-button${shouldBeActive ? ' is-active' : ''}" title="${__('Show Folders', 'virtual-media-folders')}">
+				<span class="screen-reader-text">${__('Show Folders', 'virtual-media-folders')}</span>
 				${folderIcon}
 			</a>
 		`);
@@ -103,7 +103,7 @@ function addFolderToggleButtonToPage() {
 			const urlParams = new URLSearchParams(window.location.search);
 			if (urlParams.get('mode') === 'list') {
 				// Navigate to grid mode with folder view enabled
-				localStorage.setItem('mm_folder_view', '1');
+				localStorage.setItem('vmf_folder_view', '1');
 				window.location.href = window.location.pathname + '?mode=grid';
 				return;
 			}
@@ -113,7 +113,7 @@ function addFolderToggleButtonToPage() {
 				toggleFolderView(currentBrowser, true);
 			} else {
 				// Set preference, will be applied when browser renders
-				localStorage.setItem('mm_folder_view', '1');
+				localStorage.setItem('vmf_folder_view', '1');
 				folderViewActive = true;
 				$button.addClass('is-active');
 			}
@@ -130,7 +130,7 @@ jQuery(document).ready(function() {
  * Move media to a folder via AJAX.
  */
 async function moveMediaToFolder(mediaId, folderId) {
-	const { ajaxUrl, nonce } = window.mediaManagerData || {};
+	const { ajaxUrl, nonce } = window.vmfData || {};
 
 	if (!ajaxUrl || !nonce) {
 		console.error('Media Manager: Missing AJAX configuration');
@@ -138,7 +138,7 @@ async function moveMediaToFolder(mediaId, folderId) {
 	}
 
 	const formData = new FormData();
-	formData.append('action', 'mm_move_to_folder');
+	formData.append('action', 'vmf_move_to_folder');
 	formData.append('nonce', nonce);
 	formData.append('media_id', mediaId);
 	formData.append('folder_id', folderId ?? '');
@@ -157,17 +157,17 @@ async function moveMediaToFolder(mediaId, folderId) {
 				showNotice(data.data.message, 'success');
 			}
 			// Refresh the folder counts
-			if (window.mediaManagerRefreshFolders) {
-				window.mediaManagerRefreshFolders();
+			if (window.vmfRefreshFolders) {
+				window.vmfRefreshFolders();
 			}
 			// Refresh the media library view
 			refreshMediaLibrary();
 		} else {
-			showNotice(data.data?.message || __('Failed to move media.', 'mediamanager'), 'error');
+			showNotice(data.data?.message || __('Failed to move media.', 'virtual-media-folders'), 'error');
 		}
 	} catch (error) {
 		console.error('Error moving media:', error);
-		showNotice(__('Failed to move media.', 'mediamanager'), 'error');
+		showNotice(__('Failed to move media.', 'virtual-media-folders'), 'error');
 	}
 }
 
@@ -178,7 +178,7 @@ async function moveMediaToFolder(mediaId, folderId) {
 function refreshMediaLibrary() {
 	// Simplest approach: re-trigger the current folder selection
 	// This ensures the filter is properly re-applied
-	const $selectedFolder = jQuery('.mm-folder-button.is-selected');
+	const $selectedFolder = jQuery('.vmf-folder-button.is-selected');
 	if ($selectedFolder.length) {
 		// Small delay to ensure the server has processed the move
 		setTimeout(() => {
@@ -209,14 +209,14 @@ function refreshMediaLibrary() {
 	}
 }
 
-window.mediaManagerMoveToFolder = moveMediaToFolder;
+window.vmfMoveToFolder = moveMediaToFolder;
 
 /**
  * Show a temporary notice.
  */
 function showNotice(message, type = 'success') {
 	const notice = document.createElement('div');
-	notice.className = `notice notice-${type} mm-notice is-dismissible`;
+	notice.className = `notice notice-${type} vmf-notice is-dismissible`;
 	notice.innerHTML = `<p>${message}</p>`;
 	notice.style.cssText = 'position: fixed; top: 40px; right: 20px; z-index: 100000; max-width: 300px;';
 	document.body.appendChild(notice);
@@ -238,7 +238,7 @@ function alignSidebarWithGrid(browser) {
 function setupStickySidebar(browser) {
 	// Wait for sidebar to be rendered by React
 	const waitForSidebar = () => {
-		const sidebar = document.querySelector('.mm-folder-tree-sidebar');
+		const sidebar = document.querySelector('.vmf-folder-tree-sidebar');
 		const attachmentsWrapper = browser.$el.find('.attachments-wrapper')[0];
 		const attachments = browser.$el.find('.attachments')[0];
 		
@@ -361,15 +361,15 @@ function removeViewSwitchCurrent() {
  */
 function toggleFolderView(browser, show) {
 	folderViewActive = show;
-	const $container = browser.$el.find('#mm-folder-tree');
-	const $toggle = jQuery('.mm-folder-toggle-button');
+	const $container = browser.$el.find('#vmf-folder-tree');
+	const $toggle = jQuery('.vmf-folder-toggle-button');
 	
 	if (show) {
 		$container.addClass('is-visible');
 		$toggle.addClass('is-active');
-		document.body.classList.add('mm-folder-view-active');
+		document.body.classList.add('vmf-folder-view-active');
 		// Add class to the browser element itself
-		browser.$el.addClass('mm-sidebar-visible');
+		browser.$el.addClass('vmf-sidebar-visible');
 		// Remove 'current' class from grid/list icons (with delay to ensure DOM is ready)
 		removeViewSwitchCurrent();
 		setTimeout(removeViewSwitchCurrent, 100);
@@ -383,15 +383,15 @@ function toggleFolderView(browser, show) {
 	} else {
 		$container.removeClass('is-visible');
 		$toggle.removeClass('is-active');
-		document.body.classList.remove('mm-folder-view-active');
+		document.body.classList.remove('vmf-folder-view-active');
 		// Remove the class
-		browser.$el.removeClass('mm-sidebar-visible');
+		browser.$el.removeClass('vmf-sidebar-visible');
 		// Restore 'current' class to grid icon (we're in grid mode)
 		jQuery('.view-switch a.view-grid').addClass('current');
 	}
 	
 	// Save preference
-	localStorage.setItem('mm_folder_view', show ? '1' : '0');
+	localStorage.setItem('vmf_folder_view', show ? '1' : '0');
 }
 
 /**
@@ -404,15 +404,15 @@ function addFolderToggleButton(browser) {
 	currentBrowser = browser;
 	
 	// If button doesn't exist yet (fallback), add it to the media toolbar
-	if (!jQuery('.mm-folder-toggle-button').length) {
+	if (!jQuery('.vmf-folder-toggle-button').length) {
 		// Folder icon SVG - bold folder icon
 		const folderIcon = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7.5l-2-2H4z"/></svg>`;
 		
 		const $toolbar = browser.$el.find('.media-toolbar-secondary');
 		if ($toolbar.length) {
 			const $button = jQuery(`
-				<button type="button" class="mm-folder-toggle-button" title="${__('Show Folders', 'mediamanager')}">
-					<span class="screen-reader-text">${__('Show Folders', 'mediamanager')}</span>
+				<button type="button" class="vmf-folder-toggle-button" title="${__('Show Folders', 'virtual-media-folders')}">
+					<span class="screen-reader-text">${__('Show Folders', 'virtual-media-folders')}</span>
 					${folderIcon}
 				</button>
 			`);
@@ -427,9 +427,9 @@ function addFolderToggleButton(browser) {
 	}
 	
 	// Check saved preference or URL param and apply
-	const savedPref = localStorage.getItem('mm_folder_view');
+	const savedPref = localStorage.getItem('vmf_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	if (savedPref === '1' || urlParams.has('mm_folder') || urlParams.get('mode') === 'folder') {
+	if (savedPref === '1' || urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder') {
 		toggleFolderView(browser, true);
 	}
 }
@@ -439,13 +439,13 @@ function addFolderToggleButton(browser) {
  */
 function injectFolderTree(browser) {
 	// Don't inject twice
-	if (browser.$el.find('#mm-folder-tree').length) {
+	if (browser.$el.find('#vmf-folder-tree').length) {
 		return;
 	}
 
 	const container = document.createElement('div');
-	container.id = 'mm-folder-tree';
-	container.className = 'mm-folder-tree-sidebar';
+	container.id = 'vmf-folder-tree';
+	container.className = 'vmf-folder-tree-sidebar';
 
 	// Find the best insertion point - we want the sidebar next to attachments,
 	// not overlapping the uploader
@@ -472,9 +472,9 @@ function injectFolderTree(browser) {
 					// Update URL state with mode=folder when folder view is active
 					const url = new URL(window.location);
 					if (folderId) {
-						url.searchParams.set('mm_folder', folderId);
+						url.searchParams.set('vmf_folder', folderId);
 					} else {
-						url.searchParams.delete('mm_folder');
+						url.searchParams.delete('vmf_folder');
 					}
 					// Always use mode=folder when in folder view (sidebar visible)
 					url.searchParams.set('mode', 'folder');
@@ -490,22 +490,22 @@ function injectFolderTree(browser) {
 						
 						// Add loading class for smooth transition
 						const $attachments = browser.$el.find('.attachments');
-						$attachments.addClass('mm-loading');
+						$attachments.addClass('vmf-loading');
 						
 						// Hide/show uploader based on folder selection
 						// Only show uploader for "All Media" (folderId === null)
-						const wasFiltered = browser.$el.hasClass('mm-folder-filtered');
+						const wasFiltered = browser.$el.hasClass('vmf-folder-filtered');
 						const willBeFiltered = folderId !== null;
 						
 						if (willBeFiltered) {
-							browser.$el.addClass('mm-folder-filtered');
+							browser.$el.addClass('vmf-folder-filtered');
 						} else {
-							browser.$el.removeClass('mm-folder-filtered');
+							browser.$el.removeClass('vmf-folder-filtered');
 						}
 						
 						// Only recalculate sidebar if uploader visibility changed
 						if (wasFiltered !== willBeFiltered) {
-							const sidebar = document.querySelector('.mm-folder-tree-sidebar');
+							const sidebar = document.querySelector('.vmf-folder-tree-sidebar');
 							if (sidebar && sidebar._recalculateOffset) {
 								setTimeout(() => sidebar._recalculateOffset(), 50);
 							}
@@ -540,9 +540,9 @@ function injectFolderTree(browser) {
 						currentCollection.reset();
 						currentCollection.more({ remove: false }).then(() => {
 							// Remove loading class after content loads
-							$attachments.removeClass('mm-loading');
+							$attachments.removeClass('vmf-loading');
 						}).catch(() => {
-							$attachments.removeClass('mm-loading');
+							$attachments.removeClass('vmf-loading');
 						});
 					}
 				}}
@@ -612,17 +612,17 @@ function setupDragAndDrop(browser) {
 				thumbnail: $attachment.find('img').attr('src') || ''
 			}));
 			e.originalEvent.dataTransfer.effectAllowed = 'move';
-			$attachment.addClass('mm-dragging');
+			$attachment.addClass('vmf-dragging');
 			
 			// Hide WordPress uploader overlay during internal drag
-			document.body.classList.add('mm-internal-drag');
+			document.body.classList.add('vmf-internal-drag');
 		}
 	});
 
 	$attachments.on('dragend.mm', '.attachment', function() {
-		jQuery(this).removeClass('mm-dragging');
+		jQuery(this).removeClass('vmf-dragging');
 		// Re-enable WordPress uploader overlay
-		document.body.classList.remove('mm-internal-drag');
+		document.body.classList.remove('vmf-internal-drag');
 	});
 }
 

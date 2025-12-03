@@ -16,6 +16,11 @@ class ComposerStaticInit9da11f50a84c12ea0f2b8e42c40880be
     );
 
     public static $prefixLengthsPsr4 = array (
+        'V' => 
+        array (
+            'VirtualMediaFolders\\' => 20,
+            'VirtualMediaFoldersTests\\' => 25,
+        ),
         'P' => 
         array (
             'PhpParser\\' => 10,
@@ -23,8 +28,6 @@ class ComposerStaticInit9da11f50a84c12ea0f2b8e42c40880be
         'M' => 
         array (
             'Mockery\\' => 8,
-            'MediaManager\\' => 13,
-            'MediaManagerTests\\' => 18,
         ),
         'D' => 
         array (
@@ -37,6 +40,14 @@ class ComposerStaticInit9da11f50a84c12ea0f2b8e42c40880be
     );
 
     public static $prefixDirsPsr4 = array (
+        'VirtualMediaFolders\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+        ),
+        'VirtualMediaFoldersTests\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/tests/php',
+        ),
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
@@ -44,14 +55,6 @@ class ComposerStaticInit9da11f50a84c12ea0f2b8e42c40880be
         'Mockery\\' => 
         array (
             0 => __DIR__ . '/..' . '/mockery/mockery/library/Mockery',
-        ),
-        'MediaManager\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/src',
-        ),
-        'MediaManagerTests\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/tests/php',
         ),
         'DeepCopy\\' => 
         array (

@@ -2,16 +2,16 @@
 /**
  * Editor class tests.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  */
 
 declare(strict_types=1);
 
-namespace MediaManager\Tests;
+namespace VirtualMediaFolders\Tests;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
-use MediaManager\Editor;
+use VirtualMediaFolders\Editor;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,14 +26,14 @@ class EditorTest extends TestCase {
 		Monkey\setUp();
 
 		// Define constants if not already defined
-		if ( ! defined( 'MEDIAMANAGER_PATH' ) ) {
-			define( 'MEDIAMANAGER_PATH', '/tmp/mediamanager-test/' );
+		if ( ! defined( 'VMF_PATH' ) ) {
+			define( 'VMF_PATH', '/tmp/mediamanager-test/' );
 		}
-		if ( ! defined( 'MEDIAMANAGER_URL' ) ) {
-			define( 'MEDIAMANAGER_URL', 'https://example.com/wp-content/plugins/mediamanager/' );
+		if ( ! defined( 'VMF_URL' ) ) {
+			define( 'VMF_URL', 'https://example.com/wp-content/plugins/mediamanager/' );
 		}
-		if ( ! defined( 'MEDIAMANAGER_VERSION' ) ) {
-			define( 'MEDIAMANAGER_VERSION', '0.1.0' );
+		if ( ! defined( 'VMF_VERSION' ) ) {
+			define( 'VMF_VERSION', '0.1.0' );
 		}
 	}
 
@@ -92,12 +92,14 @@ class EditorTest extends TestCase {
 		Functions\expect( 'sanitize_text_field' )
 			->once()
 			->andReturnUsing( function ( $val ) {
-				return $val; } );
+				return $val;
+			} );
 
 		Functions\expect( 'wp_unslash' )
 			->once()
 			->andReturnUsing( function ( $val ) {
-				return $val; } );
+				return $val;
+			} );
 
 		Functions\expect( 'absint' )
 			->once()
@@ -106,7 +108,7 @@ class EditorTest extends TestCase {
 
 		Functions\expect( 'apply_filters' )
 			->once()
-			->with( 'mediamanager_include_child_folders', false, 5 )
+			->with( 'vmf_include_child_folders', false, 5 )
 			->andReturn( false );
 
 		$query_args = [ 'post_type' => 'attachment' ];
@@ -136,12 +138,14 @@ class EditorTest extends TestCase {
 		Functions\expect( 'sanitize_text_field' )
 			->once()
 			->andReturnUsing( function ( $val ) {
-				return $val; } );
+				return $val;
+			} );
 
 		Functions\expect( 'wp_unslash' )
 			->once()
 			->andReturnUsing( function ( $val ) {
-				return $val; } );
+				return $val;
+			} );
 
 		Functions\expect( 'get_terms' )
 			->once()
@@ -176,12 +180,14 @@ class EditorTest extends TestCase {
 		Functions\expect( 'sanitize_text_field' )
 			->once()
 			->andReturnUsing( function ( $val ) {
-				return $val; } );
+				return $val;
+			} );
 
 		Functions\expect( 'wp_unslash' )
 			->once()
 			->andReturnUsing( function ( $val ) {
-				return $val; } );
+				return $val;
+			} );
 
 		Functions\expect( 'get_terms' )
 			->once()
@@ -217,12 +223,14 @@ class EditorTest extends TestCase {
 		Functions\expect( 'sanitize_text_field' )
 			->once()
 			->andReturnUsing( function ( $val ) {
-				return $val; } );
+				return $val;
+			} );
 
 		Functions\expect( 'wp_unslash' )
 			->once()
 			->andReturnUsing( function ( $val ) {
-				return $val; } );
+				return $val;
+			} );
 
 		Functions\expect( 'get_terms' )
 			->once()

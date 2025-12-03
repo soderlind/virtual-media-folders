@@ -5,13 +5,13 @@
  * Analyzes uploaded media files and suggests appropriate folders
  * based on file type, EXIF metadata, and IPTC keywords.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  * @since   1.0.0
  */
 
 declare(strict_types=1);
 
-namespace MediaManager;
+namespace VirtualMediaFolders;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -35,7 +35,7 @@ class Suggestions {
 	 *
 	 * @var string
 	 */
-	public const META_KEY = '_mm_folder_suggestions';
+	public const META_KEY = '_vmf_folder_suggestions';
 
 	/**
 	 * Initialize suggestion hooks.

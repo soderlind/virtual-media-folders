@@ -139,7 +139,7 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 		// Get initial folder from URL (admin only)
 		if (trackUrl) {
 			const params = new URLSearchParams(window.location.search);
-			const urlFolder = params.get('mm_folder');
+			const urlFolder = params.get('vmf_folder');
 			const urlMode = params.get('mode');
 			
 			if (urlFolder) {

@@ -79,16 +79,16 @@ export function MediaManagerDndProvider({ onMoveToFolder, children }) {
 			{children}
 			<DragOverlay>
 				{activeId ? (
-					<div className="mm-drag-overlay">
+					<div className="vmf-drag-overlay">
 						{activeData?.thumbnail ? (
 							<img
 								src={activeData.thumbnail}
 								alt={activeData.title || ''}
-								className="mm-drag-overlay__image"
+								className="vmf-drag-overlay__image"
 							/>
 						) : (
-							<div className="mm-drag-overlay__placeholder">
-								{activeData?.title || __('Media', 'mediamanager')}
+							<div className="vmf-drag-overlay__placeholder">
+								{activeData?.title || __('Media', 'virtual-media-folders')}
 							</div>
 						)}
 					</div>

@@ -5,13 +5,13 @@
  * Handles admin-side functionality including script/style enqueuing
  * and AJAX handlers for media folder operations.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  * @since   1.0.0
  */
 
 declare(strict_types=1);
 
-namespace MediaManager;
+namespace VirtualMediaFolders;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -35,7 +35,7 @@ class Admin {
 	 */
 	public static function init(): void {
 		add_action( 'admin_enqueue_scripts', [ static::class, 'enqueue_scripts' ] );
-		add_action( 'wp_ajax_mm_move_to_folder', [ static::class, 'ajax_move_to_folder' ] );
+		add_action( 'wp_ajax_vmf_move_to_folder', [ static::class, 'ajax_move_to_folder' ] );
 		add_action( 'add_attachment', [ static::class, 'assign_default_folder' ] );
 	}
 
@@ -72,13 +72,13 @@ class Admin {
 	 */
 	public static function ajax_move_to_folder(): void {
 		// Verify nonce for security.
-		if ( ! check_ajax_referer( 'mm_move_media', 'nonce', false ) ) {
-			wp_send_json_error( [ 'message' => __( 'Invalid security token.', 'mediamanager' ) ], 403 );
+		if ( ! check_ajax_referer( 'vmf_move_media', 'nonce', false ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid security token.', 'virtual-media-folders' ) ], 403 );
 		}
 
 		// Verify user has permission to upload/manage media.
 		if ( ! current_user_can( 'upload_files' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Permission denied.', 'mediamanager' ) ], 403 );
+			wp_send_json_error( [ 'message' => __( 'Permission denied.', 'virtual-media-folders' ) ], 403 );
 		}
 
 		// Sanitize and validate input.
@@ -86,20 +86,20 @@ class Admin {
 		$folder_id = isset( $_POST[ 'folder_id' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'folder_id' ] ) ) : '';
 
 		if ( ! $media_id ) {
-			wp_send_json_error( [ 'message' => __( 'Invalid media ID.', 'mediamanager' ) ], 400 );
+			wp_send_json_error( [ 'message' => __( 'Invalid media ID.', 'virtual-media-folders' ) ], 400 );
 		}
 
 		// Verify the attachment exists and is valid.
 		$attachment = get_post( $media_id );
 		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
-			wp_send_json_error( [ 'message' => __( 'Attachment not found.', 'mediamanager' ) ], 404 );
+			wp_send_json_error( [ 'message' => __( 'Attachment not found.', 'virtual-media-folders' ) ], 404 );
 		}
 
 		// Handle special cases: remove from all folders.
 		if ( $folder_id === 'uncategorized' || $folder_id === '' || $folder_id === 'root' ) {
 			wp_set_object_terms( $media_id, [], 'media_folder' );
 			wp_send_json_success( [
-				'message'   => __( 'Media removed from all folders.', 'mediamanager' ),
+				'message'   => __( 'Media removed from all folders.', 'virtual-media-folders' ),
 				'media_id'  => $media_id,
 				'folder_id' => null,
 			] );
@@ -109,7 +109,7 @@ class Admin {
 		$folder_id = absint( $folder_id );
 		$term      = get_term( $folder_id, 'media_folder' );
 		if ( ! $term || is_wp_error( $term ) ) {
-			wp_send_json_error( [ 'message' => __( 'Folder not found.', 'mediamanager' ) ], 404 );
+			wp_send_json_error( [ 'message' => __( 'Folder not found.', 'virtual-media-folders' ) ], 404 );
 		}
 
 		// Assign media to folder (replaces existing assignments).
@@ -122,7 +122,7 @@ class Admin {
 		wp_send_json_success( [
 			'message'   => sprintf(
 				/* translators: %s: folder name */
-				__( 'Media moved to "%s".', 'mediamanager' ),
+				__( 'Media moved to "%s".', 'virtual-media-folders' ),
 				$term->name
 			),
 			'media_id'  => $media_id,
@@ -145,7 +145,7 @@ class Admin {
 			return;
 		}
 
-		$asset_file = MEDIAMANAGER_PATH . 'build/admin.asset.php';
+		$asset_file = VMF_PATH . 'build/admin.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -155,25 +155,25 @@ class Admin {
 
 		// Enqueue the main admin JavaScript bundle.
 		wp_enqueue_script(
-			'mediamanager-admin',
-			MEDIAMANAGER_URL . 'build/admin.js',
+			'vmf-admin',
+			VMF_URL . 'build/admin.js',
 			$asset[ 'dependencies' ] ?? [ 'wp-element', 'wp-api-fetch', 'wp-i18n', 'wp-icons' ],
-			$asset[ 'version' ] ?? MEDIAMANAGER_VERSION,
+			$asset[ 'version' ] ?? VMF_VERSION,
 			true
 		);
 
 		// Enqueue admin styles.
 		wp_enqueue_style(
-			'mediamanager-admin',
-			MEDIAMANAGER_URL . 'build/admin.css',
+			'vmf-admin',
+			VMF_URL . 'build/admin.css',
 			[ 'wp-components' ],
-			$asset[ 'version' ] ?? MEDIAMANAGER_VERSION
+			$asset[ 'version' ] ?? VMF_VERSION
 		);
 
 		// Provide AJAX configuration to JavaScript.
-		wp_localize_script( 'mediamanager-admin', 'mediaManagerData', [
+		wp_localize_script( 'vmf-admin', 'vmfData', [
 			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
-			'nonce'                 => wp_create_nonce( 'mm_move_media' ),
+			'nonce'                 => wp_create_nonce( 'vmf_move_media' ),
 			'jumpToFolderAfterMove' => Settings::get( 'jump_to_folder_after_move', false ),
 			'showAllMedia'          => Settings::get( 'show_all_media', true ),
 			'showUncategorized'     => Settings::get( 'show_uncategorized', true ),
@@ -181,6 +181,6 @@ class Admin {
 		] );
 
 		// Enable translations for JavaScript strings.
-		wp_set_script_translations( 'mediamanager-admin', 'mediamanager', MEDIAMANAGER_PATH . 'languages' );
+		wp_set_script_translations( 'vmf-admin', 'virtual-media-folders', VMF_PATH . 'languages' );
 	}
 }

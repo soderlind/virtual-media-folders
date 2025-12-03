@@ -5,13 +5,13 @@
  * Provides custom REST API endpoints for folder management
  * and folder suggestions.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace MediaManager;
+namespace VirtualMediaFolders;
 
 use WP_Error;
 use WP_REST_Controller;
@@ -29,7 +29,7 @@ final class RestApi extends WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'mediamanager/v1';
+	protected $namespace = 'vmf/v1';
 
 	/**
 	 * Initialize the REST API.
@@ -66,13 +66,13 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_text_field',
-							'description'       => __( 'The folder name.', 'mediamanager' ),
+							'description'       => __( 'The folder name.', 'virtual-media-folders' ),
 						],
 						'parent' => [
 							'type'              => 'integer',
 							'default'           => 0,
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'Parent folder ID.', 'mediamanager' ),
+							'description'       => __( 'Parent folder ID.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -93,7 +93,7 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The folder ID.', 'mediamanager' ),
+							'description'       => __( 'The folder ID.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -106,17 +106,17 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The folder ID.', 'mediamanager' ),
+							'description'       => __( 'The folder ID.', 'virtual-media-folders' ),
 						],
 						'name'   => [
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_text_field',
-							'description'       => __( 'The folder name.', 'mediamanager' ),
+							'description'       => __( 'The folder name.', 'virtual-media-folders' ),
 						],
 						'parent' => [
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'Parent folder ID.', 'mediamanager' ),
+							'description'       => __( 'Parent folder ID.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -129,12 +129,12 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The folder ID.', 'mediamanager' ),
+							'description'       => __( 'The folder ID.', 'virtual-media-folders' ),
 						],
 						'force' => [
 							'type'        => 'boolean',
 							'default'     => false,
-							'description' => __( 'Whether to bypass trash and force deletion.', 'mediamanager' ),
+							'description' => __( 'Whether to bypass trash and force deletion.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -156,13 +156,13 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The folder ID.', 'mediamanager' ),
+							'description'       => __( 'The folder ID.', 'virtual-media-folders' ),
 						],
 						'media_id' => [
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The media attachment ID.', 'mediamanager' ),
+							'description'       => __( 'The media attachment ID.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -175,13 +175,13 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The folder ID.', 'mediamanager' ),
+							'description'       => __( 'The folder ID.', 'virtual-media-folders' ),
 						],
 						'media_id' => [
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The media attachment ID.', 'mediamanager' ),
+							'description'       => __( 'The media attachment ID.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -202,7 +202,7 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The media attachment ID.', 'mediamanager' ),
+							'description'       => __( 'The media attachment ID.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -222,7 +222,7 @@ final class RestApi extends WP_REST_Controller {
 						'media_type' => [
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_text_field',
-							'description'       => __( 'Filter counts by media type (image, audio, video, application).', 'mediamanager' ),
+							'description'       => __( 'Filter counts by media type (image, audio, video, application).', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -242,13 +242,13 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The media attachment ID.', 'mediamanager' ),
+							'description'       => __( 'The media attachment ID.', 'virtual-media-folders' ),
 						],
 						'folder_id' => [
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The folder ID to apply.', 'mediamanager' ),
+							'description'       => __( 'The folder ID to apply.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -268,7 +268,7 @@ final class RestApi extends WP_REST_Controller {
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-							'description'       => __( 'The media attachment ID.', 'mediamanager' ),
+							'description'       => __( 'The media attachment ID.', 'virtual-media-folders' ),
 						],
 					],
 				],
@@ -286,7 +286,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! current_user_can( 'upload_files' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view folders.', 'mediamanager' ),
+				__( 'You do not have permission to view folders.', 'virtual-media-folders' ),
 				[ 'status' => rest_authorization_required_code() ]
 			);
 		}
@@ -303,7 +303,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_categories' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to create folders.', 'mediamanager' ),
+				__( 'You do not have permission to create folders.', 'virtual-media-folders' ),
 				[ 'status' => rest_authorization_required_code() ]
 			);
 		}
@@ -320,7 +320,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_categories' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to update folders.', 'mediamanager' ),
+				__( 'You do not have permission to update folders.', 'virtual-media-folders' ),
 				[ 'status' => rest_authorization_required_code() ]
 			);
 		}
@@ -337,7 +337,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_categories' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to delete folders.', 'mediamanager' ),
+				__( 'You do not have permission to delete folders.', 'virtual-media-folders' ),
 				[ 'status' => rest_authorization_required_code() ]
 			);
 		}
@@ -389,7 +389,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $term ) {
 			return new WP_Error(
 				'rest_folder_not_found',
-				__( 'Folder not found.', 'mediamanager' ),
+				__( 'Folder not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -441,7 +441,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $term ) {
 			return new WP_Error(
 				'rest_folder_not_found',
-				__( 'Folder not found.', 'mediamanager' ),
+				__( 'Folder not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -459,7 +459,7 @@ final class RestApi extends WP_REST_Controller {
 			if ( $parent === $folder_id ) {
 				return new WP_Error(
 					'rest_invalid_parent',
-					__( 'A folder cannot be its own parent.', 'mediamanager' ),
+					__( 'A folder cannot be its own parent.', 'virtual-media-folders' ),
 					[ 'status' => 400 ]
 				);
 			}
@@ -498,7 +498,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $term ) {
 			return new WP_Error(
 				'rest_folder_not_found',
-				__( 'Folder not found.', 'mediamanager' ),
+				__( 'Folder not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -512,7 +512,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_folder_delete_failed',
-				__( 'Failed to delete folder.', 'mediamanager' ),
+				__( 'Failed to delete folder.', 'virtual-media-folders' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -541,7 +541,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( is_wp_error( $term ) || ! $term ) {
 			return new WP_Error(
 				'rest_folder_not_found',
-				__( 'Folder not found.', 'mediamanager' ),
+				__( 'Folder not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -551,7 +551,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
 			return new WP_Error(
 				'rest_media_not_found',
-				__( 'Media not found.', 'mediamanager' ),
+				__( 'Media not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -563,14 +563,14 @@ final class RestApi extends WP_REST_Controller {
 		}
 
 		// Clear any dismissed suggestions since user is now organizing.
-		delete_post_meta( $media_id, '_mm_suggestions_dismissed' );
+		delete_post_meta( $media_id, '_vmf_suggestions_dismissed' );
 
 		return new WP_REST_Response(
 			[
 				'success'   => true,
 				'media_id'  => $media_id,
 				'folder_id' => $folder_id,
-				'message'   => __( 'Media added to folder.', 'mediamanager' ),
+				'message'   => __( 'Media added to folder.', 'virtual-media-folders' ),
 			],
 			200
 		);
@@ -591,7 +591,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
 			return new WP_Error(
 				'rest_media_not_found',
-				__( 'Media not found.', 'mediamanager' ),
+				__( 'Media not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -607,7 +607,7 @@ final class RestApi extends WP_REST_Controller {
 				'success'   => true,
 				'media_id'  => $media_id,
 				'folder_id' => $folder_id,
-				'message'   => __( 'Media removed from folder.', 'mediamanager' ),
+				'message'   => __( 'Media removed from folder.', 'virtual-media-folders' ),
 			],
 			200
 		);
@@ -727,13 +727,13 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
 			return new WP_Error(
 				'rest_media_not_found',
-				__( 'Media not found.', 'mediamanager' ),
+				__( 'Media not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
 
 		// Check if suggestions were dismissed.
-		$dismissed = get_post_meta( $media_id, '_mm_suggestions_dismissed', true );
+		$dismissed = get_post_meta( $media_id, '_vmf_suggestions_dismissed', true );
 		if ( $dismissed ) {
 			return new WP_REST_Response(
 				[
@@ -745,7 +745,7 @@ final class RestApi extends WP_REST_Controller {
 		}
 
 		// Get stored suggestions.
-		$suggestions = get_post_meta( $media_id, '_mm_folder_suggestions', true );
+		$suggestions = get_post_meta( $media_id, '_vmf_folder_suggestions', true );
 		if ( ! is_array( $suggestions ) ) {
 			$suggestions = [];
 		}
@@ -783,7 +783,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
 			return new WP_Error(
 				'rest_media_not_found',
-				__( 'Media not found.', 'mediamanager' ),
+				__( 'Media not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -793,7 +793,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( is_wp_error( $term ) || ! $term ) {
 			return new WP_Error(
 				'rest_folder_not_found',
-				__( 'Folder not found.', 'mediamanager' ),
+				__( 'Folder not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -806,15 +806,15 @@ final class RestApi extends WP_REST_Controller {
 		}
 
 		// Clear suggestions after applying.
-		delete_post_meta( $media_id, '_mm_folder_suggestions' );
-		delete_post_meta( $media_id, '_mm_suggestions_dismissed' );
+		delete_post_meta( $media_id, '_vmf_folder_suggestions' );
+		delete_post_meta( $media_id, '_vmf_suggestions_dismissed' );
 
 		return new WP_REST_Response(
 			[
 				'success'   => true,
 				'media_id'  => $media_id,
 				'folder_id' => $folder_id,
-				'message'   => __( 'Folder suggestion applied.', 'mediamanager' ),
+				'message'   => __( 'Folder suggestion applied.', 'virtual-media-folders' ),
 			],
 			200
 		);
@@ -834,19 +834,19 @@ final class RestApi extends WP_REST_Controller {
 		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
 			return new WP_Error(
 				'rest_media_not_found',
-				__( 'Media not found.', 'mediamanager' ),
+				__( 'Media not found.', 'virtual-media-folders' ),
 				[ 'status' => 404 ]
 			);
 		}
 
 		// Mark suggestions as dismissed.
-		update_post_meta( $media_id, '_mm_suggestions_dismissed', true );
+		update_post_meta( $media_id, '_vmf_suggestions_dismissed', true );
 
 		return new WP_REST_Response(
 			[
 				'success'  => true,
 				'media_id' => $media_id,
-				'message'  => __( 'Suggestions dismissed.', 'mediamanager' ),
+				'message'  => __( 'Suggestions dismissed.', 'virtual-media-folders' ),
 			],
 			200
 		);
@@ -893,35 +893,35 @@ final class RestApi extends WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => [
 				'id'          => [
-					'description' => __( 'Unique identifier for the folder.', 'mediamanager' ),
+					'description' => __( 'Unique identifier for the folder.', 'virtual-media-folders' ),
 					'type'        => 'integer',
 					'context'     => [ 'view', 'edit' ],
 					'readonly'    => true,
 				],
 				'name'        => [
-					'description' => __( 'The name of the folder.', 'mediamanager' ),
+					'description' => __( 'The name of the folder.', 'virtual-media-folders' ),
 					'type'        => 'string',
 					'context'     => [ 'view', 'edit' ],
 					'required'    => true,
 				],
 				'slug'        => [
-					'description' => __( 'The slug of the folder.', 'mediamanager' ),
+					'description' => __( 'The slug of the folder.', 'virtual-media-folders' ),
 					'type'        => 'string',
 					'context'     => [ 'view', 'edit' ],
 				],
 				'description' => [
-					'description' => __( 'The description of the folder.', 'mediamanager' ),
+					'description' => __( 'The description of the folder.', 'virtual-media-folders' ),
 					'type'        => 'string',
 					'context'     => [ 'view', 'edit' ],
 				],
 				'parent'      => [
-					'description' => __( 'The parent folder ID.', 'mediamanager' ),
+					'description' => __( 'The parent folder ID.', 'virtual-media-folders' ),
 					'type'        => 'integer',
 					'context'     => [ 'view', 'edit' ],
 					'default'     => 0,
 				],
 				'count'       => [
-					'description' => __( 'Number of media items in this folder.', 'mediamanager' ),
+					'description' => __( 'Number of media items in this folder.', 'virtual-media-folders' ),
 					'type'        => 'integer',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
@@ -938,12 +938,12 @@ final class RestApi extends WP_REST_Controller {
 	public function get_collection_params(): array {
 		return [
 			'hide_empty' => [
-				'description' => __( 'Whether to hide folders with no media.', 'mediamanager' ),
+				'description' => __( 'Whether to hide folders with no media.', 'virtual-media-folders' ),
 				'type'        => 'boolean',
 				'default'     => false,
 			],
 			'parent'     => [
-				'description' => __( 'Filter by parent folder ID.', 'mediamanager' ),
+				'description' => __( 'Filter by parent folder ID.', 'virtual-media-folders' ),
 				'type'        => 'integer',
 				'default'     => null,
 			],

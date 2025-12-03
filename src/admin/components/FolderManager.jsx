@@ -71,7 +71,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	 */
 	function getParentOptions() {
 		return [
-			{ label: __('None (top level)', 'mediamanager'), value: '0' },
+			{ label: __('None (top level)', 'virtual-media-folders'), value: '0' },
 			...buildHierarchicalOptions(folders),
 		];
 	}
@@ -83,7 +83,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	 */
 	function getRenameParentOptions() {
 		return [
-			{ label: __('None (top level)', 'mediamanager'), value: '0' },
+			{ label: __('None (top level)', 'virtual-media-folders'), value: '0' },
 			...buildHierarchicalOptions(folders, 0, 0, selectedId),
 		];
 	}
@@ -93,7 +93,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	 */
 	async function handleCreate() {
 		if (!newFolderName.trim()) {
-			setError(__('Please enter a folder name.', 'mediamanager'));
+			setError(__('Please enter a folder name.', 'virtual-media-folders'));
 			return;
 		}
 
@@ -113,10 +113,10 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 			setNewFolderName('');
 			setNewFolderParent(0);
 			setIsCreateOpen(false);
-			showNotice(__('Folder created.', 'mediamanager'), 'success');
+			showNotice(__('Folder created.', 'virtual-media-folders'), 'success');
 			onRefresh?.();
 		} catch (err) {
-			setError(err.message || __('Failed to create folder.', 'mediamanager'));
+			setError(err.message || __('Failed to create folder.', 'virtual-media-folders'));
 		} finally {
 			setIsProcessing(false);
 		}
@@ -127,7 +127,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	 */
 	async function handleRename() {
 		if (!renameFolderName.trim()) {
-			setError(__('Please enter a folder name.', 'mediamanager'));
+			setError(__('Please enter a folder name.', 'virtual-media-folders'));
 			return;
 		}
 
@@ -151,10 +151,10 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 			setRenameFolderName('');
 			setRenameFolderParent(0);
 			setIsRenameOpen(false);
-			showNotice(__('Folder updated.', 'mediamanager'), 'success');
+			showNotice(__('Folder updated.', 'virtual-media-folders'), 'success');
 			onRefresh?.();
 		} catch (err) {
-			setError(err.message || __('Failed to update folder.', 'mediamanager'));
+			setError(err.message || __('Failed to update folder.', 'virtual-media-folders'));
 		} finally {
 			setIsProcessing(false);
 		}
@@ -178,13 +178,13 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 			});
 
 			setIsDeleteOpen(false);
-			showNotice(__('Folder deleted.', 'mediamanager'), 'success');
+			showNotice(__('Folder deleted.', 'virtual-media-folders'), 'success');
 			
 			// Move focus to Uncategorized if it has items, otherwise All Media
 			onDelete?.();
 			onRefresh?.();
 		} catch (err) {
-			setError(err.message || __('Failed to delete folder.', 'mediamanager'));
+			setError(err.message || __('Failed to delete folder.', 'virtual-media-folders'));
 		} finally {
 			setIsProcessing(false);
 		}
@@ -207,7 +207,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	 */
 	function showNotice(message, type = 'success') {
 		const notice = document.createElement('div');
-		notice.className = `notice notice-${type} mm-notice is-dismissible`;
+		notice.className = `notice notice-${type} vmf-notice is-dismissible`;
 		notice.innerHTML = `<p>${message}</p>`;
 		notice.style.cssText = 'position: fixed; top: 40px; right: 20px; z-index: 100000; max-width: 300px;';
 		document.body.appendChild(notice);
@@ -217,11 +217,11 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	const canModifyFolder = selectedId && typeof selectedId === 'number';
 
 	return (
-		<div className="mm-folder-manager" onClick={(e) => e.stopPropagation()}>
-			<div className="mm-folder-manager-buttons">
+		<div className="vmf-folder-manager" onClick={(e) => e.stopPropagation()}>
+			<div className="vmf-folder-manager-buttons">
 				<Button
 					icon={plus}
-					aria-label={__('Create Folder', 'mediamanager')}
+					aria-label={__('Create Folder', 'virtual-media-folders')}
 					onClick={(e) => {
 						e.stopPropagation();
 						setError('');
@@ -230,32 +230,32 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 						setNewFolderParent(isValidFolder ? selectedId : 0);
 						setIsCreateOpen(true);
 					}}
-					className="mm-folder-manager-button"
+					className="vmf-folder-manager-button"
 					size="small"
 					showTooltip={false}
 				/>
 				<Button
 					icon={pencil}
-					aria-label={__('Rename Folder', 'mediamanager')}
+					aria-label={__('Rename Folder', 'virtual-media-folders')}
 					onClick={(e) => {
 						e.stopPropagation();
 						openRenameModal();
 					}}
 					disabled={!canModifyFolder}
-					className="mm-folder-manager-button"
+					className="vmf-folder-manager-button"
 					size="small"
 					showTooltip={false}
 				/>
 				<Button
 					icon={trash}
-					aria-label={__('Delete Folder', 'mediamanager')}
+					aria-label={__('Delete Folder', 'virtual-media-folders')}
 					onClick={(e) => {
 						e.stopPropagation();
 						setError('');
 						setIsDeleteOpen(true);
 					}}
 					disabled={!canModifyFolder}
-					className="mm-folder-manager-button"
+					className="vmf-folder-manager-button"
 					isDestructive
 					size="small"
 					showTooltip={false}
@@ -265,41 +265,41 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 			{/* Create Modal */}
 			{isCreateOpen && (
 				<Modal
-					title={__('Create Folder', 'mediamanager')}
+					title={__('Create Folder', 'virtual-media-folders')}
 					onRequestClose={() => setIsCreateOpen(false)}
-					className="mm-folder-modal"
+					className="vmf-folder-modal"
 				>
 					<TextControl
-						label={__('Folder Name', 'mediamanager')}
+						label={__('Folder Name', 'virtual-media-folders')}
 						value={newFolderName}
 						onChange={setNewFolderName}
-						placeholder={__('Enter folder name', 'mediamanager')}
+						placeholder={__('Enter folder name', 'virtual-media-folders')}
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 					/>
 					<SelectControl
-						label={__('Parent Folder', 'mediamanager')}
+						label={__('Parent Folder', 'virtual-media-folders')}
 						value={String(newFolderParent)}
 						options={getParentOptions()}
 						onChange={(value) => setNewFolderParent(parseInt(value, 10))}
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 					/>
-					{error && <p className="mm-folder-modal-error">{error}</p>}
-					<div className="mm-folder-modal-actions">
+					{error && <p className="vmf-folder-modal-error">{error}</p>}
+					<div className="vmf-folder-modal-actions">
 						<Button
 							variant="secondary"
 							onClick={() => setIsCreateOpen(false)}
 							disabled={isProcessing}
 						>
-							{__('Cancel', 'mediamanager')}
+							{__('Cancel', 'virtual-media-folders')}
 						</Button>
 						<Button
 							variant="primary"
 							onClick={handleCreate}
 							disabled={isProcessing}
 						>
-							{isProcessing ? __('Creating…', 'mediamanager') : __('Create', 'mediamanager')}
+							{isProcessing ? __('Creating…', 'virtual-media-folders') : __('Create', 'virtual-media-folders')}
 						</Button>
 					</div>
 				</Modal>
@@ -308,41 +308,41 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 			{/* Rename Modal */}
 			{isRenameOpen && (
 				<Modal
-					title={__('Edit Folder', 'mediamanager')}
+					title={__('Edit Folder', 'virtual-media-folders')}
 					onRequestClose={() => setIsRenameOpen(false)}
-					className="mm-folder-modal"
+					className="vmf-folder-modal"
 				>
 					<TextControl
-						label={__('Folder Name', 'mediamanager')}
+						label={__('Folder Name', 'virtual-media-folders')}
 						value={renameFolderName}
 						onChange={setRenameFolderName}
-						placeholder={__('Enter folder name', 'mediamanager')}
+						placeholder={__('Enter folder name', 'virtual-media-folders')}
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 					/>
 					<SelectControl
-						label={__('Parent Folder', 'mediamanager')}
+						label={__('Parent Folder', 'virtual-media-folders')}
 						value={String(renameFolderParent)}
 						options={getRenameParentOptions()}
 						onChange={(value) => setRenameFolderParent(parseInt(value, 10))}
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 					/>
-					{error && <p className="mm-folder-modal-error">{error}</p>}
-					<div className="mm-folder-modal-actions">
+					{error && <p className="vmf-folder-modal-error">{error}</p>}
+					<div className="vmf-folder-modal-actions">
 						<Button
 							variant="secondary"
 							onClick={() => setIsRenameOpen(false)}
 							disabled={isProcessing}
 						>
-							{__('Cancel', 'mediamanager')}
+							{__('Cancel', 'virtual-media-folders')}
 						</Button>
 						<Button
 							variant="primary"
 							onClick={handleRename}
 							disabled={isProcessing}
 						>
-							{isProcessing ? __('Saving…', 'mediamanager') : __('Save', 'mediamanager')}
+							{isProcessing ? __('Saving…', 'virtual-media-folders') : __('Save', 'virtual-media-folders')}
 						</Button>
 					</div>
 				</Modal>
@@ -351,28 +351,28 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 			{/* Delete Confirmation Modal */}
 			{isDeleteOpen && (
 				<Modal
-					title={__('Delete Folder', 'mediamanager')}
+					title={__('Delete Folder', 'virtual-media-folders')}
 					onRequestClose={() => setIsDeleteOpen(false)}
-					className="mm-folder-modal"
+					className="vmf-folder-modal"
 				>
 					<p>
 						{sprintf(
 							/* translators: %s: folder name */
-							__('Are you sure you want to delete the folder "%s"?', 'mediamanager'),
+							__('Are you sure you want to delete the folder "%s"?', 'virtual-media-folders'),
 							currentFolder?.name || ''
 						)}
 					</p>
-					<p className="mm-folder-modal-warning">
-						{__('Media items in this folder will not be deleted, only the folder organization.', 'mediamanager')}
+					<p className="vmf-folder-modal-warning">
+						{__('Media items in this folder will not be deleted, only the folder organization.', 'virtual-media-folders')}
 					</p>
-					{error && <p className="mm-folder-modal-error">{error}</p>}
-					<div className="mm-folder-modal-actions">
+					{error && <p className="vmf-folder-modal-error">{error}</p>}
+					<div className="vmf-folder-modal-actions">
 						<Button
 							variant="secondary"
 							onClick={() => setIsDeleteOpen(false)}
 							disabled={isProcessing}
 						>
-							{__('Cancel', 'mediamanager')}
+							{__('Cancel', 'virtual-media-folders')}
 						</Button>
 						<Button
 							variant="primary"
@@ -380,7 +380,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 							onClick={handleDelete}
 							disabled={isProcessing}
 						>
-							{isProcessing ? __('Deleting…', 'mediamanager') : __('Delete', 'mediamanager')}
+							{isProcessing ? __('Deleting…', 'virtual-media-folders') : __('Delete', 'virtual-media-folders')}
 						</Button>
 					</div>
 				</Modal>

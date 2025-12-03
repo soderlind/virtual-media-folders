@@ -106,8 +106,8 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 
 	return (
 		<Dropdown
-			className="mm-move-to-folder-dropdown"
-			contentClassName="mm-move-to-folder-content"
+			className="vmf-move-to-folder-dropdown"
+			contentClassName="vmf-move-to-folder-content"
 			popoverProps={{ placement: 'bottom-start' }}
 			renderToggle={({ isOpen, onToggle }) => (
 				<Button
@@ -115,19 +115,19 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 					onClick={onToggle}
 					aria-expanded={isOpen}
 					aria-haspopup="true"
-					className="mm-move-to-folder-button"
+					className="vmf-move-to-folder-button"
 				>
 					<Icon icon={folderIcon} />
 					<span className="screen-reader-text">
-						{__('Move to folder', 'mediamanager')}
+						{__('Move to folder', 'virtual-media-folders')}
 					</span>
 				</Button>
 			)}
 			renderContent={({ onClose }) => (
-				<MenuGroup label={__('Move to folder', 'mediamanager')}>
+				<MenuGroup label={__('Move to folder', 'virtual-media-folders')}>
 					{loading ? (
 						<MenuItem disabled>
-							{__('Loading…', 'mediamanager')}
+							{__('Loading…', 'virtual-media-folders')}
 						</MenuItem>
 					) : (
 						<>
@@ -139,7 +139,7 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 								}}
 								isSelected={currentFolderId === null}
 							>
-								{__('Remove from folder', 'mediamanager')}
+								{__('Remove from folder', 'virtual-media-folders')}
 							</MenuItem>
 
 							{/* Folder list */}
@@ -147,7 +147,7 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 								renderFolderItems(tree, 0, onClose)
 							) : (
 								<MenuItem disabled>
-									{__('No folders yet', 'mediamanager')}
+									{__('No folders yet', 'virtual-media-folders')}
 								</MenuItem>
 							)}
 						</>

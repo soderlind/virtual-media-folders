@@ -42,7 +42,7 @@ export function DraggableMedia({ mediaId, title, thumbnail, children }) {
 		<div
 			ref={setNodeRef}
 			style={style}
-			className={`mm-draggable-media ${isDragging ? 'is-dragging' : ''}`}
+			className={`vmf-draggable-media ${isDragging ? 'is-dragging' : ''}`}
 			{...listeners}
 			{...attributes}
 		>

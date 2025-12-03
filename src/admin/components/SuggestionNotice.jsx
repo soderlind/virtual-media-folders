@@ -24,25 +24,25 @@ export function SuggestionNotice({ attachmentId, suggestions, onApply, onDismiss
 
 	const message = sprintf(
 		/* translators: %s: list of suggested folders */
-		__('Suggested folders: %s', 'mediamanager'),
+		__('Suggested folders: %s', 'virtual-media-folders'),
 		suggestions.join(', ')
 	);
 
 	return (
-		<Notice status="info" isDismissible={false} className="mm-suggestion-notice">
+		<Notice status="info" isDismissible={false} className="vmf-suggestion-notice">
 			<p>{message}</p>
-			<div className="mm-suggestion-notice__actions">
+			<div className="vmf-suggestion-notice__actions">
 				<Button
 					variant="primary"
 					onClick={() => onApply?.(attachmentId, suggestions)}
 				>
-					{__('Apply', 'mediamanager')}
+					{__('Apply', 'virtual-media-folders')}
 				</Button>
 				<Button
 					variant="tertiary"
 					onClick={() => onDismiss?.(attachmentId)}
 				>
-					{__('Dismiss', 'mediamanager')}
+					{__('Dismiss', 'virtual-media-folders')}
 				</Button>
 			</div>
 		</Notice>

@@ -2,15 +2,15 @@
 /**
  * Settings Page.
  *
- * Provides a settings page for Media Manager plugin options.
+ * Provides a settings page for Virtual Media Folders plugin options.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace MediaManager;
+namespace VirtualMediaFolders;
 
 /**
  * Settings handler.
@@ -20,17 +20,17 @@ final class Settings {
 	/**
 	 * Option group name.
 	 */
-	private const OPTION_GROUP = 'mediamanager_settings';
+	private const OPTION_GROUP = 'vmf_settings';
 
 	/**
 	 * Option name for storing settings.
 	 */
-	private const OPTION_NAME = 'mediamanager_options';
+	private const OPTION_NAME = 'vmf_options';
 
 	/**
 	 * Settings page slug.
 	 */
-	private const PAGE_SLUG = 'mediamanager-settings';
+	private const PAGE_SLUG = 'vmf-settings';
 
 	/**
 	 * Default settings.
@@ -67,8 +67,8 @@ final class Settings {
 	public static function add_menu_page(): void {
 		add_submenu_page(
 			'upload.php',
-			__( 'Media Manager Settings', 'mediamanager' ),
-			__( 'Folder Settings', 'mediamanager' ),
+			__( 'Virtual Media Folders Settings', 'virtual-media-folders' ),
+			__( 'Folder Settings', 'virtual-media-folders' ),
 			'manage_options',
 			self::PAGE_SLUG,
 			[ self::class, 'render_settings_page' ]
@@ -152,77 +152,77 @@ final class Settings {
 
 		// Default behavior section.
 		add_settings_section(
-			'mediamanager_defaults',
-			__( 'Default Behavior', 'mediamanager' ),
+			'vmf_defaults',
+			__( 'Default Behavior', 'virtual-media-folders' ),
 			[ self::class, 'render_defaults_section' ],
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
 			'default_folder',
-			__( 'Default Folder', 'mediamanager' ),
+			__( 'Default Folder', 'virtual-media-folders' ),
 			[ self::class, 'render_folder_select_field' ],
 			self::PAGE_SLUG,
-			'mediamanager_defaults',
+			'vmf_defaults',
 			[
 				'id'          => 'default_folder',
-				'description' => __( 'Automatically assign new uploads to this folder (0 = none).', 'mediamanager' ),
+				'description' => __( 'Automatically assign new uploads to this folder (0 = none).', 'virtual-media-folders' ),
 			]
 		);
 
 		add_settings_field(
 			'show_all_media',
-			__( 'Show All Media', 'mediamanager' ),
+			__( 'Show All Media', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'mediamanager_defaults',
+			'vmf_defaults',
 			[
 				'id'          => 'show_all_media',
-				'description' => __( 'Show the "All Media" option in the sidebar.', 'mediamanager' ),
+				'description' => __( 'Show the "All Media" option in the sidebar.', 'virtual-media-folders' ),
 			]
 		);
 
 		add_settings_field(
 			'show_uncategorized',
-			__( 'Show Uncategorized', 'mediamanager' ),
+			__( 'Show Uncategorized', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'mediamanager_defaults',
+			'vmf_defaults',
 			[
 				'id'          => 'show_uncategorized',
-				'description' => __( 'Show the "Uncategorized" virtual folder in the sidebar.', 'mediamanager' ),
+				'description' => __( 'Show the "Uncategorized" virtual folder in the sidebar.', 'virtual-media-folders' ),
 			]
 		);
 
 		// UI preferences section.
 		add_settings_section(
-			'mediamanager_ui',
-			__( 'User Interface', 'mediamanager' ),
+			'vmf_ui',
+			__( 'User Interface', 'virtual-media-folders' ),
 			[ self::class, 'render_ui_section' ],
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
 			'sidebar_default_visible',
-			__( 'Sidebar Default Visible', 'mediamanager' ),
+			__( 'Sidebar Default Visible', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'mediamanager_ui',
+			'vmf_ui',
 			[
 				'id'          => 'sidebar_default_visible',
-				'description' => __( 'Show the folder sidebar by default when opening Media Library.', 'mediamanager' ),
+				'description' => __( 'Show the folder sidebar by default when opening Media Library.', 'virtual-media-folders' ),
 			]
 		);
 
 		add_settings_field(
 			'jump_to_folder_after_move',
-			__( 'Jump to Folder After Move', 'mediamanager' ),
+			__( 'Jump to Folder After Move', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'mediamanager_ui',
+			'vmf_ui',
 			[
 				'id'          => 'jump_to_folder_after_move',
-				'description' => __( 'Automatically switch to the target folder after moving files.', 'mediamanager' ),
+				'description' => __( 'Automatically switch to the target folder after moving files.', 'virtual-media-folders' ),
 			]
 		);
 	}
@@ -292,9 +292,9 @@ final class Settings {
 		// Show save confirmation.
 		if ( isset( $_GET[ 'settings-updated' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			add_settings_error(
-				'mediamanager_messages',
-				'mediamanager_message',
-				__( 'Settings saved.', 'mediamanager' ),
+				'vmf_messages',
+				'vmf_message',
+				__( 'Settings saved.', 'virtual-media-folders' ),
 				'updated'
 			);
 		}
@@ -302,12 +302,12 @@ final class Settings {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<?php settings_errors( 'mediamanager_messages' ); ?>
+			<?php settings_errors( 'vmf_messages' ); ?>
 			<form action="options.php" method="post">
 				<?php
 				settings_fields( self::OPTION_GROUP );
 				do_settings_sections( self::PAGE_SLUG );
-				submit_button( __( 'Save Settings', 'mediamanager' ) );
+				submit_button( __( 'Save Settings', 'virtual-media-folders' ) );
 				?>
 			</form>
 		</div>
@@ -320,7 +320,7 @@ final class Settings {
 	 * @return void
 	 */
 	public static function render_suggestions_section(): void {
-		echo '<p>' . esc_html__( 'Configure how Media Manager suggests folders for newly uploaded files.', 'mediamanager' ) . '</p>';
+		echo '<p>' . esc_html__( 'Configure how Virtual Media Folders suggests folders for newly uploaded files.', 'virtual-media-folders' ) . '</p>';
 	}
 
 	/**
@@ -329,7 +329,7 @@ final class Settings {
 	 * @return void
 	 */
 	public static function render_defaults_section(): void {
-		echo '<p>' . esc_html__( 'Set default behavior for folder organization.', 'mediamanager' ) . '</p>';
+		echo '<p>' . esc_html__( 'Set default behavior for folder organization.', 'virtual-media-folders' ) . '</p>';
 	}
 
 	/**
@@ -338,7 +338,7 @@ final class Settings {
 	 * @return void
 	 */
 	public static function render_ui_section(): void {
-		echo '<p>' . esc_html__( 'Customize the Media Manager user interface.', 'mediamanager' ) . '</p>';
+		echo '<p>' . esc_html__( 'Customize the Virtual Media Folders user interface.', 'virtual-media-folders' ) . '</p>';
 	}
 
 	/**
@@ -381,7 +381,7 @@ final class Settings {
 		);
 
 		echo '<select name="' . esc_attr( $name ) . '">';
-		echo '<option value="0">' . esc_html__( 'None', 'mediamanager' ) . '</option>';
+		echo '<option value="0">' . esc_html__( 'None', 'virtual-media-folders' ) . '</option>';
 
 		if ( ! is_wp_error( $folders ) && is_array( $folders ) ) {
 			foreach ( $folders as $folder ) {

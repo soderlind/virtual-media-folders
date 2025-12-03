@@ -64,8 +64,8 @@ export function FolderFilter({ onFilterChange, value = '' }) {
 
 		// Flatten with indentation
 		const options = [
-			{ label: __('All Folders', 'mediamanager'), value: '' },
-			{ label: __('Uncategorized', 'mediamanager'), value: 'uncategorized' },
+			{ label: __('All Folders', 'virtual-media-folders'), value: '' },
+			{ label: __('Uncategorized', 'virtual-media-folders'), value: 'uncategorized' },
 		];
 
 		function addToOptions(items, level = 0) {
@@ -88,9 +88,9 @@ export function FolderFilter({ onFilterChange, value = '' }) {
 	if (loading) {
 		return (
 			<SelectControl
-				label={__('Folder', 'mediamanager')}
+				label={__('Folder', 'virtual-media-folders')}
 				value=""
-				options={[{ label: __('Loading…', 'mediamanager'), value: '' }]}
+				options={[{ label: __('Loading…', 'virtual-media-folders'), value: '' }]}
 				disabled
 			/>
 		);
@@ -98,11 +98,11 @@ export function FolderFilter({ onFilterChange, value = '' }) {
 
 	return (
 		<SelectControl
-			label={__('Folder', 'mediamanager')}
+			label={__('Folder', 'virtual-media-folders')}
 			value={String(value)}
 			options={folders}
 			onChange={(newValue) => onFilterChange(newValue)}
-			className="mm-folder-filter"
+			className="vmf-folder-filter"
 		/>
 	);
 }

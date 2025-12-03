@@ -129,7 +129,7 @@ export default function BaseFolderItem({
 	const buttonContent = (
 		<button
 			type="button"
-			className={`mm-folder-button ${isSelected ? 'is-selected' : ''}`}
+			className={`vmf-folder-button ${isSelected ? 'is-selected' : ''}`}
 			style={{ paddingLeft: `${level * 16 + 8}px` }}
 			onClick={() => onSelect(folder.id)}
 			onKeyDown={enableKeyboardNav ? handleKeyDown : undefined}
@@ -138,21 +138,21 @@ export default function BaseFolderItem({
 		>
 			{hasChildren && (
 				<span
-					className="mm-folder-toggle"
+					className="vmf-folder-toggle"
 					onClick={handleToggleClick}
 					onKeyDown={enableKeyboardNav ? handleToggleKeyDown : undefined}
 					role={enableKeyboardNav ? 'button' : undefined}
 					tabIndex={enableKeyboardNav ? 0 : undefined}
-					aria-label={expanded ? __('Collapse', 'mediamanager') : __('Expand', 'mediamanager')}
+					aria-label={expanded ? __('Collapse', 'virtual-media-folders') : __('Expand', 'virtual-media-folders')}
 				>
 					<ChevronIcon expanded={expanded} />
 				</span>
 			)}
-			<span className="mm-folder-name">{folder.name}</span>
+			<span className="vmf-folder-name">{folder.name}</span>
 			{typeof folder.count === 'number' && (
 				<span 
-					className="mm-folder-count" 
-					aria-label={enableAria ? `${folder.count} ${__('items', 'mediamanager')}` : undefined}
+					className="vmf-folder-count" 
+					aria-label={enableAria ? `${folder.count} ${__('items', 'virtual-media-folders')}` : undefined}
 				>
 					({folder.count})
 				</span>
@@ -175,10 +175,10 @@ export default function BaseFolderItem({
 		: {};
 
 	return (
-		<li className="mm-folder-item" {...listItemProps}>
+		<li className="vmf-folder-item" {...listItemProps}>
 			{wrappedButton}
 			{hasChildren && expanded && (
-				<ul className="mm-folder-children" role={enableAria ? 'group' : undefined}>
+				<ul className="vmf-folder-children" role={enableAria ? 'group' : undefined}>
 					{folder.children.map((child) => (
 						<BaseFolderItem
 							key={child.id}

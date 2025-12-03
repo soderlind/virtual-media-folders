@@ -2,16 +2,16 @@
 /**
  * REST API tests.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  */
 
 declare(strict_types=1);
 
-namespace MediaManager\Tests;
+namespace VirtualMediaFolders\Tests;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
-use MediaManager\RestApi;
+use VirtualMediaFolders\RestApi;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -60,7 +60,7 @@ class RestApiTest extends TestCase {
 		$property   = $reflection->getProperty( 'namespace' );
 		$property->setAccessible( true );
 
-		$this->assertEquals( 'mediamanager/v1', $property->getValue( $this->api ) );
+		$this->assertEquals( 'vmf/v1', $property->getValue( $this->api ) );
 	}
 
 	/**

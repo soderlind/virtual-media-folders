@@ -27,7 +27,7 @@ jobs:
         uses: thedoctor0/zip-release@b57d897cb5d60cb78b51a507f63fa184cfe35554 #0.7.6
         with:
           type: 'zip'
-          filename: 'mediamanager.zip'
+          filename: 'virtual-media-folders.zip'
           exclusions: '*.git* .editorconfig  *.md package.json package-lock.json phpunit.xml.dist /*tests/*'
 
       - name: Release
@@ -35,5 +35,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: mediamanager.zip
+          files: virtual-media-folders.zip
           tag_name: ${{ github.event.inputs.tag }}

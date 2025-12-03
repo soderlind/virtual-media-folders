@@ -3,21 +3,21 @@
  */
 
 /* Draggable media item */
-.mm-draggable-media {
+.vmf-draggable-media {
 	cursor: grab;
 	transition: opacity 0.15s ease;
 }
 
-.mm-draggable-media:active {
+.vmf-draggable-media:active {
 	cursor: grabbing;
 }
 
-.mm-draggable-media.is-dragging {
+.vmf-draggable-media.is-dragging {
 	opacity: 0.5;
 }
 
 /* Drag overlay - follows cursor during drag */
-.mm-drag-overlay {
+.vmf-drag-overlay {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -30,13 +30,13 @@
 	pointer-events: none;
 }
 
-.mm-drag-overlay__image {
+.vmf-drag-overlay__image {
 	max-width: 100%;
 	max-height: 100%;
 	object-fit: contain;
 }
 
-.mm-drag-overlay__placeholder {
+.vmf-drag-overlay__placeholder {
 	padding: 8px;
 	font-size: 12px;
 	text-align: center;
@@ -47,16 +47,16 @@
 }
 
 /* Droppable folder */
-.mm-droppable-folder {
+.vmf-droppable-folder {
 	position: relative;
 	transition: background-color 0.15s ease;
 }
 
-.mm-droppable-folder.is-over {
+.vmf-droppable-folder.is-over {
 	background-color: rgba(0, 124, 186, 0.1);
 }
 
-.mm-droppable-folder.is-over::after {
+.vmf-droppable-folder.is-over::after {
 	content: '';
 	position: absolute;
 	inset: 0;
@@ -66,60 +66,60 @@
 }
 
 /* Folder button in tree when drop target */
-.mm-folder-button.mm-droppable-folder.is-over {
+.vmf-folder-button.vmf-droppable-folder.is-over {
 	background-color: rgba(0, 124, 186, 0.15);
 }
 
 /* Move to folder menu button */
-.mm-move-to-folder-button {
+.vmf-move-to-folder-button {
 	padding: 4px;
 	min-width: 32px;
 	min-height: 32px;
 }
 
-.mm-move-to-folder-button .components-icon {
+.vmf-move-to-folder-button .components-icon {
 	width: 20px;
 	height: 20px;
 }
 
 /* Move to folder dropdown content */
-.mm-move-to-folder-content {
+.vmf-move-to-folder-content {
 	min-width: 200px;
 	max-height: 300px;
 	overflow-y: auto;
 }
 
-.mm-move-to-folder-content .components-menu-item__button {
+.vmf-move-to-folder-content .components-menu-item__button {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
 /* Keyboard focus states for accessibility */
-.mm-draggable-media:focus-visible {
+.vmf-draggable-media:focus-visible {
 	outline: 2px solid #007cba;
 	outline-offset: 2px;
 }
 
-.mm-droppable-folder:focus-within {
+.vmf-droppable-folder:focus-within {
 	outline: none;
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-	.mm-drag-overlay {
+	.vmf-drag-overlay {
 		border-width: 3px;
 	}
 	
-	.mm-droppable-folder.is-over::after {
+	.vmf-droppable-folder.is-over::after {
 		border-width: 3px;
 	}
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-	.mm-draggable-media,
-	.mm-droppable-folder {
+	.vmf-draggable-media,
+	.vmf-droppable-folder {
 		transition: none;
 	}
 }

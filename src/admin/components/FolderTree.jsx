@@ -22,7 +22,7 @@ import FolderManager from './FolderManager';
 import BulkFolderAction from './BulkFolderAction';
 
 // Get settings from server
-const { showAllMedia = true, showUncategorized = true } = window.mediaManagerData || {};
+const { showAllMedia = true, showUncategorized = true } = window.vmfData || {};
 
 /**
  * FolderTree component.
@@ -125,17 +125,17 @@ export default function FolderTree({ onFolderSelect }) {
 
 	useEffect(() => {
 		// Expose refresh function globally
-		window.mediaManagerRefreshFolders = handleRefresh;
+		window.vmfRefreshFolders = handleRefresh;
 		
 		// Expose folder selection function globally (for drop-to-folder navigation)
-		window.mediaManagerSelectFolder = (folderId) => {
+		window.vmfSelectFolder = (folderId) => {
 			setSelectedId(folderId);
 			onFolderSelect?.(folderId);
 		};
 		
 		return () => {
-			delete window.mediaManagerRefreshFolders;
-			delete window.mediaManagerSelectFolder;
+			delete window.vmfRefreshFolders;
+			delete window.vmfSelectFolder;
 		};
 	}, [handleRefresh, onFolderSelect, setSelectedId]);
 

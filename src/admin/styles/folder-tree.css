@@ -3,7 +3,7 @@
  */
 
 /* Folder toggle button - matches WordPress view switcher icons */
-.mm-folder-toggle-button {
+.vmf-folder-toggle-button {
 	display: inline-block;
 	width: 28px;
 	height: 28px;
@@ -21,34 +21,34 @@
 	transition: color 0.1s, box-shadow 0.1s;
 }
 
-.mm-folder-toggle-button:hover {
+.vmf-folder-toggle-button:hover {
 	color: #135e96;
 	text-decoration: none;
 }
 
-.mm-folder-toggle-button:focus {
+.vmf-folder-toggle-button:focus {
 	color: #135e96;
 	text-decoration: none;
 	box-shadow: 0 0 0 2px #2271b1;
 	outline: none;
 }
 
-.mm-folder-toggle-button:active {
+.vmf-folder-toggle-button:active {
 	box-shadow: 0 0 0 2px #2271b1;
 }
 
-.mm-folder-toggle-button.is-active {
+.vmf-folder-toggle-button.is-active {
 	color: #2271b1;
 }
 
-.mm-folder-toggle-button svg {
+.vmf-folder-toggle-button svg {
 	display: block;
 	width: 20px;
 	height: 20px;
 }
 
 /* Folder tree sidebar - hidden by default */
-.mm-folder-tree-sidebar {
+.vmf-folder-tree-sidebar {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -65,27 +65,27 @@
 }
 
 /* Show when folder view is active */
-.mm-folder-tree-sidebar.is-visible {
+.vmf-folder-tree-sidebar.is-visible {
 	display: block;
 }
 
 /* Ensure attachments-wrapper has proper positioning context */
-.attachments-browser.mm-sidebar-visible .attachments-wrapper {
+.attachments-browser.vmf-sidebar-visible .attachments-wrapper {
 	position: relative;
 	min-height: 400px;
 }
 
 /* Push attachments content to make room for sidebar */
-.attachments-browser.mm-sidebar-visible .attachments {
+.attachments-browser.vmf-sidebar-visible .attachments {
 	margin-left: 220px !important;
 }
 
 /* Uploader positioning when sidebar is visible - don't push it, let it span full width */
-.attachments-browser.mm-sidebar-visible .uploader-inline {
+.attachments-browser.vmf-sidebar-visible .uploader-inline {
 	/* Don't adjust uploader - it should remain full width above the sidebar */
 }
 
-.mm-folder-tree-container {
+.vmf-folder-tree-container {
 	width: 220px;
 	min-width: 200px;
 	max-width: 280px;
@@ -98,20 +98,20 @@
 	z-index: 10;
 }
 
-.mm-folder-tree {
+.vmf-folder-tree {
 	padding: 0;
 	/* Top padding calculated by JS to align with first image */
 	/* Ensure content isn't clipped */
 	min-height: min-content;
 }
 
-.mm-folder-tree--loading {
+.vmf-folder-tree--loading {
 	padding: 20px;
 	text-align: center;
 	color: #757575;
 }
 
-.mm-folder-list {
+.vmf-folder-list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -119,12 +119,12 @@
 	/* Ensure last item is fully visible */
 }
 
-.mm-folder-item {
+.vmf-folder-item {
 	margin: 0;
 	padding: 0;
 }
 
-.mm-folder-button {
+.vmf-folder-button {
 	display: flex;
 	align-items: center;
 	gap: 4px;
@@ -140,21 +140,21 @@
 	transition: background-color 0.1s;
 }
 
-.mm-folder-button:hover {
+.vmf-folder-button:hover {
 	background: #e0e0e0;
 }
 
-.mm-folder-button:focus {
+.vmf-folder-button:focus {
 	outline: 2px solid #007cba;
 	outline-offset: -2px;
 }
 
-.mm-folder-button.is-selected {
+.vmf-folder-button.is-selected {
 	background: #007cba;
 	color: #fff;
 }
 
-.mm-folder-toggle {
+.vmf-folder-toggle {
 	width: 20px;
 	height: 20px;
 	flex-shrink: 0;
@@ -168,57 +168,57 @@
 	transition: background-color 0.1s;
 }
 
-.mm-folder-toggle:hover {
+.vmf-folder-toggle:hover {
 	background-color: rgba(0, 0, 0, 0.1);
 }
 
-.mm-folder-button.is-selected .mm-folder-toggle {
+.vmf-folder-button.is-selected .vmf-folder-toggle {
 	color: rgba(255, 255, 255, 0.9);
 }
 
-.mm-folder-button.is-selected .mm-folder-toggle:hover {
+.vmf-folder-button.is-selected .vmf-folder-toggle:hover {
 	background-color: rgba(255, 255, 255, 0.2);
 }
 
-.mm-folder-name {
+.vmf-folder-name {
 	flex: 1;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.mm-folder-count {
+.vmf-folder-count {
 	flex-shrink: 0;
 	font-size: 12px;
 	color: #757575;
 }
 
-.mm-folder-button.is-selected .mm-folder-count {
+.vmf-folder-button.is-selected .vmf-folder-count {
 	color: rgba(255, 255, 255, 0.8);
 }
 
-.mm-folder-children {
+.vmf-folder-children {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
 /* Drag and Drop styles */
-.mm-droppable-folder {
+.vmf-droppable-folder {
 	transition: background-color 0.15s ease;
 }
 
-.mm-droppable-folder.is-over {
+.vmf-droppable-folder.is-over {
 	background-color: rgba(0, 124, 186, 0.15);
 	box-shadow: inset 0 0 0 2px #007cba;
 }
 
-.mm-droppable-folder.is-over .mm-folder-button {
+.vmf-droppable-folder.is-over .vmf-folder-button {
 	background-color: transparent;
 }
 
 /* Dragging attachment styles */
-.attachment.mm-dragging,
+.attachment.vmf-dragging,
 .attachment.is-dragging,
 .attachment[aria-grabbed="true"] {
 	opacity: 0.5 !important;
@@ -226,10 +226,10 @@
 	box-shadow: none !important;
 }
 
-.attachment.mm-dragging *,
+.attachment.vmf-dragging *,
 .attachment.is-dragging *,
-.attachment.mm-dragging .attachment-preview,
-.attachment.mm-dragging .thumbnail {
+.attachment.vmf-dragging .attachment-preview,
+.attachment.vmf-dragging .thumbnail {
 	background: transparent !important;
 	background-color: transparent !important;
 	box-shadow: none !important;
@@ -244,31 +244,31 @@
 }
 
 /* Prevent dark selection background during drag - WordPress uses box-shadow for selection */
-.attachments-browser .attachment.mm-dragging,
-.attachments-browser .attachment.mm-dragging:focus,
-.attachments-browser .attachment.mm-dragging.selected,
-.attachments-browser .attachment.mm-dragging.details {
+.attachments-browser .attachment.vmf-dragging,
+.attachments-browser .attachment.vmf-dragging:focus,
+.attachments-browser .attachment.vmf-dragging.selected,
+.attachments-browser .attachment.vmf-dragging.details {
 	box-shadow: none !important;
 	outline: none !important;
 }
 
-.attachments-browser .attachment.mm-dragging .thumbnail,
-.attachments-browser .attachment.mm-dragging .attachment-preview {
+.attachments-browser .attachment.vmf-dragging .thumbnail,
+.attachments-browser .attachment.vmf-dragging .attachment-preview {
 	background-color: transparent !important;
 	box-shadow: none !important;
 }
 
-.attachments-browser .attachment.mm-dragging::before,
-.attachments-browser .attachment.mm-dragging::after,
-.attachments-browser .attachment.mm-dragging .thumbnail::after,
-.attachments-browser .attachment.mm-dragging .check {
+.attachments-browser .attachment.vmf-dragging::before,
+.attachments-browser .attachment.vmf-dragging::after,
+.attachments-browser .attachment.vmf-dragging .thumbnail::after,
+.attachments-browser .attachment.vmf-dragging .check {
 	display: none !important;
 	opacity: 0 !important;
 }
 
 /* Hide WordPress uploader overlay during internal drag operations */
-body.mm-internal-drag .uploader-inline,
-body.mm-internal-drag .uploader-window {
+body.vmf-internal-drag .uploader-inline,
+body.vmf-internal-drag .uploader-window {
 	display: none !important;
 	visibility: hidden !important;
 	pointer-events: none !important;
@@ -276,7 +276,7 @@ body.mm-internal-drag .uploader-window {
 
 /* Hide uploader drop zone when viewing a specific folder (not All Media) */
 /* Use visibility instead of display to keep the upload button working */
-.mm-folder-filtered .uploader-inline {
+.vmf-folder-filtered .uploader-inline {
 	visibility: hidden !important;
 	height: 0 !important;
 	min-height: 0 !important;
@@ -290,18 +290,18 @@ body.mm-internal-drag .uploader-window {
 	transition: opacity 0.15s ease-out;
 }
 
-.attachments.mm-loading {
+.attachments.vmf-loading {
 	opacity: 0.4;
 	pointer-events: none;
 }
 
 /* Notice styles */
-.mm-notice {
+.vmf-notice {
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-	animation: mm-slide-in 0.3s ease;
+	animation: vmf-slide-in 0.3s ease;
 }
 
-@keyframes mm-slide-in {
+@keyframes vmf-slide-in {
 	from {
 		transform: translateX(100%);
 		opacity: 0;
@@ -314,7 +314,7 @@ body.mm-internal-drag .uploader-window {
 }
 
 /* Folder Manager styles */
-.mm-folder-manager {
+.vmf-folder-manager {
 	padding: 8px 12px;
 	border-bottom: 1px solid #dcdcde;
 	background: #fff;
@@ -322,12 +322,12 @@ body.mm-internal-drag .uploader-window {
 	z-index: 100;
 }
 
-.mm-folder-manager-buttons {
+.vmf-folder-manager-buttons {
 	display: flex;
 	gap: 4px;
 }
 
-.mm-folder-manager-button {
+.vmf-folder-manager-button {
 	padding: 4px !important;
 	min-width: 28px !important;
 	height: 28px !important;
@@ -336,13 +336,13 @@ body.mm-internal-drag .uploader-window {
 }
 
 /* Hide button text, keep only icon - text is for screen readers only */
-.mm-folder-manager-button .components-button__content {
+.vmf-folder-manager-button .components-button__content {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.mm-folder-manager-button .components-button__content>span:not(.components-visually-hidden) {
+.vmf-folder-manager-button .components-button__content>span:not(.components-visually-hidden) {
 	position: absolute;
 	width: 1px;
 	height: 1px;
@@ -354,13 +354,13 @@ body.mm-internal-drag .uploader-window {
 	border: 0;
 }
 
-.mm-folder-manager-button svg {
+.vmf-folder-manager-button svg {
 	width: 18px;
 	height: 18px;
 }
 
 /* Folder Modal styles - ensure it's above everything */
-.mm-folder-modal,
+.vmf-folder-modal,
 .components-modal__screen-overlay {
 	z-index: 100100 !important;
 }
@@ -374,11 +374,11 @@ body.mm-internal-drag .uploader-window {
 	bottom: 0 !important;
 }
 
-.mm-folder-modal .components-modal__content {
+.vmf-folder-modal .components-modal__content {
 	min-width: 320px;
 }
 
-.mm-folder-modal-actions {
+.vmf-folder-modal-actions {
 	display: flex;
 	justify-content: flex-end;
 	gap: 8px;
@@ -387,7 +387,7 @@ body.mm-internal-drag .uploader-window {
 	border-top: 1px solid #dcdcde;
 }
 
-.mm-folder-modal-error {
+.vmf-folder-modal-error {
 	color: #d63638;
 	margin: 8px 0;
 	padding: 8px 12px;
@@ -395,13 +395,13 @@ body.mm-internal-drag .uploader-window {
 	border-left: 4px solid #d63638;
 }
 
-.mm-folder-modal-warning {
+.vmf-folder-modal-warning {
 	color: #996800;
 	font-style: italic;
 }
 
 /* Bulk Folder Action styles */
-.mm-bulk-folder-action {
+.vmf-bulk-folder-action {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -411,13 +411,13 @@ body.mm-internal-drag .uploader-window {
 	flex-wrap: wrap;
 }
 
-.mm-bulk-folder-select {
+.vmf-bulk-folder-select {
 	flex: 1;
 	min-width: 100px;
 	max-width: 140px;
 }
 
-.mm-bulk-folder-apply {
+.vmf-bulk-folder-apply {
 	flex-shrink: 0;
 	padding: 4px 8px !important;
 	min-height: 28px;
@@ -426,15 +426,15 @@ body.mm-internal-drag .uploader-window {
 	justify-content: center;
 }
 
-.mm-bulk-folder-apply svg {
+.vmf-bulk-folder-apply svg {
 	display: block;
 }
 
-.mm-bulk-folder-apply:disabled {
+.vmf-bulk-folder-apply:disabled {
 	opacity: 0.5;
 }
 
-.mm-bulk-folder-count {
+.vmf-bulk-folder-count {
 	font-size: 11px;
 	color: #757575;
 	white-space: nowrap;

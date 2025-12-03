@@ -46,14 +46,14 @@ export default function BaseFolderTree({
 	loadingText,
 }) {
 	if (loading) {
-		const baseClass = enableAria ? 'mm-folder-tree' : 'mm-folder-sidebar';
+		const baseClass = enableAria ? 'vmf-folder-tree' : 'vmf-folder-sidebar';
 		return (
 			<div 
 				className={`${baseClass} ${baseClass}--loading ${className}`}
-				aria-label={enableAria ? __('Media folders', 'mediamanager') : undefined}
+				aria-label={enableAria ? __('Media folders', 'virtual-media-folders') : undefined}
 			>
 				<p aria-live={enableAria ? 'polite' : undefined}>
-					{loadingText || __('Loading…', 'mediamanager')}
+					{loadingText || __('Loading…', 'virtual-media-folders')}
 				</p>
 			</div>
 		);
@@ -63,11 +63,11 @@ export default function BaseFolderTree({
 	const allMediaButton = (
 		<button
 			type="button"
-			className={`mm-folder-button ${selectedId === null ? 'is-selected' : ''}`}
+			className={`vmf-folder-button ${selectedId === null ? 'is-selected' : ''}`}
 			onClick={() => onSelect(null)}
 			aria-current={selectedId === null ? 'true' : undefined}
 		>
-			<span className="mm-folder-name">{__('All Media', 'mediamanager')}</span>
+			<span className="vmf-folder-name">{__('All Media', 'virtual-media-folders')}</span>
 		</button>
 	);
 
@@ -75,14 +75,14 @@ export default function BaseFolderTree({
 	const uncategorizedButton = (
 		<button
 			type="button"
-			className={`mm-folder-button ${selectedId === 'uncategorized' ? 'is-selected' : ''}`}
+			className={`vmf-folder-button ${selectedId === 'uncategorized' ? 'is-selected' : ''}`}
 			onClick={() => onSelect('uncategorized')}
 			aria-current={selectedId === 'uncategorized' ? 'true' : undefined}
 		>
-			<span className="mm-folder-name">{__('Uncategorized', 'mediamanager')}</span>
+			<span className="vmf-folder-name">{__('Uncategorized', 'virtual-media-folders')}</span>
 			<span 
-				className="mm-folder-count"
-				aria-label={enableAria ? `${uncategorizedCount} ${__('items', 'mediamanager')}` : undefined}
+				className="vmf-folder-count"
+				aria-label={enableAria ? `${uncategorizedCount} ${__('items', 'virtual-media-folders')}` : undefined}
 			>
 				({uncategorizedCount})
 			</span>
@@ -96,23 +96,23 @@ export default function BaseFolderTree({
 
 	const containerTag = enableAria ? 'nav' : 'div';
 	const ContainerTag = containerTag;
-	const baseClass = enableAria ? 'mm-folder-tree' : 'mm-folder-sidebar';
+	const baseClass = enableAria ? 'vmf-folder-tree' : 'vmf-folder-sidebar';
 
 	return (
 		<ContainerTag 
 			className={`${baseClass} ${className}`}
-			aria-label={enableAria ? __('Media folders', 'mediamanager') : undefined}
+			aria-label={enableAria ? __('Media folders', 'virtual-media-folders') : undefined}
 		>
 			{renderHeader && renderHeader()}
 			<ul 
-				className="mm-folder-list" 
+				className="vmf-folder-list" 
 				role={enableAria ? 'tree' : undefined}
-				aria-label={enableAria ? __('Folder tree', 'mediamanager') : undefined}
+				aria-label={enableAria ? __('Folder tree', 'virtual-media-folders') : undefined}
 			>
 				{/* All Media - only shown if showAllMedia is true */}
 				{showAllMedia && (
 					<li 
-						className="mm-folder-item" 
+						className="vmf-folder-item" 
 						role={enableAria ? 'treeitem' : undefined}
 						aria-selected={enableAria ? selectedId === null : undefined}
 					>
@@ -123,7 +123,7 @@ export default function BaseFolderTree({
 				{/* Uncategorized - only shown if showUncategorized is true */}
 				{showUncategorized && (
 					<li 
-						className="mm-folder-item" 
+						className="vmf-folder-item" 
 						role={enableAria ? 'treeitem' : undefined}
 						aria-selected={enableAria ? selectedId === 'uncategorized' : undefined}
 					>

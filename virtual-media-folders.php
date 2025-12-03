@@ -1,26 +1,26 @@
 <?php
 /**
- * Media Manager WordPress Plugin
+ * Virtual Media Folders WordPress Plugin
  *
  * Provides virtual folder organization and smart management features
  * for the WordPress Media Library. Includes a folder sidebar in both
  * the Media Library grid view and Gutenberg block editor media modals.
  *
- * @package     MediaManager
+ * @package     VirtualMediaFolders
  * @author      Per Søderlind
  * @copyright   2024 Per Søderlind
  * @license     GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: Media Manager
+ * Plugin Name: Virtual Media Folders
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 0.1.17
+ * Version: 1.0.0
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Per Soderlind
  * Author URI: https://soderlind.no/
  * License: GPL-2.0-or-later
- * Text Domain: mediamanager
+ * Text Domain: virtual-media-folders
  */
 
 /*
@@ -32,22 +32,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /*
  * Check PHP version compatibility.
- * Media Manager requires PHP 8.3+ for modern language features.
+ * Virtual Media Folders requires PHP 8.3+ for modern language features.
  */
 if ( version_compare( PHP_VERSION, '8.3', '<' ) ) {
 	add_action( 'admin_notices', static function () {
-		echo '<div class="notice notice-error"><p>' . esc_html__( 'Media Manager requires PHP 8.3 or higher.', 'mediamanager' ) . '</p></div>';
+		echo '<div class="notice notice-error"><p>' . esc_html__( 'Virtual Media Folders requires PHP 8.3 or higher.', 'virtual-media-folders' ) . '</p></div>';
 	} );
 	return;
 }
 
 /*
  * Check WordPress version compatibility.
- * Media Manager requires WP 6.8+ for modern block editor features.
+ * Virtual Media Folders requires WP 6.8+ for modern block editor features.
  */
 if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 	add_action( 'admin_notices', static function () {
-		echo '<div class="notice notice-error"><p>' . esc_html__( 'Media Manager requires WordPress 6.8 or higher.', 'mediamanager' ) . '</p></div>';
+		echo '<div class="notice notice-error"><p>' . esc_html__( 'Virtual Media Folders requires WordPress 6.8 or higher.', 'virtual-media-folders' ) . '</p></div>';
 	} );
 	return;
 }
@@ -55,10 +55,10 @@ if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 /*
  * Define plugin constants.
  */
-define( 'MEDIAMANAGER_VERSION', defined( 'WP_DEBUG' ) && WP_DEBUG ? strval( time() ) : '0.1.7' );
-define( 'MEDIAMANAGER_FILE', __FILE__ );
-define( 'MEDIAMANAGER_PATH', __DIR__ . '/' );
-define( 'MEDIAMANAGER_URL', plugin_dir_url( __FILE__ ) );
+define( 'VMF_VERSION', defined( 'WP_DEBUG' ) && WP_DEBUG ? strval( time() ) : '1.0.0' );
+define( 'VMF_FILE', __FILE__ );
+define( 'VMF_PATH', __DIR__ . '/' );
+define( 'VMF_URL', plugin_dir_url( __FILE__ ) );
 
 /**
  * Load plugin text domain for translations.
@@ -71,13 +71,13 @@ define( 'MEDIAMANAGER_URL', plugin_dir_url( __FILE__ ) );
  */
 add_action( 'init', static function () {
 	// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Required for GitHub-hosted plugins.
-	load_plugin_textdomain( 'mediamanager', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'virtual-media-folders', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }, 0 );
 
 /*
  * Load Composer autoloader.
  */
-require_once MEDIAMANAGER_PATH . 'vendor/autoload.php';
+require_once VMF_PATH . 'vendor/autoload.php';
 
 /**
  * Initialize plugin components after all plugins are loaded.
@@ -95,32 +95,32 @@ require_once MEDIAMANAGER_PATH . 'vendor/autoload.php';
  */
 add_action( 'plugins_loaded', static function () {
 
-	\MediaManager\GitHubPluginUpdater::create_with_assets(
-		'https://github.com/soderlind/mediamanager',
-		MEDIAMANAGER_FILE,
-		'mediamanager',
-		'/mediamanager\.zip/',
+	\VirtualMediaFolders\GitHubPluginUpdater::create_with_assets(
+		'https://github.com/soderlind/virtual-media-folders',
+		VMF_FILE,
+		'virtual-media-folders',
+		'/virtual-media-folders\.zip/',
 		'main'
 	);
-	\MediaManager\Taxonomy::init();
+	\VirtualMediaFolders\Taxonomy::init();
 
-	if ( class_exists( 'MediaManager\\Admin' ) ) {
-		\MediaManager\Admin::init();
+	if ( class_exists( 'VirtualMediaFolders\\Admin' ) ) {
+		\VirtualMediaFolders\Admin::init();
 	}
 
-	if ( class_exists( 'MediaManager\\RestApi' ) ) {
-		\MediaManager\RestApi::init();
+	if ( class_exists( 'VirtualMediaFolders\\RestApi' ) ) {
+		\VirtualMediaFolders\RestApi::init();
 	}
 
-	if ( class_exists( 'MediaManager\\Suggestions' ) ) {
-		\MediaManager\Suggestions::init();
+	if ( class_exists( 'VirtualMediaFolders\\Suggestions' ) ) {
+		\VirtualMediaFolders\Suggestions::init();
 	}
 
-	if ( class_exists( 'MediaManager\\Editor' ) ) {
-		\MediaManager\Editor::boot();
+	if ( class_exists( 'VirtualMediaFolders\\Editor' ) ) {
+		\VirtualMediaFolders\Editor::boot();
 	}
 
-	if ( class_exists( 'MediaManager\\Settings' ) ) {
-		\MediaManager\Settings::init();
+	if ( class_exists( 'VirtualMediaFolders\\Settings' ) ) {
+		\VirtualMediaFolders\Settings::init();
 	}
 } );

@@ -5,13 +5,13 @@
  * Handles registration of editor scripts and styles
  * for block editor integration.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace MediaManager;
+namespace VirtualMediaFolders;
 
 /**
  * Editor integration handler.
@@ -21,7 +21,7 @@ final class Editor {
 	/**
 	 * Script handle for editor scripts.
 	 */
-	private const SCRIPT_HANDLE = 'mediamanager-editor';
+	private const SCRIPT_HANDLE = 'vmf-editor';
 
 	/**
 	 * Boot the editor integration.
@@ -39,7 +39,7 @@ final class Editor {
 	 * @return void
 	 */
 	public static function enqueue_editor_assets(): void {
-		$asset_file = MEDIAMANAGER_PATH . 'build/editor.asset.php';
+		$asset_file = VMF_PATH . 'build/editor.asset.php';
 
 		if ( file_exists( $asset_file ) ) {
 			$asset = require $asset_file;
@@ -53,13 +53,13 @@ final class Editor {
 					'wp-i18n',
 					'wp-media-utils',
 				],
-				'version'      => MEDIAMANAGER_VERSION,
+				'version'      => VMF_VERSION,
 			];
 		}
 
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
-			MEDIAMANAGER_URL . 'build/editor.js',
+			VMF_URL . 'build/editor.js',
 			$asset[ 'dependencies' ],
 			$asset[ 'version' ],
 			true
@@ -67,7 +67,7 @@ final class Editor {
 
 		wp_enqueue_style(
 			self::SCRIPT_HANDLE,
-			MEDIAMANAGER_URL . 'build/editor.css',
+			VMF_URL . 'build/editor.css',
 			[ 'wp-components' ],
 			$asset[ 'version' ]
 		);
@@ -75,15 +75,15 @@ final class Editor {
 		// Pass folder data to JavaScript.
 		wp_localize_script(
 			self::SCRIPT_HANDLE,
-			'mediaManagerEditor',
+			'vmfEditor',
 			self::get_editor_data()
 		);
 
 		// Set script translations.
 		wp_set_script_translations(
 			self::SCRIPT_HANDLE,
-			'mediamanager',
-			MEDIAMANAGER_PATH . 'languages'
+			'virtual-media-folders',
+			VMF_PATH . 'languages'
 		);
 	}
 
@@ -182,7 +182,7 @@ final class Editor {
 				 * @param bool $include_children Whether to include child folders. Default false.
 				 * @param int  $folder_id        The folder term ID being filtered.
 				 */
-				$include_children = apply_filters( 'mediamanager_include_child_folders', false, $folder_id );
+				$include_children = apply_filters( 'vmf_include_child_folders', false, $folder_id );
 
 				$query_args[ 'tax_query' ][] = [
 					'taxonomy'         => 'media_folder',

@@ -109,13 +109,13 @@ export default function BulkFolderAction({ onComplete }) {
 
 		setIsProcessing(true);
 
-		const { ajaxUrl, nonce } = window.mediaManagerData || {};
+		const { ajaxUrl, nonce } = window.vmfData || {};
 
 		try {
 			// Process each media item
 			const promises = mediaIds.map(async (mediaId) => {
 				const formData = new FormData();
-				formData.append('action', 'mm_move_to_folder');
+				formData.append('action', 'vmf_move_to_folder');
 				formData.append('nonce', nonce);
 				formData.append('media_id', mediaId);
 				formData.append('folder_id', selectedFolder);
@@ -132,13 +132,13 @@ export default function BulkFolderAction({ onComplete }) {
 
 			// Show success notice
 			const folderName = selectedFolder === 'uncategorized'
-				? __('Uncategorized', 'mediamanager')
+				? __('Uncategorized', 'virtual-media-folders')
 				: folders.find(f => f.id === parseInt(selectedFolder, 10))?.name || '';
 
 			showNotice(
 				sprintf(
 					/* translators: 1: number of items, 2: folder name */
-					__('%1$d items moved to "%2$s".', 'mediamanager'),
+					__('%1$d items moved to "%2$s".', 'virtual-media-folders'),
 					mediaIds.length,
 					folderName
 				),
@@ -146,20 +146,20 @@ export default function BulkFolderAction({ onComplete }) {
 			);
 
 			// Refresh folders and media
-			if (window.mediaManagerRefreshFolders) {
-				window.mediaManagerRefreshFolders();
+			if (window.vmfRefreshFolders) {
+				window.vmfRefreshFolders();
 			}
 			
 			// Select the target folder to show moved items (if setting is enabled)
-			const { jumpToFolderAfterMove = false } = window.mediaManagerData || {};
+			const { jumpToFolderAfterMove = false } = window.vmfData || {};
 			if (jumpToFolderAfterMove) {
 				// Delay to ensure refresh completes
 				setTimeout(() => {
-					if (window.mediaManagerSelectFolder) {
+					if (window.vmfSelectFolder) {
 						const targetFolderId = selectedFolder === 'uncategorized' 
 							? 'uncategorized' 
 							: parseInt(selectedFolder, 10);
-						window.mediaManagerSelectFolder(targetFolderId);
+						window.vmfSelectFolder(targetFolderId);
 					}
 				}, 200);
 			} else {
@@ -181,7 +181,7 @@ export default function BulkFolderAction({ onComplete }) {
 			onComplete?.();
 		} catch (error) {
 			console.error('Bulk move error:', error);
-			showNotice(__('Failed to move some items.', 'mediamanager'), 'error');
+			showNotice(__('Failed to move some items.', 'virtual-media-folders'), 'error');
 		} finally {
 			setIsProcessing(false);
 			setSelectedFolder('');
@@ -193,7 +193,7 @@ export default function BulkFolderAction({ onComplete }) {
 	 */
 	function showNotice(message, type = 'success') {
 		const notice = document.createElement('div');
-		notice.className = `notice notice-${type} mm-notice is-dismissible`;
+		notice.className = `notice notice-${type} vmf-notice is-dismissible`;
 		notice.innerHTML = `<p>${message}</p>`;
 		notice.style.cssText = 'position: fixed; top: 40px; right: 20px; z-index: 100000; max-width: 300px;';
 		document.body.appendChild(notice);
@@ -205,15 +205,15 @@ export default function BulkFolderAction({ onComplete }) {
 	}
 
 	return (
-		<div className="mm-bulk-folder-action">
+		<div className="vmf-bulk-folder-action">
 			<select
 				value={selectedFolder}
 				onChange={(e) => setSelectedFolder(e.target.value)}
 				disabled={isProcessing}
-				className="mm-bulk-folder-select"
+				className="vmf-bulk-folder-select"
 			>
-				<option value="">{__('Move to folder…', 'mediamanager')}</option>
-				<option value="uncategorized">{__('Uncategorized', 'mediamanager')}</option>
+				<option value="">{__('Move to folder…', 'virtual-media-folders')}</option>
+				<option value="uncategorized">{__('Uncategorized', 'virtual-media-folders')}</option>
 				{folders.map((folder) => (
 					<option key={folder.id} value={folder.id}>
 						{folder.name}
@@ -222,11 +222,11 @@ export default function BulkFolderAction({ onComplete }) {
 			</select>
 			<button
 				type="button"
-				className="button mm-bulk-folder-apply"
+				className="button vmf-bulk-folder-apply"
 				onClick={handleBulkMove}
 				disabled={!selectedFolder || isProcessing}
-				title={isProcessing ? __('Moving…', 'mediamanager') : __('Apply', 'mediamanager')}
-				aria-label={isProcessing ? __('Moving…', 'mediamanager') : __('Apply', 'mediamanager')}
+				title={isProcessing ? __('Moving…', 'virtual-media-folders') : __('Apply', 'virtual-media-folders')}
+				aria-label={isProcessing ? __('Moving…', 'virtual-media-folders') : __('Apply', 'virtual-media-folders')}
 			>
 				{isProcessing ? (
 					<span className="spinner is-active" style={{ margin: 0 }} />
@@ -236,10 +236,10 @@ export default function BulkFolderAction({ onComplete }) {
 					</svg>
 				)}
 			</button>
-			<span className="mm-bulk-folder-count">
+			<span className="vmf-bulk-folder-count">
 				{sprintf(
 					/* translators: %d: number of selected items */
-					__('%d selected', 'mediamanager'),
+					__('%d selected', 'virtual-media-folders'),
 					selectedCount
 				)}
 			</span>

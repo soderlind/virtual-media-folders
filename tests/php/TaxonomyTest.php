@@ -3,7 +3,7 @@
 namespace MediaManagerTests;
 
 use Brain\Monkey;
-use MediaManager\Taxonomy;
+use VirtualMediaFolders\Taxonomy;
 use PHPUnit\Framework\TestCase;
 
 class TaxonomyTest extends TestCase {

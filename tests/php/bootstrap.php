@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  */
 
 // Load autoloader first - this includes Patchwork before any function definitions

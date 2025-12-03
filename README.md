@@ -1,16 +1,16 @@
-# Media Manager
+# Virtual Media Folders
 
 Virtual folder organization and smart management for the WordPress Media Library.
 
-<a href="https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/mediamanager/refs/heads/main/assets/blueprint.json"><img src="https://img.shields.io/badge/▶_Try_in_WordPress_Playground-blue?style=for-the-badge" alt="Try in WordPress Playground" /></a>
+<a href="https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/virtual-media-folders/refs/heads/main/assets/blueprint.json"><img src="https://img.shields.io/badge/▶_Try_in_WordPress_Playground-blue?style=for-the-badge" alt="Try in WordPress Playground" /></a>
 
->Way back in 2006 (almost 20 years ago!), I released [ImageManager 2.0](assets/imagemnager-2006.md), a popular WordPress plugin for image management and editing. Media Manager is my modern take on media organization for WordPress, built with React and modern tooling.
+>Way back in 2006 (almost 20 years ago!), I released [ImageManager 2.0](assets/imagemnager-2006.md), a popular WordPress plugin for image management and editing. Virtual Media Folders is my modern take on media organization for WordPress, built with React and modern tooling.
 
 ## Description
 
-Media Manager brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders without moving files on disk—folders are virtual, so your URLs never change.
+Virtual Media Folders brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders without moving files on disk—folders are virtual, so your URLs never change.
 
-<a href="https://www.youtube.com/watch?v=C81ttYpji_c"><img width="899" height="449" alt="mediamanager" src="https://github.com/user-attachments/assets/58322a25-0635-4376-85f4-7ea3b3b55ccb" /></a>
+<a href="https://www.youtube.com/watch?v=C81ttYpji_c"><img width="899" height="449" alt="virtual-media-folders" src="https://github.com/user-attachments/assets/58322a25-0635-4376-85f4-7ea3b3b55ccb" /></a>
 
 ### Features
 
@@ -29,7 +29,7 @@ Media Manager brings virtual folder organization to your WordPress Media Library
 
 ## Installation
 
-- Download [`mediamanager.zip`](https://github.com/soderlind/mediamanager/releases/latest/download/mediamanager.zip)
+- Download [`virtual-media-folders.zip`](https://github.com/soderlind/virtual-media-folders/releases/latest/download/virtual-media-folders.zip)
 - Upload via  Plugins > Add New > Upload Plugin
 - Activate the plugin.
 
@@ -39,7 +39,7 @@ Plugin [updates are handled automatically](https://github.com/soderlind/wordpres
 
 ```bash
 # Add via Composer
-composer require soderlind/mediamanager
+composer require soderlind/virtual-media-folders
 
 # Install dependencies
 composer install
@@ -79,7 +79,7 @@ When inserting media in the block editor:
 ## Folder Structure
 
 ```
-mediamanager/
+virtual-media-folders/
 ├── build/              # Compiled assets
 ├── docs/               # Documentation
 ├── languages/          # Translation files
@@ -99,12 +99,12 @@ mediamanager/
 │   ├── js/             # Vitest tests
 │   └── php/            # PHPUnit tests
 ├── uninstall.php       # Cleanup on uninstall
-└── mediamanager.php    # Main plugin file
+└── virtual-media-folders.php    # Main plugin file
 ```
 
 ## REST API
 
-The plugin provides REST API endpoints under `mediamanager/v1`:
+The plugin provides REST API endpoints under `vmf/v1`:
 
 ### Folders
 
@@ -120,14 +120,14 @@ The plugin provides REST API endpoints under `mediamanager/v1`:
 
 ### Actions
 
-- `mediamanager_folder_created` - Fired when a folder is created
-- `mediamanager_folder_deleted` - Fired when a folder is deleted
-- `mediamanager_media_moved` - Fired when media is moved to a folder
+- `vmf_folder_created` - Fired when a folder is created
+- `vmf_folder_deleted` - Fired when a folder is deleted
+- `vmf_media_moved` - Fired when media is moved to a folder
 
 ### Filters
 
-- `mediamanager_suggestion_matchers` - Customize suggestion matching logic
-- `mediamanager_folder_capabilities` - Modify capability requirements
+- `vmf_suggestion_matchers` - Customize suggestion matching logic
+- `vmf_folder_capabilities` - Modify capability requirements
 
 ## Translation
 
@@ -156,11 +156,11 @@ Contributions are welcome! Please:
 
 # Copyright and License
 
-Media Manager is copyright 2025 Per Soderlind
+Virtual Media Folders is copyright 2025 Per Soderlind
 
-Media Manager is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
+Virtual Media Folders is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
 
-Media Manager is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+Virtual Media Folders is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License along with the Extension. If not, see http://www.gnu.org/licenses/.
 

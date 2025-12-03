@@ -3,7 +3,7 @@
 namespace MediaManagerTests;
 
 use Brain\Monkey;
-use MediaManager\Suggestions;
+use VirtualMediaFolders\Suggestions;
 use PHPUnit\Framework\TestCase;
 
 class SuggestionsTest extends TestCase

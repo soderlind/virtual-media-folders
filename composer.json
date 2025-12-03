@@ -1,5 +1,5 @@
 {
-	"name": "soderlind/mediamanager",
+	"name": "soderlind/virtual-media-folders",
 	"description": "Virtual folder organization and smart management for the WordPress Media Library.",
 	"type": "wordpress-plugin",
 	"require": {
@@ -12,12 +12,12 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"MediaManager\\": "src/"
+			"VirtualMediaFolders\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"MediaManagerTests\\": "tests/php/"
+			"VirtualMediaFoldersTests\\": "tests/php/"
 		}
 	},
 	"scripts": {

@@ -1,9 +1,9 @@
-=== Media Manager ===
+=== Virtual Media Folders ===
 Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 0.1.17
+Stable tag: 1.0.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -12,7 +12,7 @@ Virtual folder organization and smart management for the WordPress Media Library
 
 == Description ==
 
-Media Manager brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders without moving files on disk—folders are virtual, so your URLs never change.
+Virtual Media Folders brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders without moving files on disk—folders are virtual, so your URLs never change.
 
 = Features =
 
@@ -26,7 +26,7 @@ Media Manager brings virtual folder organization to your WordPress Media Library
 
 = How It Works =
 
-Media Manager uses a custom taxonomy to assign media to folders. This means:
+Virtual Media Folders uses a custom taxonomy to assign media to folders. This means:
 
 * Your media files stay exactly where they are on the server
 * URLs never change when you reorganize
@@ -34,21 +34,21 @@ Media Manager uses a custom taxonomy to assign media to folders. This means:
 
 == Installation ==
 
-1. Upload the `mediamanager` folder to the `/wp-content/plugins/` directory
+1. Upload the `virtual-media-folders` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to Media → Library to start organizing your media
 
 = From WordPress Plugin Directory =
 
 1. Go to Plugins → Add New in your WordPress admin
-2. Search for "Media Manager"
+2. Search for "Virtual Media Folders"
 3. Click "Install Now" and then "Activate"
 
 == Frequently Asked Questions ==
 
 = Will this move my actual files? =
 
-No. Media Manager uses virtual folders. Your files stay exactly where they are on the server, and all URLs remain unchanged.
+No. Virtual Media Folders uses virtual folders. Your files stay exactly where they are on the server, and all URLs remain unchanged.
 
 = Can I nest folders? =
 
@@ -68,9 +68,21 @@ Only the folder organization is removed. Your media files are not deleted.
 
 = Is this compatible with my theme? =
 
-Media Manager works entirely within the WordPress admin. It doesn't affect your front-end theme.
+Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.0.0 =
+* **Major Release**: Complete plugin rename from "Media Manager" to "Virtual Media Folders"
+* Changed: New plugin slug "virtual-media-folders"
+* Changed: Updated PHP namespace from MediaManager to VirtualMediaFolders
+* Changed: Updated constants from MEDIAMANAGER_* to VMF_*
+* Changed: Updated REST API namespace from mediamanager/v1 to vmf/v1
+* Changed: Updated CSS class prefixes from mm- to vmf-
+* Changed: Updated JavaScript globals from mediaManagerData to vmfData
+* Changed: Updated text domain from mediamanager to virtual-media-folders
+* Changed: Renamed translation files to use new text domain
+* Note: Breaking change - customizations using old namespace/classes need updating
 
 = 0.1.17 =
 * Fixed: Plugin Check compliance - added phpcs:ignore comments for false positives
@@ -122,7 +134,7 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 * Changed: BulkFolderAction and MoveToFolderMenu now listen for folder change events
 
 = 0.1.5 =
-* Changed: MEDIAMANAGER_VERSION now uses actual version number in production (WP_DEBUG=false)
+* Changed: VMF_VERSION now uses actual version number in production (WP_DEBUG=false)
 * Removed: Debug console.log statements from JavaScript
 
 = 0.1.4 =
@@ -149,18 +161,20 @@ Media Manager works entirely within the WordPress admin. It doesn't affect your 
 * Drag and drop support
 * Sticky sidebar with fixed positioning on scroll
 * Bulk move action with compact UI
-
 * Gutenberg integration with folder sidebar
 * Settings page
 * Norwegian Bokmål translation
 
 == Upgrade Notice ==
 
-= 0.1.16 =
-Added uninstall.php for clean plugin removal.
+= 1.0.0 =
+Major release: Plugin renamed from "Media Manager" to "Virtual Media Folders". Breaking change for customizations.
 
 = 0.1.17 =
 Plugin Check compliance fixes.
+
+= 0.1.16 =
+Added uninstall.php for clean plugin removal.
 
 = 0.1.15 =
 Improved keyboard navigation: ArrowLeft moves to parent folder, collapsing parent selects it.
@@ -208,11 +222,11 @@ Refactored folder sidebar with shared components. Better UX after folder deletio
 Fixes sticky sidebar in Gutenberg media modal.
 
 = 0.1.0 =
-Initial release of Media Manager.
+Initial release of Virtual Media Folders.
 
 == Privacy Policy ==
 
-Media Manager does not:
+Virtual Media Folders does not:
 
 * Track users
 * Send data to external servers

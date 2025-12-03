@@ -1,15 +1,32 @@
 # Changelog
 
-All notable changes to MediaManager will be documented in this file.
+All notable changes to Virtual Media Folders will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.0] - 2025-12-03
+
+### Changed
+- **Major Release**: Complete plugin rename from "Media Manager" to "Virtual Media Folders"
+- New plugin slug: `virtual-media-folders`
+- Updated PHP namespace from `MediaManager` to `VirtualMediaFolders`
+- Updated constants from `MEDIAMANAGER_*` to `VMF_*`
+- Updated REST API namespace from `mediamanager/v1` to `vmf/v1`
+- Updated CSS class prefixes from `mm-` to `vmf-`
+- Updated JavaScript globals from `mediaManagerData` to `vmfData`
+- Updated text domain from `mediamanager` to `virtual-media-folders`
+- Renamed all translation files to use new text domain
+- Updated GitHub repository URL to `soderlind/virtual-media-folders`
+
+### Note
+- This is a breaking change. If you have customizations referencing the old namespace, constants, or CSS classes, you will need to update them.
 
 ## [0.1.17] - 2025-12-03
 
 ### Fixed
 - Plugin Check compliance: Added phpcs:ignore comments for false positives
-- Prefixed global variables in `uninstall.php` with `mediamanager_` prefix
+- Prefixed global variables in `uninstall.php` with `vmf_` prefix
 - Removed `error_log` debug function from `GitHubPluginUpdater.php`
 
 ## [0.1.16] - 2025-12-02
@@ -101,7 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.5] - 2025-11-30
 
 ### Changed
-- `MEDIAMANAGER_VERSION` now uses actual version number in production (when `WP_DEBUG` is false)
+- `VMF_VERSION` now uses actual version number in production (when `WP_DEBUG` is false)
 - Version constant uses `time()` for cache busting only during development
 
 ### Removed
@@ -206,21 +223,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leverages WordPress REST API for all operations
 
 
-[0.1.17]: https://github.com/soderlind/mediamanager/compare/0.1.16...0.1.17
-[0.1.16]: https://github.com/soderlind/mediamanager/compare/0.1.15...0.1.16
-[0.1.15]: https://github.com/soderlind/mediamanager/compare/0.1.14...0.1.15
-[0.1.14]: https://github.com/soderlind/mediamanager/compare/0.1.13...0.1.14
-[0.1.13]: https://github.com/soderlind/mediamanager/compare/0.1.12...0.1.13
-[0.1.12]: https://github.com/soderlind/mediamanager/compare/0.1.11...0.1.12
-[0.1.11]: https://github.com/soderlind/mediamanager/compare/0.1.10...0.1.11
-[0.1.10]: https://github.com/soderlind/mediamanager/compare/0.1.9...0.1.10
-[0.1.9]: https://github.com/soderlind/mediamanager/compare/0.1.8...0.1.9
-[0.1.8]: https://github.com/soderlind/mediamanager/compare/0.1.7...0.1.8
-[0.1.7]: https://github.com/soderlind/mediamanager/compare/0.1.6...0.1.7
-[0.1.6]: https://github.com/soderlind/mediamanager/compare/0.1.5...0.1.6
-[0.1.5]: https://github.com/soderlind/mediamanager/compare/0.1.4...0.1.5
-[0.1.4]: https://github.com/soderlind/mediamanager/compare/0.1.3...0.1.4
-[0.1.3]: https://github.com/soderlind/mediamanager/compare/0.1.2...0.1.3
-[0.1.2]: https://github.com/soderlind/mediamanager/compare/0.1.1...0.1.2
-[0.1.1]: https://github.com/soderlind/mediamanager/compare/0.1.0...0.1.1
-[0.1.0]: https://github.com/soderlind/mediamanager/releases/tag/0.1.0
+[1.0.0]: https://github.com/soderlind/virtual-media-folders/compare/0.1.17...1.0.0
+[0.1.17]: https://github.com/soderlind/virtual-media-folders/compare/0.1.16...0.1.17
+[0.1.16]: https://github.com/soderlind/virtual-media-folders/compare/0.1.15...0.1.16
+[0.1.15]: https://github.com/soderlind/virtual-media-folders/compare/0.1.14...0.1.15
+[0.1.14]: https://github.com/soderlind/virtual-media-folders/compare/0.1.13...0.1.14
+[0.1.13]: https://github.com/soderlind/virtual-media-folders/compare/0.1.12...0.1.13
+[0.1.12]: https://github.com/soderlind/virtual-media-folders/compare/0.1.11...0.1.12
+[0.1.11]: https://github.com/soderlind/virtual-media-folders/compare/0.1.10...0.1.11
+[0.1.10]: https://github.com/soderlind/virtual-media-folders/compare/0.1.9...0.1.10
+[0.1.9]: https://github.com/soderlind/virtual-media-folders/compare/0.1.8...0.1.9
+[0.1.8]: https://github.com/soderlind/virtual-media-folders/compare/0.1.7...0.1.8
+[0.1.7]: https://github.com/soderlind/virtual-media-folders/compare/0.1.6...0.1.7
+[0.1.6]: https://github.com/soderlind/virtual-media-folders/compare/0.1.5...0.1.6
+[0.1.5]: https://github.com/soderlind/virtual-media-folders/compare/0.1.4...0.1.5
+[0.1.4]: https://github.com/soderlind/virtual-media-folders/compare/0.1.3...0.1.4
+[0.1.3]: https://github.com/soderlind/virtual-media-folders/compare/0.1.2...0.1.3
+[0.1.2]: https://github.com/soderlind/virtual-media-folders/compare/0.1.1...0.1.2
+[0.1.1]: https://github.com/soderlind/virtual-media-folders/compare/0.1.0...0.1.1
+[0.1.0]: https://github.com/soderlind/virtual-media-folders/releases/tag/0.1.0

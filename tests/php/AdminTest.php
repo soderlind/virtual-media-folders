@@ -2,16 +2,16 @@
 /**
  * Admin class tests.
  *
- * @package MediaManager
+ * @package VirtualMediaFolders
  */
 
 declare(strict_types=1);
 
-namespace MediaManager\Tests;
+namespace VirtualMediaFolders\Tests;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
-use MediaManager\Admin;
+use VirtualMediaFolders\Admin;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -63,8 +63,8 @@ class AdminTest extends TestCase {
 	 * Test enqueue_scripts returns early when asset file doesn't exist.
 	 */
 	public function test_enqueue_scripts_skips_when_no_asset_file(): void {
-		if ( ! defined( 'MEDIAMANAGER_PATH' ) ) {
-			define( 'MEDIAMANAGER_PATH', '/tmp/mediamanager-test/' );
+		if ( ! defined( 'VMF_PATH' ) ) {
+			define( 'VMF_PATH', '/tmp/mediamanager-test/' );
 		}
 
 		Functions\expect( 'wp_enqueue_script' )->never();
