@@ -174,9 +174,19 @@ async function moveMediaToFolder(mediaId, folderId) {
 /**
  * Refresh the media library after a move operation.
  * Preserves the current sort order.
+ * Does NOT refresh when in "All Media" view to preserve item positions.
  */
 function refreshMediaLibrary() {
-	// Simplest approach: re-trigger the current folder selection
+	// Check if we're in "All Media" view - don't refresh the grid
+	// because items should stay in place (they're still visible in All Media)
+	const isAllMediaView = !document.querySelector('.attachments-browser')?.classList.contains('vmf-folder-filtered');
+	if (isAllMediaView) {
+		// In All Media view, just update folder counts (already done via vmfRefreshFolders)
+		// No need to refresh the media grid
+		return;
+	}
+	
+	// Re-trigger the current folder selection to refresh the view
 	// This ensures the filter is properly re-applied
 	const $selectedFolder = jQuery('.vmf-folder-button.is-selected');
 	if ($selectedFolder.length) {

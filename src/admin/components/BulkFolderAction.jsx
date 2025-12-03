@@ -164,12 +164,16 @@ export default function BulkFolderAction({ onComplete }) {
 				}, 200);
 			} else {
 				// When not jumping to folder, remove the moved items from the current view
-				mediaIds.forEach((id) => {
-					const attachment = document.querySelector(`.attachment[data-id="${id}"]`);
-					if (attachment) {
-						attachment.remove();
-					}
-				});
+				// BUT only if we're not in "All Media" view (All Media shows all items regardless of folder)
+				const isAllMediaView = !document.querySelector('.attachments-browser')?.classList.contains('vmf-folder-filtered');
+				if (!isAllMediaView) {
+					mediaIds.forEach((id) => {
+						const attachment = document.querySelector(`.attachment[data-id="${id}"]`);
+						if (attachment) {
+							attachment.remove();
+						}
+					});
+				}
 			}
 			
 			// Disable bulk select mode by triggering WordPress media library's bulk select toggle

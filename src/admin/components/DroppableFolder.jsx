@@ -63,12 +63,16 @@ export function DroppableFolder({ folderId, children, className = '' }) {
 						}, 200);
 					} else {
 						// When not jumping to folder, remove the moved item from the current view
-						const attachment = document.querySelector(`.attachment[data-id="${data.mediaId}"]`);
-						if (attachment) {
-							// Small delay to let the move complete before removing
-							setTimeout(() => {
-								attachment.remove();
-							}, 300);
+						// BUT only if we're not in "All Media" view (All Media shows all items regardless of folder)
+						const isAllMediaView = !document.querySelector('.attachments-browser')?.classList.contains('vmf-folder-filtered');
+						if (!isAllMediaView) {
+							const attachment = document.querySelector(`.attachment[data-id="${data.mediaId}"]`);
+							if (attachment) {
+								// Small delay to let the move complete before removing
+								setTimeout(() => {
+									attachment.remove();
+								}, 300);
+							}
 						}
 					}
 				}
