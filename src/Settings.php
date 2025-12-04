@@ -276,7 +276,7 @@ final class Settings {
 		 *
 		 * @param array $defaults Default settings array.
 		 */
-		return apply_filters( 'vmf_default_settings', self::DEFAULTS );
+		return apply_filters( 'vmf_default_settings', self::DEFAULTS ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
 	}
 
 	/**
@@ -303,7 +303,7 @@ final class Settings {
 		 *
 		 * @param array $options All settings.
 		 */
-		$options = apply_filters( 'vmf_settings', $options );
+		$options = apply_filters( 'vmf_settings', $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
 
 		// Enforce interdependency: at least one of show_all_media or show_uncategorized must be true.
 		if ( empty( $options[ 'show_all_media' ] ) && empty( $options[ 'show_uncategorized' ] ) ) {
@@ -327,13 +327,13 @@ final class Settings {
 		 * @param string $key     The setting key.
 		 * @param array  $options All settings.
 		 */
-		$value = apply_filters( "vmf_setting_{$key}", $value, $key, $options );
+		$value = apply_filters( "vmf_setting_{$key}", $value, $key, $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
 
 		// Final enforcement after individual filter: if requesting show_all_media or show_uncategorized,
 		// ensure at least one is true.
 		if ( $key === 'show_all_media' || $key === 'show_uncategorized' ) {
 			$other_key   = $key === 'show_all_media' ? 'show_uncategorized' : 'show_all_media';
-			$other_value = apply_filters( "vmf_setting_{$other_key}", $options[ $other_key ] ?? true, $other_key, $options );
+			$other_value = apply_filters( "vmf_setting_{$other_key}", $options[ $other_key ] ?? true, $other_key, $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
 
 			// If both would be false, force the current one to true.
 			if ( ! $value && ! $other_value ) {
