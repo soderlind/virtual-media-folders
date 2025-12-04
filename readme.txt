@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -71,6 +71,13 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.0.6 =
+* Added: Filter hooks for settings (`vmf_default_settings`, `vmf_settings`, `vmf_setting_{$key}`)
+* Added: When "Show All Media" is disabled, "Uncategorized" becomes the default folder
+* Changed: Removed "Sidebar Default Visible" setting (now uses localStorage)
+* Changed: Consolidated settings into single "Default Behavior" section
+* Fixed: Settings checkbox interdependency now saves correctly
 
 = 1.0.5 =
 * Housekeeping

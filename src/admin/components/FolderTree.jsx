@@ -24,6 +24,11 @@ import BulkFolderAction from './BulkFolderAction';
 // Get settings from server
 const { showAllMedia = true, showUncategorized = true } = window.vmfData || {};
 
+// Determine default folder based on settings:
+// - If showAllMedia is true, default is null (All Media)
+// - If showAllMedia is false, default is 'uncategorized'
+const defaultFolder = showAllMedia ? null : 'uncategorized';
+
 /**
  * FolderTree component.
  *
@@ -47,6 +52,7 @@ export default function FolderTree({ onFolderSelect }) {
 		trackUrl: true, 
 		onFolderSelect,
 		mediaType,
+		defaultFolder,
 	});
 
 	// Listen for changes to the WordPress media type filter dropdown

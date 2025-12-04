@@ -53,21 +53,16 @@ jQuery(document).on('click', '.page-title-action', function() {
  */
 function addFolderToggleButtonToPage() {
 	// Check if folder view should be active on load
-	// Priority: URL params > localStorage > server setting
+	// Priority: URL params > localStorage > default (false)
 	const savedPref = localStorage.getItem('vmf_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	const { sidebarDefaultVisible = false } = window.vmfData || {};
 	
 	let shouldBeActive = urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder';
 	if (!shouldBeActive && savedPref !== null) {
 		// Use localStorage if set
 		shouldBeActive = savedPref === '1';
-	} else if (!shouldBeActive && savedPref === null) {
-		// First visit - use server setting
-		shouldBeActive = sidebarDefaultVisible;
-		// Store in localStorage for future visits
-		localStorage.setItem('vmf_folder_view', shouldBeActive ? '1' : '0');
 	}
+	// If no URL params and no localStorage, default to hidden (shouldBeActive stays false)
 	
 	// If button already exists, just update its state
 	const $existingButton = jQuery('.vmf-folder-toggle-button');

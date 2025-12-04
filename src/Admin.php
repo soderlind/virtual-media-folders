@@ -177,7 +177,6 @@ class Admin {
 			'jumpToFolderAfterMove' => Settings::get( 'jump_to_folder_after_move', false ),
 			'showAllMedia'          => Settings::get( 'show_all_media', true ),
 			'showUncategorized'     => Settings::get( 'show_uncategorized', true ),
-			'sidebarDefaultVisible' => Settings::get( 'sidebar_default_visible', false ),
 		] );
 
 		// Enable translations for JavaScript strings.

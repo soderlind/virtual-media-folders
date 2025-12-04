@@ -45,7 +45,6 @@ final class Settings {
 		'default_folder'            => 0,
 		'show_all_media'            => true,
 		'show_uncategorized'        => true,
-		'sidebar_default_visible'   => false,
 		'jump_to_folder_after_move' => false,
 	];
 
@@ -57,6 +56,7 @@ final class Settings {
 	public static function init(): void {
 		add_action( 'admin_menu', [ self::class, 'add_menu_page' ] );
 		add_action( 'admin_init', [ self::class, 'register_settings' ] );
+		add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_settings_scripts' ] );
 	}
 
 	/**
@@ -72,6 +72,26 @@ final class Settings {
 			'manage_options',
 			self::PAGE_SLUG,
 			[ self::class, 'render_settings_page' ]
+		);
+	}
+
+	/**
+	 * Enqueue settings page scripts.
+	 *
+	 * @param string $hook_suffix The current admin page.
+	 * @return void
+	 */
+	public static function enqueue_settings_scripts( string $hook_suffix ): void {
+		if ( 'media_page_' . self::PAGE_SLUG !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'vmf-settings',
+			plugins_url( 'src/admin/settings.js', dirname( __FILE__ ) ),
+			[],
+			filemtime( plugin_dir_path( dirname( __FILE__ ) ) . 'src/admin/settings.js' ),
+			true
 		);
 	}
 
@@ -194,32 +214,12 @@ final class Settings {
 			]
 		);
 
-		// UI preferences section.
-		add_settings_section(
-			'vmf_ui',
-			__( 'User Interface', 'virtual-media-folders' ),
-			[ self::class, 'render_ui_section' ],
-			self::PAGE_SLUG
-		);
-
-		add_settings_field(
-			'sidebar_default_visible',
-			__( 'Sidebar Default Visible', 'virtual-media-folders' ),
-			[ self::class, 'render_checkbox_field' ],
-			self::PAGE_SLUG,
-			'vmf_ui',
-			[
-				'id'          => 'sidebar_default_visible',
-				'description' => __( 'Show the folder sidebar by default when opening Media Library.', 'virtual-media-folders' ),
-			]
-		);
-
 		add_settings_field(
 			'jump_to_folder_after_move',
 			__( 'Jump to Folder After Move', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'vmf_ui',
+			'vmf_defaults',
 			[
 				'id'          => 'jump_to_folder_after_move',
 				'description' => __( 'Automatically switch to the target folder after moving files.', 'virtual-media-folders' ),
@@ -244,12 +244,17 @@ final class Settings {
 			'suggestions_iptc',
 			'show_all_media',
 			'show_uncategorized',
-			'sidebar_default_visible',
 			'jump_to_folder_after_move',
 		];
 
 		foreach ( $boolean_fields as $field ) {
 			$sanitized[ $field ] = ! empty( $input[ $field ] );
+		}
+
+		// Enforce interdependency: at least one of show_all_media or show_uncategorized must be true.
+		if ( ! $sanitized[ 'show_all_media' ] && ! $sanitized[ 'show_uncategorized' ] ) {
+			// If both are unchecked, force show_all_media on.
+			$sanitized[ 'show_all_media' ] = true;
 		}
 
 		// Integer fields.
@@ -259,24 +264,84 @@ final class Settings {
 	}
 
 	/**
+	 * Get the default settings.
+	 *
+	 * @return array<string, mixed> Default settings, filtered via 'vmf_default_settings'.
+	 */
+	public static function get_defaults(): array {
+		/**
+		 * Filter the default settings.
+		 *
+		 * @since 1.0.5
+		 *
+		 * @param array $defaults Default settings array.
+		 */
+		return apply_filters( 'vmf_default_settings', self::DEFAULTS );
+	}
+
+	/**
 	 * Get a setting value.
+	 *
+	 * Settings can be overridden via the 'vmf_setting_{$key}' filter or
+	 * the 'vmf_settings' filter for all settings at once.
+	 *
+	 * Note: At least one of 'show_all_media' or 'show_uncategorized' must be true.
+	 * If both are set to false (via filters), 'show_all_media' will be forced to true.
 	 *
 	 * @param string $key     Setting key.
 	 * @param mixed  $default Default value if not set.
-	 * @return mixed Setting value.
+	 * @return mixed Setting value, filtered via 'vmf_setting_{$key}'.
 	 */
 	public static function get( string $key, $default = null ) {
-		$options = get_option( self::OPTION_NAME, self::DEFAULTS );
+		$defaults = self::get_defaults();
+		$options  = get_option( self::OPTION_NAME, $defaults );
+
+		/**
+		 * Filter all settings at once.
+		 *
+		 * @since 1.0.5
+		 *
+		 * @param array $options All settings.
+		 */
+		$options = apply_filters( 'vmf_settings', $options );
+
+		// Enforce interdependency: at least one of show_all_media or show_uncategorized must be true.
+		if ( empty( $options[ 'show_all_media' ] ) && empty( $options[ 'show_uncategorized' ] ) ) {
+			$options[ 'show_all_media' ] = true;
+		}
 
 		if ( isset( $options[ $key ] ) ) {
-			return $options[ $key ];
+			$value = $options[ $key ];
+		} elseif ( $default !== null ) {
+			$value = $default;
+		} else {
+			$value = $defaults[ $key ] ?? null;
 		}
 
-		if ( $default !== null ) {
-			return $default;
+		/**
+		 * Filter a specific setting value.
+		 *
+		 * @since 1.0.5
+		 *
+		 * @param mixed  $value   The setting value.
+		 * @param string $key     The setting key.
+		 * @param array  $options All settings.
+		 */
+		$value = apply_filters( "vmf_setting_{$key}", $value, $key, $options );
+
+		// Final enforcement after individual filter: if requesting show_all_media or show_uncategorized,
+		// ensure at least one is true.
+		if ( $key === 'show_all_media' || $key === 'show_uncategorized' ) {
+			$other_key   = $key === 'show_all_media' ? 'show_uncategorized' : 'show_all_media';
+			$other_value = apply_filters( "vmf_setting_{$other_key}", $options[ $other_key ] ?? true, $other_key, $options );
+
+			// If both would be false, force the current one to true.
+			if ( ! $value && ! $other_value ) {
+				$value = true;
+			}
 		}
 
-		return self::DEFAULTS[ $key ] ?? null;
+		return $value;
 	}
 
 	/**
@@ -333,15 +398,6 @@ final class Settings {
 	}
 
 	/**
-	 * Render UI section description.
-	 *
-	 * @return void
-	 */
-	public static function render_ui_section(): void {
-		echo '<p>' . esc_html__( 'Customize the Virtual Media Folders user interface.', 'virtual-media-folders' ) . '</p>';
-	}
-
-	/**
 	 * Render a checkbox field.
 	 *
 	 * @param array $args Field arguments.
@@ -352,10 +408,35 @@ final class Settings {
 		$value   = $options[ $args[ 'id' ] ] ?? self::DEFAULTS[ $args[ 'id' ] ] ?? false;
 		$name    = self::OPTION_NAME . '[' . $args[ 'id' ] . ']';
 
+		// Check if this field should be disabled based on interdependency.
+		// When disabled, the checkbox is forced checked (the other option is off).
+		$disabled     = '';
+		$is_forced_on = false;
+		if ( $args[ 'id' ] === 'show_uncategorized' && empty( $options[ 'show_all_media' ] ) ) {
+			$disabled     = 'disabled';
+			$is_forced_on = true;
+			$value        = true; // Force checked visually.
+		} elseif ( $args[ 'id' ] === 'show_all_media' && empty( $options[ 'show_uncategorized' ] ) ) {
+			$disabled     = 'disabled';
+			$is_forced_on = true;
+			$value        = true; // Force checked visually.
+		}
+
+		// Hidden field to submit value when checkbox is disabled.
+		// Disabled fields don't submit, so we need this to preserve the forced-on state.
+		if ( $is_forced_on ) {
+			printf(
+				'<input type="hidden" name="%s" value="1" />',
+				esc_attr( $name )
+			);
+		}
+
 		printf(
-			'<label><input type="checkbox" name="%s" value="1" %s /> %s</label>',
+			'<label><input type="checkbox" id="%s" name="%s" value="1" %s %s /> %s</label>',
+			esc_attr( $args[ 'id' ] ),
 			esc_attr( $name ),
 			checked( $value, true, false ),
+			esc_attr( $disabled ),
 			esc_html( $args[ 'description' ] ?? '' )
 		);
 	}

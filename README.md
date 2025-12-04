@@ -124,7 +124,64 @@ The plugin provides REST API endpoints under `vmf/v1`:
 - `vmf_folder_deleted` - Fired when a folder is deleted
 - `vmf_media_moved` - Fired when media is moved to a folder
 
-### Filters
+### Settings Filters
+
+#### `vmf_default_settings`
+
+Filter the default settings values.
+
+```php
+add_filter( 'vmf_default_settings', function( $defaults ) {
+    // Change default values
+    $defaults['show_all_media']            = true;
+    $defaults['show_uncategorized']        = true;
+    $defaults['jump_to_folder_after_move'] = false;
+    $defaults['default_folder']            = 0;
+    return $defaults;
+} );
+```
+
+#### `vmf_settings`
+
+Filter all settings at once after loading from the database.
+
+```php
+add_filter( 'vmf_settings', function( $options ) {
+    // Force jump to folder after move for all users
+    $options['jump_to_folder_after_move'] = true;
+    return $options;
+} );
+```
+
+#### `vmf_setting_{$key}`
+
+Filter a specific setting value. Available keys:
+- `show_all_media` - Show "All Media" in sidebar
+- `show_uncategorized` - Show "Uncategorized" in sidebar  
+- `jump_to_folder_after_move` - Navigate to folder after moving files
+- `default_folder` - Default folder for new uploads (0 = none)
+
+```php
+// Hide "All Media" option for non-administrators
+add_filter( 'vmf_setting_show_all_media', function( $value, $key, $options ) {
+    if ( ! current_user_can( 'manage_options' ) ) {
+        return false;
+    }
+    return $value;
+}, 10, 3 );
+
+// Always show uncategorized for editors
+add_filter( 'vmf_setting_show_uncategorized', function( $value ) {
+    if ( current_user_can( 'edit_others_posts' ) ) {
+        return true;
+    }
+    return $value;
+} );
+```
+
+> **Note:** At least one of `show_all_media` or `show_uncategorized` must be `true`. If both are set to `false` via filters, `show_all_media` will automatically be set to `true`.
+
+### Other Filters
 
 - `vmf_suggestion_matchers` - Customize suggestion matching logic
 - `vmf_folder_capabilities` - Modify capability requirements
