@@ -5,6 +5,23 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2025-12-04
+
+### Added
+- Filter hooks for settings: `vmf_default_settings`, `vmf_settings`, and `vmf_setting_{$key}`
+- When "Show All Media" is disabled, "Uncategorized" becomes the default selected folder
+- Settings interdependency enforcement via hooks (at least one must be true)
+
+### Changed
+- Removed "Sidebar Default Visible" setting (sidebar visibility now remembered via localStorage)
+- Moved "Jump to Folder After Move" from UI section to Default Behavior section
+- Removed "User Interface" settings section (consolidated into Default Behavior)
+- Moved settings page JavaScript to external file (`src/admin/settings.js`)
+
+### Fixed
+- Settings checkbox interdependency now correctly saves when one option is disabled
+- Hidden field ensures disabled checkbox value is submitted with form
+
 ## [1.0.5] - 2025-12-04
 
 ### Changed

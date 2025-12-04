@@ -69,12 +69,13 @@ function normalizeMediaType(mediaType) {
  * @param {boolean} options.trackUrl Whether to sync with URL params (admin only).
  * @param {Function} options.onFolderSelect Callback when folder selection changes.
  * @param {string} options.mediaType Filter counts by media type (e.g., 'image', 'audio', 'video').
+ * @param {string|number|null} options.defaultFolder Default folder when no URL param is set.
  * @return {Object} Folder data and state.
  */
-export default function useFolderData({ trackUrl = false, onFolderSelect, mediaType = '' } = {}) {
+export default function useFolderData({ trackUrl = false, onFolderSelect, mediaType = '', defaultFolder = null } = {}) {
 	const [folders, setFolders] = useState([]);
 	const [flatFolders, setFlatFolders] = useState([]);
-	const [selectedId, setSelectedId] = useState(null);
+	const [selectedId, setSelectedId] = useState(defaultFolder);
 	const [loading, setLoading] = useState(true);
 	const [uncategorizedCount, setUncategorizedCount] = useState(0);
 
@@ -145,13 +146,14 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 			if (urlFolder) {
 				setSelectedId(urlFolder === 'uncategorized' ? 'uncategorized' : parseInt(urlFolder, 10));
 			} else if (urlMode === 'folder') {
-				// mode=folder without specific folder means show folder view but no folder selected
-				setSelectedId(null);
+				// mode=folder without specific folder means use default folder setting
+				setSelectedId(defaultFolder);
 			}
+			// If no URL params, selectedId keeps its initial value (defaultFolder)
 		}
 
 		fetchFolders();
-	}, [fetchFolders, trackUrl]);
+	}, [fetchFolders, trackUrl, defaultFolder]);
 
 	// Re-fetch when media type changes
 	useEffect(() => {
