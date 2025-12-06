@@ -131,10 +131,35 @@ class GitHubPluginUpdater {
 				2
 			);
 
+			// Add filter to prevent 500 errors when plugin info is null.
+			add_filter(
+				'puc_pre_inject_info-' . $this->plugin_slug,
+				array( $this, 'handle_pre_inject_info' ),
+				10,
+				1
+			);
+
 		} catch (\Exception $e) {
 			// Silently fail - update checker is non-critical.
 			unset( $e );
 		}
+	}
+
+	/**
+	 * Handle pre-inject info filter to prevent 500 errors.
+	 *
+	 * When the GitHub API returns null (rate limit, network error, etc.),
+	 * returning false here prevents the library from trying to call toWpFormat()
+	 * on a null object, which would cause a fatal error.
+	 *
+	 * @param mixed $plugin_info The plugin info object or null.
+	 * @return mixed The plugin info or false to prevent injection.
+	 */
+	public function handle_pre_inject_info( $plugin_info ) {
+		if ( null === $plugin_info || false === $plugin_info ) {
+			return false;
+		}
+		return $plugin_info;
 	}
 
 	/**

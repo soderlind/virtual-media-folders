@@ -5,6 +5,12 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-12-06
+
+### Fixed
+- Fixed 500 error on plugin information page when GitHub API returns null
+- Added defensive handling for null plugin info in GitHubPluginUpdater
+
 ## [1.1.0] - 2025-12-06
 
 ### Added
