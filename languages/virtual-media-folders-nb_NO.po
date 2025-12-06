@@ -578,3 +578,11 @@ msgstr "Virtuelle mapper"
 #: src/Admin.php:63
 msgid "Virtual Media Folders on GitHub"
 msgstr "Virtual Media Folders på GitHub"
+
+#: src/GitHubPluginUpdater.php:175
+msgid "Virtual Media Folders:"
+msgstr "Virtual Media Folders:"
+
+#: src/GitHubPluginUpdater.php:176
+msgid "Could not check for updates. GitHub API may be temporarily unavailable. Please try again later."
+msgstr "Kunne ikke se etter oppdateringer. GitHub API kan være midlertidig utilgjengelig. Vennligst prøv igjen senere."
