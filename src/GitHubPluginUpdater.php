@@ -106,6 +106,9 @@ class GitHubPluginUpdater {
 	 * @return void
 	 */
 	public function setup_updater(): void {
+		// Always register admin notice hook to check transient state.
+		add_action( 'admin_notices', array( $this, 'show_update_error_notice' ) );
+
 		try {
 			$update_checker = PucFactory::buildUpdateChecker(
 				$this->github_url,
@@ -120,10 +123,66 @@ class GitHubPluginUpdater {
 				$update_checker->getVcsApi()->enableReleaseAssets( $this->name_regex );
 			}
 
+			// Add filter to handle API errors gracefully.
+			add_filter(
+				'puc_request_info_result-' . $this->plugin_slug,
+				array( $this, 'handle_update_check_result' ),
+				10,
+				2
+			);
+
 		} catch (\Exception $e) {
 			// Silently fail - update checker is non-critical.
 			unset( $e );
 		}
+	}
+
+	/**
+	 * Handle update check result and show admin notice on API errors.
+	 *
+	 * @param mixed $result        The update check result.
+	 * @param array $http_response The HTTP response (if available).
+	 * @return mixed The result (unchanged).
+	 */
+	public function handle_update_check_result( $result, $http_response = null ) {
+		$transient_key = 'vmf_updater_error_notice';
+
+		// Check if result indicates an error (null or WP_Error).
+		if ( is_wp_error( $result ) || null === $result ) {
+			// Store transient to track error state (1 hour).
+			if ( false === get_transient( $transient_key ) ) {
+				set_transient( $transient_key, true, HOUR_IN_SECONDS );
+			}
+		} else {
+			// Clear error transient on success - connection restored.
+			delete_transient( $transient_key );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Display admin notice when update check fails.
+	 *
+	 * @return void
+	 */
+	public function show_update_error_notice(): void {
+		// Only show if error transient exists.
+		if ( false === get_transient( 'vmf_updater_error_notice' ) ) {
+			return;
+		}
+
+		// Only show on plugins page.
+		$screen = get_current_screen();
+		if ( ! $screen || 'plugins' !== $screen->id ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-warning is-dismissible"><p><strong>%s</strong> %s</p></div>',
+			esc_html__( 'Virtual Media Folders:', 'virtual-media-folders' ),
+			esc_html__( 'Could not check for updates. GitHub API may be temporarily unavailable. Please try again later.', 'virtual-media-folders' )
+		);
 	}
 
 	/**

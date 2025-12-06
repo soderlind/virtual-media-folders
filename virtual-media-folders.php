@@ -95,13 +95,16 @@ require_once VMF_PATH . 'vendor/autoload.php';
  */
 add_action( 'plugins_loaded', static function () {
 
-	\VirtualMediaFolders\GitHubPluginUpdater::create_with_assets(
-		'https://github.com/soderlind/virtual-media-folders',
-		VMF_FILE,
-		'virtual-media-folders',
-		'/virtual-media-folders\.zip/',
-		'main'
-	);
+	if ( class_exists( 'VirtualMediaFolders\\GitHubPluginUpdater' ) ) {
+		$updater = \VirtualMediaFolders\GitHubPluginUpdater::create_with_assets(
+			'https://github.com/soderlind/virtual-media-folders',
+			VMF_FILE,
+			'virtual-media-folders',
+			'/virtual-media-folders\.zip/',
+			'main'
+		);
+	}
+
 	\VirtualMediaFolders\Taxonomy::init();
 
 	if ( class_exists( 'VirtualMediaFolders\\Admin' ) ) {
