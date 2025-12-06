@@ -2,8 +2,6 @@
 	"src/admin/index.js": "build/admin.js",
 	"src/admin/media-library.js": "build/admin.js",
 	"src/admin/components/BulkFolderAction.jsx": "build/admin.js",
-	"src/admin/components/DndContext.jsx": "build/admin.js",
-	"src/admin/components/DraggableMedia.jsx": "build/admin.js",
 	"src/admin/components/DroppableFolder.jsx": "build/admin.js",
 	"src/admin/components/FolderManager.jsx": "build/admin.js",
 	"src/admin/components/FolderTree.jsx": "build/admin.js",

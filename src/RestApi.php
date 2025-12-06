@@ -229,6 +229,35 @@ final class RestApi extends WP_REST_Controller {
 			]
 		);
 
+		// Folder reorder endpoint.
+		register_rest_route(
+			$this->namespace,
+			'/folders/reorder',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'reorder_folders' ],
+					'permission_callback' => [ $this, 'update_folder_permissions_check' ],
+					'args'                => [
+						'order'  => [
+							'required'    => true,
+							'type'        => 'array',
+							'description' => __( 'Array of folder IDs in desired order.', 'virtual-media-folders' ),
+							'items'       => [
+								'type' => 'integer',
+							],
+						],
+						'parent' => [
+							'type'              => 'integer',
+							'default'           => 0,
+							'sanitize_callback' => 'absint',
+							'description'       => __( 'Parent folder ID (0 for root level).', 'virtual-media-folders' ),
+						],
+					],
+				],
+			]
+		);
+
 		register_rest_route(
 			$this->namespace,
 			'/suggestions/(?P<media_id>[\d]+)/apply',
@@ -354,8 +383,9 @@ final class RestApi extends WP_REST_Controller {
 		$args = [
 			'taxonomy'   => 'media_folder',
 			'hide_empty' => false,
-			'orderby'    => 'name',
+			'orderby'    => 'meta_value_num',
 			'order'      => 'ASC',
+			'meta_key'   => 'vmf_order', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 		];
 
 		$terms = get_terms( $args );
@@ -363,6 +393,26 @@ final class RestApi extends WP_REST_Controller {
 		if ( is_wp_error( $terms ) ) {
 			return $terms;
 		}
+
+		// Sort terms: those with menu_order first (by order), then those without (by name)
+		usort( $terms, function ( $a, $b ) {
+			$order_a = get_term_meta( $a->term_id, 'vmf_order', true );
+			$order_b = get_term_meta( $b->term_id, 'vmf_order', true );
+
+			// If both have order, sort by order
+			if ( $order_a !== '' && $order_b !== '' ) {
+				return (int) $order_a - (int) $order_b;
+			}
+			// If only one has order, it comes first
+			if ( $order_a !== '' ) {
+				return -1;
+			}
+			if ( $order_b !== '' ) {
+				return 1;
+			}
+			// Neither has order, sort by name
+			return strcasecmp( $a->name, $b->name );
+		} );
 
 		$folders = [];
 		foreach ( $terms as $term ) {
@@ -521,6 +571,50 @@ final class RestApi extends WP_REST_Controller {
 			[
 				'deleted' => true,
 				'id'      => $folder_id,
+			],
+			200
+		);
+	}
+
+	/**
+	 * Reorder folders within a parent.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function reorder_folders( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$order     = $request->get_param( 'order' );
+		$parent_id = $request->get_param( 'parent' );
+
+		if ( ! is_array( $order ) ) {
+			return new WP_Error(
+				'rest_invalid_order',
+				__( 'Order must be an array of folder IDs.', 'virtual-media-folders' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// Update menu_order for each folder
+		foreach ( $order as $position => $folder_id ) {
+			$folder_id = absint( $folder_id );
+			$term      = get_term( $folder_id, 'media_folder' );
+
+			if ( ! $term || is_wp_error( $term ) ) {
+				continue;
+			}
+
+			// Only reorder folders with the specified parent
+			if ( (int) $term->parent !== (int) $parent_id ) {
+				continue;
+			}
+
+			update_term_meta( $folder_id, 'vmf_order', $position );
+		}
+
+		return new WP_REST_Response(
+			[
+				'success' => true,
+				'message' => __( 'Folders reordered successfully.', 'virtual-media-folders' ),
 			],
 			200
 		);

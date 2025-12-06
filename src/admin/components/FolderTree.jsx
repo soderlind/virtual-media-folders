@@ -5,7 +5,8 @@
  * virtual folder for media without any folder assignment.
  * 
  * Uses shared components for the base tree structure, adding:
- * - DroppableFolder for drag-and-drop
+ * - DroppableFolder for drag-and-drop media to folders
+ * - SortableFolderItem for reordering folders via drag-and-drop
  * - FolderManager for folder CRUD operations
  * - BulkFolderAction for bulk operations
  * - URL state management
@@ -15,9 +16,25 @@
  */
 
 import { useEffect, useCallback, useState } from '@wordpress/element';
+import {
+	DndContext,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+	closestCenter,
+} from '@dnd-kit/core';
+import {
+	SortableContext,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy,
+	arrayMove,
+} from '@dnd-kit/sortable';
+import apiFetch from '@wordpress/api-fetch';
 import useFolderData from '../../shared/hooks/useFolderData';
 import { BaseFolderTree } from '../../shared/components';
 import { DroppableFolder } from './DroppableFolder';
+import { SortableFolderItem } from './SortableFolderItem';
 import FolderManager from './FolderManager';
 import BulkFolderAction from './BulkFolderAction';
 
@@ -40,7 +57,7 @@ export default function FolderTree({ onFolderSelect }) {
 	const [mediaType, setMediaType] = useState('');
 
 	const {
-		folders,
+		folders: fetchedFolders,
 		flatFolders,
 		selectedId,
 		setSelectedId,
@@ -54,6 +71,14 @@ export default function FolderTree({ onFolderSelect }) {
 		mediaType,
 		defaultFolder,
 	});
+
+	// Local state for optimistic UI updates during drag-drop
+	const [folders, setFolders] = useState(fetchedFolders);
+
+	// Sync local folders with fetched folders when data loads
+	useEffect(() => {
+		setFolders(fetchedFolders);
+	}, [fetchedFolders]);
 
 	// Listen for changes to the WordPress media type filter dropdown
 	useEffect(() => {
@@ -145,14 +170,68 @@ export default function FolderTree({ onFolderSelect }) {
 		};
 	}, [handleRefresh, onFolderSelect, setSelectedId]);
 
-	// Wrapper for folder items - uses DroppableFolder for drag-and-drop
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 8,
+			},
+		}),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		})
+	);
+
+	// Handle folder drag end - reorder folders with optimistic UI update
+	const handleDragEnd = useCallback((event) => {
+		const { active, over } = event;
+
+		if (!over || active.id === over.id) {
+			return;
+		}
+
+		// Find the folders at root level and their order
+		const rootFolderIds = folders.map((f) => f.id);
+		const oldIndex = rootFolderIds.indexOf(active.id);
+		const newIndex = rootFolderIds.indexOf(over.id);
+
+		if (oldIndex === -1 || newIndex === -1) {
+			return;
+		}
+
+		// Calculate new order
+		const newOrder = arrayMove(rootFolderIds, oldIndex, newIndex);
+
+		// Optimistic UI update - reorder folders immediately
+		setFolders((prevFolders) => arrayMove(prevFolders, oldIndex, newIndex));
+
+		// Save to server in background (don't await)
+		apiFetch({
+			path: '/vmf/v1/folders/reorder',
+			method: 'POST',
+			data: {
+				order: newOrder,
+				parent: 0,
+			},
+		}).catch((error) => {
+			console.error('Failed to reorder folders:', error);
+			// Revert on error - fetch fresh data
+			fetchFolders();
+		});
+	}, [folders, fetchFolders]);
+
+	// Get root folder IDs for sortable context
+	const rootFolderIds = folders.map((f) => f.id);
+
+	// Wrapper for folder items - combines DroppableFolder with SortableFolderItem
 	const renderWrapper = useCallback(({ folderId, children }) => (
-		<DroppableFolder folderId={folderId}>
-			{children}
-		</DroppableFolder>
+		<SortableFolderItem id={folderId} disabled={typeof folderId !== 'number'}>
+			<DroppableFolder folderId={folderId}>
+				{children}
+			</DroppableFolder>
+		</SortableFolderItem>
 	), []);
 
-	// Wrapper for uncategorized item - uses DroppableFolder for drag-and-drop
+	// Wrapper for uncategorized item - uses DroppableFolder only (not sortable)
 	const renderUncategorizedWrapper = useCallback(({ children }) => (
 		<DroppableFolder folderId="uncategorized">
 			{children}
@@ -173,21 +252,29 @@ export default function FolderTree({ onFolderSelect }) {
 	), [flatFolders, selectedId, handleRefresh, handleDelete]);
 
 	return (
-		<BaseFolderTree
-			folders={folders}
-			selectedId={selectedId}
-			onSelect={handleSelect}
-			uncategorizedCount={uncategorizedCount}
-			showAllMedia={showAllMedia}
-			showUncategorized={showUncategorized}
-			loading={loading}
-			renderWrapper={renderWrapper}
-			renderUncategorizedWrapper={renderUncategorizedWrapper}
-			renderHeader={renderHeader}
-			enableKeyboardNav={true}
-			enableAutoExpand={true}
-			enableAria={true}
-			loadingText="Loading folders…"
-		/>
+		<DndContext
+			sensors={sensors}
+			collisionDetection={closestCenter}
+			onDragEnd={handleDragEnd}
+		>
+			<SortableContext items={rootFolderIds} strategy={verticalListSortingStrategy}>
+				<BaseFolderTree
+					folders={folders}
+					selectedId={selectedId}
+					onSelect={handleSelect}
+					uncategorizedCount={uncategorizedCount}
+					showAllMedia={showAllMedia}
+					showUncategorized={showUncategorized}
+					loading={loading}
+					renderWrapper={renderWrapper}
+					renderUncategorizedWrapper={renderUncategorizedWrapper}
+					renderHeader={renderHeader}
+					enableKeyboardNav={true}
+					enableAutoExpand={true}
+					enableAria={true}
+					loadingText="Loading folders…"
+				/>
+			</SortableContext>
+		</DndContext>
 	);
 }

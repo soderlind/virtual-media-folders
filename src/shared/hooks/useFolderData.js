@@ -86,7 +86,37 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 		try {
 			// Fetch folders from standard endpoint
 			const response = await apiFetch({
-				path: '/wp/v2/media-folders?per_page=100&hierarchical=1',
+				path: '/wp/v2/media-folders?per_page=100',
+			});
+
+			// Fetch custom order from our endpoint (only for sorting)
+			let orderMap = {};
+			try {
+				const orderedFolders = await apiFetch({
+					path: '/vmf/v1/folders',
+				});
+				// Create a map of id -> position
+				orderedFolders.forEach((folder, index) => {
+					orderMap[folder.id] = index;
+				});
+			} catch (orderError) {
+				// If we can't get the order, folders will sort by name
+				console.log('Could not fetch folder order, using default');
+			}
+
+			// Sort folders by our custom order
+			const sortedResponse = [...response].sort((a, b) => {
+				const orderA = orderMap[a.id];
+				const orderB = orderMap[b.id];
+				// If both have custom order, use it
+				if (orderA !== undefined && orderB !== undefined) {
+					return orderA - orderB;
+				}
+				// If only one has order, it comes first
+				if (orderA !== undefined) return -1;
+				if (orderB !== undefined) return 1;
+				// Neither has order, sort by name
+				return a.name.localeCompare(b.name);
 			});
 
 			// If media type filter is applied, fetch filtered counts from our custom endpoint
@@ -98,15 +128,15 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 			}
 
 			// Apply filtered counts to folders
-			const foldersWithCounts = response.map((folder) => ({
+			const foldersWithCounts = sortedResponse.map((folder) => ({
 				...folder,
 				count: filteredCounts ? (filteredCounts[folder.id] || 0) : folder.count,
 			}));
 
-			// Store flat list for manager components
+			// Store flat list for manager components (preserve order from API)
 			setFlatFolders(foldersWithCounts);
 
-			// Build tree structure
+			// Build tree structure (preserves order of roots)
 			const tree = buildTree(foldersWithCounts);
 			setFolders(tree);
 

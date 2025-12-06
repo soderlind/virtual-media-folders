@@ -46,11 +46,11 @@ msgid "Media removed from all folders."
 msgstr "Media fjernet fra alle mapper."
 
 #: src/Admin.php:169
-#: src/RestApi.php:392
-#: src/RestApi.php:444
-#: src/RestApi.php:501
-#: src/RestApi.php:544
-#: src/RestApi.php:796
+#: src/RestApi.php:442
+#: src/RestApi.php:494
+#: src/RestApi.php:551
+#: src/RestApi.php:638
+#: src/RestApi.php:890
 msgid "Folder not found."
 msgstr "Mappe ikke funnet."
 
@@ -85,93 +85,93 @@ msgstr "Om papirkurven skal hoppes over og sletting tvinges."
 #: src/RestApi.php:165
 #: src/RestApi.php:184
 #: src/RestApi.php:205
-#: src/RestApi.php:245
-#: src/RestApi.php:271
+#: src/RestApi.php:274
+#: src/RestApi.php:300
 msgid "The media attachment ID."
 msgstr "Medivedleggs-ID."
 
-#: src/RestApi.php:251
+#: src/RestApi.php:280
 msgid "The folder ID to apply."
 msgstr "Mappe-ID som skal brukes."
 
-#: src/RestApi.php:289
+#: src/RestApi.php:318
 msgid "You do not have permission to view folders."
 msgstr "Du har ikke tillatelse til å se mapper."
 
-#: src/RestApi.php:306
+#: src/RestApi.php:335
 msgid "You do not have permission to create folders."
 msgstr "Du har ikke tillatelse til å opprette mapper."
 
-#: src/RestApi.php:323
+#: src/RestApi.php:352
 msgid "You do not have permission to update folders."
 msgstr "Du har ikke tillatelse til å oppdatere mapper."
 
-#: src/RestApi.php:340
+#: src/RestApi.php:369
 msgid "You do not have permission to delete folders."
 msgstr "Du har ikke tillatelse til å slette mapper."
 
-#: src/RestApi.php:462
+#: src/RestApi.php:512
 msgid "A folder cannot be its own parent."
 msgstr "En mappe kan ikke være sin egen overordnet."
 
-#: src/RestApi.php:515
+#: src/RestApi.php:565
 #: src/admin/components/FolderManager.jsx:187
 msgid "Failed to delete folder."
 msgstr "Kunne ikke slette mappen."
 
-#: src/RestApi.php:554
-#: src/RestApi.php:594
-#: src/RestApi.php:730
-#: src/RestApi.php:786
-#: src/RestApi.php:837
+#: src/RestApi.php:648
+#: src/RestApi.php:688
+#: src/RestApi.php:824
+#: src/RestApi.php:880
+#: src/RestApi.php:931
 msgid "Media not found."
 msgstr "Media ikke funnet."
 
-#: src/RestApi.php:573
+#: src/RestApi.php:667
 msgid "Media added to folder."
 msgstr "Media lagt til i mappen."
 
-#: src/RestApi.php:610
+#: src/RestApi.php:704
 msgid "Media removed from folder."
 msgstr "Media fjernet fra mappen."
 
-#: src/RestApi.php:817
+#: src/RestApi.php:911
 msgid "Folder suggestion applied."
 msgstr "Mappeforslag brukt."
 
-#: src/RestApi.php:849
+#: src/RestApi.php:943
 msgid "Suggestions dismissed."
 msgstr "Forslag avvist."
 
-#: src/RestApi.php:896
+#: src/RestApi.php:990
 msgid "Unique identifier for the folder."
 msgstr "Unik identifikator for mappen."
 
-#: src/RestApi.php:902
+#: src/RestApi.php:996
 msgid "The name of the folder."
 msgstr "Navnet på mappen."
 
-#: src/RestApi.php:908
+#: src/RestApi.php:1002
 msgid "The slug of the folder."
 msgstr "Kortnavnet til mappen."
 
-#: src/RestApi.php:913
+#: src/RestApi.php:1007
 msgid "The description of the folder."
 msgstr "Beskrivelsen av mappen."
 
-#: src/RestApi.php:918
+#: src/RestApi.php:1012
 msgid "The parent folder ID."
 msgstr "Overordnet mappe-ID."
 
-#: src/RestApi.php:924
+#: src/RestApi.php:1018
 msgid "Number of media items in this folder."
 msgstr "Antall mediefiler i denne mappen."
 
-#: src/RestApi.php:941
+#: src/RestApi.php:1035
 msgid "Whether to hide folders with no media."
 msgstr "Om mapper uten media skal skjules."
 
-#: src/RestApi.php:946
+#: src/RestApi.php:1040
 msgid "Filter by parent folder ID."
 msgstr "Filtrer etter overordnet mappe-ID."
 
@@ -579,10 +579,26 @@ msgstr "Virtuelle mapper"
 msgid "Virtual Media Folders on GitHub"
 msgstr "Virtual Media Folders på GitHub"
 
-#: src/GitHubPluginUpdater.php:175
+#: src/GitHubPluginUpdater.php:183
 msgid "Virtual Media Folders:"
 msgstr "Virtual Media Folders:"
 
-#: src/GitHubPluginUpdater.php:176
+#: src/GitHubPluginUpdater.php:184
 msgid "Could not check for updates. GitHub API may be temporarily unavailable. Please try again later."
 msgstr "Kunne ikke se etter oppdateringer. GitHub API kan være midlertidig utilgjengelig. Vennligst prøv igjen senere."
+
+#: src/RestApi.php:245
+msgid "Array of folder IDs in desired order."
+msgstr "Array med mappe-IDer i ønsket rekkefølge."
+
+#: src/RestApi.php:254
+msgid "Parent folder ID (0 for root level)."
+msgstr "Overordnet mappe-ID (0 for rotnivå)."
+
+#: src/RestApi.php:592
+msgid "Order must be an array of folder IDs."
+msgstr "Rekkefølgen må være en array med mappe-IDer."
+
+#: src/RestApi.php:617
+msgid "Folders reordered successfully."
+msgstr "Mapper omorganisert."

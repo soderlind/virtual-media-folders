@@ -1,29 +1,11 @@
+/**
+ * DroppableFolder component tests.
+ *
+ * Tests the native HTML5 drag-and-drop functionality for moving media to folders.
+ */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DraggableMedia } from '../../src/admin/components/DraggableMedia.jsx';
 import { DroppableFolder } from '../../src/admin/components/DroppableFolder.jsx';
-
-// Mock @dnd-kit/core for DraggableMedia
-const mockUseDraggable = vi.fn(() => ({
-	attributes: { role: 'button', tabIndex: 0 },
-	listeners: {},
-	setNodeRef: vi.fn(),
-	transform: null,
-	isDragging: false,
-}));
-
-vi.mock('@dnd-kit/core', () => ({
-	useDraggable: (...args) => mockUseDraggable(...args),
-}));
-
-// Mock @dnd-kit/utilities
-vi.mock('@dnd-kit/utilities', () => ({
-	CSS: {
-		Translate: {
-			toString: vi.fn(() => null),
-		},
-	},
-}));
 
 // Mock WordPress i18n
 vi.mock('@wordpress/i18n', () => ({
@@ -32,54 +14,6 @@ vi.mock('@wordpress/i18n', () => ({
 
 beforeEach(() => {
 	vi.clearAllMocks();
-	// Reset mock to default behavior
-	mockUseDraggable.mockReturnValue({
-		attributes: { role: 'button', tabIndex: 0 },
-		listeners: {},
-		setNodeRef: vi.fn(),
-		transform: null,
-		isDragging: false,
-	});
-});
-
-describe('DraggableMedia', () => {
-	it('renders children with draggable wrapper', () => {
-		render(
-			<DraggableMedia mediaId={1} title="Test Image" thumbnail="test.jpg">
-				<img src="test.jpg" alt="Test" />
-			</DraggableMedia>
-		);
-
-		expect(screen.getByRole('img')).toBeInTheDocument();
-	});
-
-	it('applies dragging class when isDragging is true', () => {
-		mockUseDraggable.mockReturnValue({
-			attributes: {},
-			listeners: {},
-			setNodeRef: vi.fn(),
-			transform: null,
-			isDragging: true,
-		});
-
-		const { container } = render(
-			<DraggableMedia mediaId={1} title="Test" thumbnail="">
-				<span>Content</span>
-			</DraggableMedia>
-		);
-
-		expect(container.firstChild).toHaveClass('is-dragging');
-	});
-
-	it('has correct data attributes for accessibility', () => {
-		const { container } = render(
-			<DraggableMedia mediaId={42} title="My Media" thumbnail="thumb.jpg">
-				<span>Content</span>
-			</DraggableMedia>
-		);
-
-		expect(container.firstChild).toHaveClass('vmf-draggable-media');
-	});
 });
 
 describe('DroppableFolder', () => {

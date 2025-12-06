@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.0.7
+Stable tag: 1.1.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -31,6 +31,8 @@ Virtual Media Folders uses a custom taxonomy to assign media to folders. This me
 * Your media files stay exactly where they are on the server
 * URLs never change when you reorganize
 * Folders can be nested to create hierarchies
+
+https://www.youtube.com/watch?v=C81ttYpji_c
 
 == Installation ==
 
@@ -71,6 +73,14 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.1.0 =
+* Added: Drag-and-drop folder reordering with visible grip handle
+* Added: Custom folder order persists via vmf_order term meta
+* Added: Optimistic UI updates for instant visual feedback during reorder
+* Changed: Consolidated drag-drop implementation for better performance
+* Changed: Removed unused DndContext and DraggableMedia components (smaller bundle)
+* Fixed: Folder reorder now updates instantly without waiting for server response
 
 = 1.0.7 =
 * Added: Contextual help tab "Virtual Folders" on Media Library page

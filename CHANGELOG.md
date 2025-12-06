@@ -5,6 +5,21 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-12-06
+
+### Added
+- Drag-and-drop folder reordering with visible grip handle (⋮⋮)
+- Custom folder order persists via `vmf_order` term meta
+- Optimistic UI updates for instant visual feedback during reorder
+
+### Changed
+- Consolidated drag-drop implementation: native HTML5 for media-to-folder, @dnd-kit/sortable for folder reordering
+- Removed unused `DndContext.jsx` and `DraggableMedia.jsx` components (reduces bundle size)
+- Updated documentation to reflect actual drag-drop architecture
+
+### Fixed
+- Folder reorder now updates instantly without waiting for server response
+
 ## [1.0.7] - 2025-12-04
 
 ### Added

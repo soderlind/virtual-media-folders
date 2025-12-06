@@ -439,3 +439,83 @@ body.vmf-internal-drag .uploader-window {
 	color: #757575;
 	white-space: nowrap;
 }
+
+/* Sortable folder item styles */
+.vmf-sortable-folder {
+	/* wrapper for transform */
+}
+
+.vmf-sortable-folder__row {
+	display: flex;
+	align-items: stretch;
+}
+
+.vmf-sortable-folder__grip {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	flex-shrink: 0;
+	color: #a7aaad;
+	font-size: 10px;
+	letter-spacing: -3px;
+	cursor: grab;
+	touch-action: none;
+	user-select: none;
+	background: #f0f0f1;
+	border-right: 1px solid #dcdcde;
+}
+
+.vmf-sortable-folder__grip:hover {
+	color: #007cba;
+	background: #e0e0e0;
+}
+
+.vmf-sortable-folder__grip:active {
+	cursor: grabbing;
+}
+
+.vmf-sortable-folder__content {
+	flex: 1;
+	min-width: 0;
+}
+
+.vmf-sortable-folder.is-dragging {
+	opacity: 1;
+	background: #fff;
+	border: 2px solid #007cba;
+	border-radius: 4px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 9999;
+}
+
+/* Drag overlay for folder reordering - no longer used but kept for reference */
+.vmf-folder-drag-overlay {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: #fff;
+	border: 2px solid #007cba;
+	border-radius: 4px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+	font-size: 13px;
+	color: #1e1e1e;
+	white-space: nowrap;
+	pointer-events: none;
+}
+
+.vmf-folder-drag-overlay .vmf-folder-name {
+	font-weight: 500;
+}
+
+.vmf-folder-drag-overlay .vmf-folder-count {
+	color: #757575;
+	font-size: 12px;
+}
+
+/* Ensure dnd-kit drag overlay is not affected by transforms in parent containers */
+[data-dnd-kit-drag-overlay] {
+	position: fixed !important;
+	z-index: 999999 !important;
+}

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-12-05T19:31:15+00:00\n"
+"POT-Creation-Date: 2025-12-06T12:24:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: virtual-media-folders\n"
@@ -112,11 +112,11 @@ msgid "Media removed from all folders."
 msgstr ""
 
 #: src/Admin.php:169
-#: src/RestApi.php:392
-#: src/RestApi.php:444
-#: src/RestApi.php:501
-#: src/RestApi.php:544
-#: src/RestApi.php:796
+#: src/RestApi.php:442
+#: src/RestApi.php:494
+#: src/RestApi.php:551
+#: src/RestApi.php:638
+#: src/RestApi.php:890
 msgid "Folder not found."
 msgstr ""
 
@@ -126,11 +126,11 @@ msgstr ""
 msgid "Media moved to \"%s\"."
 msgstr ""
 
-#: src/GitHubPluginUpdater.php:175
+#: src/GitHubPluginUpdater.php:183
 msgid "Virtual Media Folders:"
 msgstr ""
 
-#: src/GitHubPluginUpdater.php:176
+#: src/GitHubPluginUpdater.php:184
 msgid "Could not check for updates. GitHub API may be temporarily unavailable. Please try again later."
 msgstr ""
 
@@ -159,8 +159,8 @@ msgstr ""
 #: src/RestApi.php:165
 #: src/RestApi.php:184
 #: src/RestApi.php:205
-#: src/RestApi.php:245
-#: src/RestApi.php:271
+#: src/RestApi.php:274
+#: src/RestApi.php:300
 msgid "The media attachment ID."
 msgstr ""
 
@@ -168,88 +168,104 @@ msgstr ""
 msgid "Filter counts by media type (image, audio, video, application)."
 msgstr ""
 
-#: src/RestApi.php:251
+#: src/RestApi.php:245
+msgid "Array of folder IDs in desired order."
+msgstr ""
+
+#: src/RestApi.php:254
+msgid "Parent folder ID (0 for root level)."
+msgstr ""
+
+#: src/RestApi.php:280
 msgid "The folder ID to apply."
 msgstr ""
 
-#: src/RestApi.php:289
+#: src/RestApi.php:318
 msgid "You do not have permission to view folders."
 msgstr ""
 
-#: src/RestApi.php:306
+#: src/RestApi.php:335
 msgid "You do not have permission to create folders."
 msgstr ""
 
-#: src/RestApi.php:323
+#: src/RestApi.php:352
 msgid "You do not have permission to update folders."
 msgstr ""
 
-#: src/RestApi.php:340
+#: src/RestApi.php:369
 msgid "You do not have permission to delete folders."
 msgstr ""
 
-#: src/RestApi.php:462
+#: src/RestApi.php:512
 msgid "A folder cannot be its own parent."
 msgstr ""
 
-#: src/RestApi.php:515
+#: src/RestApi.php:565
 #: src/admin/components/FolderManager.jsx:187
 msgid "Failed to delete folder."
 msgstr ""
 
-#: src/RestApi.php:554
-#: src/RestApi.php:594
-#: src/RestApi.php:730
-#: src/RestApi.php:786
-#: src/RestApi.php:837
+#: src/RestApi.php:592
+msgid "Order must be an array of folder IDs."
+msgstr ""
+
+#: src/RestApi.php:617
+msgid "Folders reordered successfully."
+msgstr ""
+
+#: src/RestApi.php:648
+#: src/RestApi.php:688
+#: src/RestApi.php:824
+#: src/RestApi.php:880
+#: src/RestApi.php:931
 msgid "Media not found."
 msgstr ""
 
-#: src/RestApi.php:573
+#: src/RestApi.php:667
 msgid "Media added to folder."
 msgstr ""
 
-#: src/RestApi.php:610
+#: src/RestApi.php:704
 msgid "Media removed from folder."
 msgstr ""
 
-#: src/RestApi.php:817
+#: src/RestApi.php:911
 msgid "Folder suggestion applied."
 msgstr ""
 
-#: src/RestApi.php:849
+#: src/RestApi.php:943
 msgid "Suggestions dismissed."
 msgstr ""
 
-#: src/RestApi.php:896
+#: src/RestApi.php:990
 msgid "Unique identifier for the folder."
 msgstr ""
 
-#: src/RestApi.php:902
+#: src/RestApi.php:996
 msgid "The name of the folder."
 msgstr ""
 
-#: src/RestApi.php:908
+#: src/RestApi.php:1002
 msgid "The slug of the folder."
 msgstr ""
 
-#: src/RestApi.php:913
+#: src/RestApi.php:1007
 msgid "The description of the folder."
 msgstr ""
 
-#: src/RestApi.php:918
+#: src/RestApi.php:1012
 msgid "The parent folder ID."
 msgstr ""
 
-#: src/RestApi.php:924
+#: src/RestApi.php:1018
 msgid "Number of media items in this folder."
 msgstr ""
 
-#: src/RestApi.php:941
+#: src/RestApi.php:1035
 msgid "Whether to hide folders with no media."
 msgstr ""
 
-#: src/RestApi.php:946
+#: src/RestApi.php:1040
 msgid "Filter by parent folder ID."
 msgstr ""
 
