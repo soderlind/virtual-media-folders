@@ -32,7 +32,7 @@ Virtual Media Folders uses a custom taxonomy to assign media to folders. This me
 * URLs never change when you reorganize
 * Folders can be nested to create hierarchies
 
-https://www.youtube.com/watch?v=C81ttYpji_c
+https://www.youtube.com/watch?v=bA4lf7ynz24
 
 == Installation ==
 
