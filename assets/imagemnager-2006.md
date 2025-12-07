@@ -104,3 +104,47 @@ https://github.com/user-attachments/assets/13bd96db-5add-474b-a684-88e864a91513
 
 	Fixed one major bug (wrong option name in get_option()) + some minor bugs
 - v2.0.0 (January 3 2006) download (338 downloads)
+
+
+## To Do / Wish List (2006)
+
+- ~~Add title attribute (same value as the alt attribute)~~
+- ~~Add style attribute for border, positioning, etc.~~
+- ~~Add class attribute for setting class name~~
+- Set the default size for the thumbnails in articles
+- Save the edited images to a temp folder
+- Add "Insert thumbnail in Index.php page and full image in Single.php"
+
+## Upgrading
+
+If you are upgrading, delete the old version and continue with the installation instructions below (you might have to flush the browser cache).
+
+## Installation
+
+Installation is simple, just follow the instructions below.
+
+### Step 1
+
+Extract the archive and save into your WordPress plugins directory.
+
+### Step 2
+
+Activate the plugin.
+
+### Step 3
+
+Configure ImageManager on the **Options > ImageManager** page. ImageManager will not be enabled until you have configured it.
+
+### Step 4
+
+You are done! Open the editor, click on the ImageManager icon and test it. If you cannot upload images and/or the editor doesn't create thumbnails, you must check file permissions. The web server must have write access to the image folder.
+
+If you are LOST (i.e., can't find your base image directory), create a PHP file with `<?php echo __DIR__; ?>` and put it in your base image directory. Access it from your browser to find the path (remember to remove the file when you are done).
+
+## Localization
+
+You can translate the plugin by copying `lang/ImageManager.pot` to `lang/LOCALE.po` (LOCALE being your locale, e.g., `fr` for French). Edit the `LOCALE.po` file using [poEdit](http://www.poedit.org/) or another editor. If you are using poEdit, create a `locale/ImageManager-LOCALE.mo` file. If you are using another editor, after you are done editing, run `imagemanager-gettext.sh` (in the lang directory) with your LOCALE as parameter:
+
+```bash
+./imagemanager-gettext.sh fr
+```
