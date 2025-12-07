@@ -2,15 +2,17 @@
 
 >Way back in 2006, I released ImageManager 2.0, a popular WordPress plugin for image management and editing. Below is the original documentation for that plugin.
 
+**Current Version: 2.4.1 (WordPress 2.1 and WPMU support)**
+
+**NOTE, the plugin is only tested with WordPress 2.0 and WordPress 2.1**
+
 The ImageManager plugin integrates the stand alone PHP ImageManager + Editor with WordPress. The ImageManager provides an interface for browsing and uploading image files on/to your server. The Editor allows for some basic image manipulations such as, cropping, rotation, flip, and scaling.
 
 
 
 https://github.com/user-attachments/assets/13bd96db-5add-474b-a684-88e864a91513
 
-**Current Version: 2.4.1 (WordPress 2.1 and WPMU support)**
 
-**NOTE, the plugin is only tested with WordPress 2.0 and WordPress 2.1**
 
 ## Feature list
 
