@@ -72,7 +72,7 @@ npm test
 
 Go to **Settings > Folder Settings** to configure:
 
-- **Show "All Media"** – Display the "All Media" option in the folder sidebar
+- **Show "All Media"** – Display the "All Media" option in the folder sidebar [I prefer to keep this disabled]
 - **Show "Uncategorized"** – Display the "Uncategorized" folder for media without a folder
 - **Jump to folder after move** – Automatically navigate to the target folder after moving media
 - **Default folder for uploads** – Automatically assign new uploads to a specific folder
