@@ -68,6 +68,15 @@ npm test
 4. Drag and drop media items onto folders to organize them
 5. Click a folder to filter the media library view
 
+### Settings
+
+Go to **Settings > Folder Settings** to configure:
+
+- **Show "All Media"** – Display the "All Media" option in the folder sidebar
+- **Show "Uncategorized"** – Display the "Uncategorized" folder for media without a folder
+- **Jump to folder after move** – Automatically navigate to the target folder after moving media
+- **Default folder for uploads** – Automatically assign new uploads to a specific folder
+
 ### Gutenberg Block Editor
 
 When inserting media in the block editor:
