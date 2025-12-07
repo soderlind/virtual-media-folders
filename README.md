@@ -181,6 +181,68 @@ add_filter( 'vmf_setting_show_uncategorized', function( $value ) {
 
 > **Note:** At least one of `show_all_media` or `show_uncategorized` must be `true`. If both are set to `false` via filters, `show_all_media` will automatically be set to `true`.
 
+### Preconfiguring Folders
+
+You can programmatically create folders using the WordPress taxonomy API. Use the `after_setup_theme` or `init` hook with a one-time check to avoid creating duplicates:
+
+```php
+add_action( 'init', function() {
+    // Only run once - use an option flag
+    if ( get_option( 'my_theme_vmf_folders_created' ) ) {
+        return;
+    }
+
+    // Make sure the taxonomy exists
+    if ( ! taxonomy_exists( 'media_folder' ) ) {
+        return;
+    }
+
+    // Define your folder structure
+    $folders = [
+        'Photos' => [
+            'Events',
+            'Products',
+            'Team',
+        ],
+        'Documents' => [
+            'Reports',
+            'Presentations',
+        ],
+        'Videos',
+        'Logos',
+    ];
+
+    // Create folders
+    foreach ( $folders as $parent => $children ) {
+        if ( is_array( $children ) ) {
+            // Parent folder with children
+            $parent_term = wp_insert_term( $parent, 'media_folder' );
+            if ( ! is_wp_error( $parent_term ) ) {
+                foreach ( $children as $child ) {
+                    wp_insert_term( $child, 'media_folder', [
+                        'parent' => $parent_term['term_id'],
+                    ] );
+                }
+            }
+        } else {
+            // Top-level folder (no children)
+            wp_insert_term( $children, 'media_folder' );
+        }
+    }
+
+    // Mark as done so it only runs once
+    update_option( 'my_theme_vmf_folders_created', true );
+}, 20 ); // Priority 20 to run after taxonomy registration
+```
+
+You can also set the custom folder order using term meta:
+
+```php
+// Set custom order for folders (lower numbers appear first)
+update_term_meta( $term_id, 'vmf_order', 0 ); // First position
+update_term_meta( $term_id, 'vmf_order', 1 ); // Second position
+```
+
 ### Other Filters
 
 - `vmf_suggestion_matchers` - Customize suggestion matching logic
