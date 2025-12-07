@@ -73,10 +73,10 @@ final class Editor {
 		);
 
 		// Pass folder data to JavaScript.
-		wp_localize_script(
+		wp_add_inline_script(
 			self::SCRIPT_HANDLE,
-			'vmfEditor',
-			self::get_editor_data()
+			'var vmfEditor = ' . wp_json_encode( self::get_editor_data() ) . ';',
+			'before'
 		);
 
 		// Set script translations.
@@ -117,9 +117,11 @@ final class Editor {
 		}
 
 		return [
-			'folders'  => $folder_list,
-			'restBase' => 'media-folders',
-			'nonce'    => wp_create_nonce( 'wp_rest' ),
+			'folders'           => $folder_list,
+			'restBase'          => 'media-folders',
+			'nonce'             => wp_create_nonce( 'wp_rest' ),
+			'showAllMedia'      => (bool) Settings::get( 'show_all_media', true ),
+			'showUncategorized' => (bool) Settings::get( 'show_uncategorized', true ),
 		];
 	}
 

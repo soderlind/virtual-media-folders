@@ -18,6 +18,9 @@ import { BaseFolderTree } from '../../shared/components';
  * @param {Function} props.onFolderSelect Called when a folder is selected.
  */
 export default function FolderSidebar({ onFolderSelect }) {
+	// Get settings from localized data - read inside component to ensure data is available
+	const { showAllMedia = true, showUncategorized = true } = window.vmfEditor || {};
+	
 	const {
 		folders,
 		selectedId,
@@ -36,6 +39,8 @@ export default function FolderSidebar({ onFolderSelect }) {
 			onSelect={handleSelect}
 			uncategorizedCount={uncategorizedCount}
 			loading={loading}
+			showAllMedia={showAllMedia}
+			showUncategorized={showUncategorized}
 			enableKeyboardNav={false}
 			enableAutoExpand={false}
 			enableAria={false}

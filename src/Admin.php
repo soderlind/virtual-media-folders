@@ -228,13 +228,17 @@ class Admin {
 		);
 
 		// Provide AJAX configuration to JavaScript.
-		wp_localize_script( 'vmf-admin', 'vmfData', [
-			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
-			'nonce'                 => wp_create_nonce( 'vmf_move_media' ),
-			'jumpToFolderAfterMove' => Settings::get( 'jump_to_folder_after_move', false ),
-			'showAllMedia'          => Settings::get( 'show_all_media', true ),
-			'showUncategorized'     => Settings::get( 'show_uncategorized', true ),
-		] );
+		wp_add_inline_script(
+			'vmf-admin',
+			'var vmfData = ' . wp_json_encode( [
+				'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
+				'nonce'                 => wp_create_nonce( 'vmf_move_media' ),
+				'jumpToFolderAfterMove' => (bool) Settings::get( 'jump_to_folder_after_move', false ),
+				'showAllMedia'          => (bool) Settings::get( 'show_all_media', true ),
+				'showUncategorized'     => (bool) Settings::get( 'show_uncategorized', true ),
+			] ) . ';',
+			'before'
+		);
 
 		// Enable translations for JavaScript strings.
 		wp_set_script_translations( 'vmf-admin', 'virtual-media-folders', VMF_PATH . 'languages' );
