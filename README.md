@@ -8,7 +8,7 @@ Virtual folder organization and smart management for the WordPress Media Library
 
 ## Description
 
-Virtual Media Folders brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders without moving files on disk—folders are virtual, so your URLs never change.
+Virtual Media Folders brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders **without moving files on disk**—folders are virtual, so your URLs never change.
 
 <a href="https://www.youtube.com/watch?v=bA4lf7ynz24"><img width="899" height="449" alt="virtual-media-folders" src="assets/virtual-media-folders.png" alt="Link to YouTube video"  title="Link to YouTube video"/></a>
 
