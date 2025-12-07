@@ -70,7 +70,7 @@ npm test
 
 ### Settings
 
-Go to **Settings > Folder Settings** to configure:
+Go to **Media > Folder Settings** to configure:
 
 - **Show "All Media"** – Display the "All Media" option in the folder sidebar [I prefer to keep this disabled]
 - **Show "Uncategorized"** – Display the "Uncategorized" folder for media without a folder
