@@ -125,6 +125,32 @@ The plugin provides REST API endpoints under `/wp-json/vmf/v1`:
 - `POST /folders/{id}/media` - Add media to folder
 - `DELETE /folders/{id}/media` - Remove media from folder
 
+### Example: Create a Folder and Add Media
+
+Authentication requires [Application Passwords](https://make.wordpress.org/core/2020/11/05/application-passwords-integration-guide/) (WordPress 5.6+). Generate one at **Users > Profile > Application Passwords**. The password format is `xxxx xxxx xxxx xxxx xxxx xxxx` (with spaces).
+
+> **Note:** Replace `username` with your actual WordPress username and `xxxx xxxx xxxx xxxx xxxx xxxx` with your Application Password.
+
+```bash
+# Create a new folder
+curl -X POST "https://example.com/wp-json/vmf/v1/folders" \
+  -u "username:xxxx xxxx xxxx xxxx xxxx xxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Photos", "parent": 0}'
+
+# Response: {"id": 5, "name": "Photos", "slug": "photos", "parent": 0, "count": 0}
+
+# Add media (ID 123) to the folder (ID 5)
+curl -X POST "https://example.com/wp-json/vmf/v1/folders/5/media" \
+  -u "username:xxxx xxxx xxxx xxxx xxxx xxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"media_id": 123}'
+
+# List all folders
+curl "https://example.com/wp-json/vmf/v1/folders" \
+  -u "username:xxxx xxxx xxxx xxxx xxxx xxxx"
+```
+
 ## Hooks & Filters
 
 ### Actions
