@@ -113,7 +113,7 @@ virtual-media-folders/
 
 ## REST API
 
-The plugin provides REST API endpoints under `vmf/v1`:
+The plugin provides REST API endpoints under `/wp-json/vmf/v1`:
 
 ### Folders
 
