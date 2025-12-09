@@ -312,14 +312,7 @@ final class RestApi extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function get_folders_permissions_check( WP_REST_Request $request ) {
-		if ( ! current_user_can( 'upload_files' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to view folders.', 'virtual-media-folders' ),
-				[ 'status' => rest_authorization_required_code() ]
-			);
-		}
-		return true;
+		return $this->check_capability( 'upload_files', __( 'You do not have permission to view folders.', 'virtual-media-folders' ) );
 	}
 
 	/**
@@ -329,14 +322,7 @@ final class RestApi extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function create_folder_permissions_check( WP_REST_Request $request ) {
-		if ( ! current_user_can( 'manage_categories' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to create folders.', 'virtual-media-folders' ),
-				[ 'status' => rest_authorization_required_code() ]
-			);
-		}
-		return true;
+		return $this->check_capability( 'manage_categories', __( 'You do not have permission to create folders.', 'virtual-media-folders' ) );
 	}
 
 	/**
@@ -346,14 +332,7 @@ final class RestApi extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function update_folder_permissions_check( WP_REST_Request $request ) {
-		if ( ! current_user_can( 'manage_categories' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to update folders.', 'virtual-media-folders' ),
-				[ 'status' => rest_authorization_required_code() ]
-			);
-		}
-		return true;
+		return $this->check_capability( 'manage_categories', __( 'You do not have permission to update folders.', 'virtual-media-folders' ) );
 	}
 
 	/**
@@ -363,14 +342,7 @@ final class RestApi extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_folder_permissions_check( WP_REST_Request $request ) {
-		if ( ! current_user_can( 'manage_categories' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to delete folders.', 'virtual-media-folders' ),
-				[ 'status' => rest_authorization_required_code() ]
-			);
-		}
-		return true;
+		return $this->check_capability( 'manage_categories', __( 'You do not have permission to delete folders.', 'virtual-media-folders' ) );
 	}
 
 	/**
@@ -430,18 +402,10 @@ final class RestApi extends WP_REST_Controller {
 	 */
 	public function get_folder( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$folder_id = $request->get_param( 'id' );
-		$term      = get_term( $folder_id, 'media_folder' );
+		$term      = $this->get_folder_or_error( $folder_id );
 
 		if ( is_wp_error( $term ) ) {
 			return $term;
-		}
-
-		if ( ! $term ) {
-			return new WP_Error(
-				'rest_folder_not_found',
-				__( 'Folder not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
 		}
 
 		return new WP_REST_Response( $this->prepare_folder_for_response( $term ), 200 );
@@ -482,18 +446,10 @@ final class RestApi extends WP_REST_Controller {
 	 */
 	public function update_folder( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$folder_id = $request->get_param( 'id' );
-		$term      = get_term( $folder_id, 'media_folder' );
+		$term      = $this->get_folder_or_error( $folder_id );
 
 		if ( is_wp_error( $term ) ) {
 			return $term;
-		}
-
-		if ( ! $term ) {
-			return new WP_Error(
-				'rest_folder_not_found',
-				__( 'Folder not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
 		}
 
 		$args = [];
@@ -539,18 +495,10 @@ final class RestApi extends WP_REST_Controller {
 	 */
 	public function delete_folder( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$folder_id = $request->get_param( 'id' );
-		$term      = get_term( $folder_id, 'media_folder' );
+		$term      = $this->get_folder_or_error( $folder_id );
 
 		if ( is_wp_error( $term ) ) {
 			return $term;
-		}
-
-		if ( ! $term ) {
-			return new WP_Error(
-				'rest_folder_not_found',
-				__( 'Folder not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
 		}
 
 		$result = wp_delete_term( $folder_id, 'media_folder' );
@@ -630,44 +578,23 @@ final class RestApi extends WP_REST_Controller {
 		$folder_id = $request->get_param( 'id' );
 		$media_id  = $request->get_param( 'media_id' );
 
-		// Verify folder exists.
-		$term = get_term( $folder_id, 'media_folder' );
-		if ( is_wp_error( $term ) || ! $term ) {
-			return new WP_Error(
-				'rest_folder_not_found',
-				__( 'Folder not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
+		$folder = $this->get_folder_or_error( $folder_id );
+		if ( is_wp_error( $folder ) ) {
+			return $folder;
 		}
 
-		// Verify media exists.
-		$attachment = get_post( $media_id );
-		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
-			return new WP_Error(
-				'rest_media_not_found',
-				__( 'Media not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
+		$attachment = $this->get_attachment_or_error( $media_id );
+		if ( is_wp_error( $attachment ) ) {
+			return $attachment;
 		}
 
-		$result = wp_set_object_terms( $media_id, [ $folder_id ], 'media_folder', true );
+		$result = $this->assign_media_to_folder( $media_id, $folder_id, __( 'Folder suggestion applied.', 'virtual-media-folders' ) );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		// Clear any dismissed suggestions since user is now organizing.
-		delete_post_meta( $media_id, '_vmf_suggestions_dismissed' );
-
-		return new WP_REST_Response(
-			[
-				'success'   => true,
-				'media_id'  => $media_id,
-				'folder_id' => $folder_id,
-				'message'   => __( 'Media added to folder.', 'virtual-media-folders' ),
-			],
-			200
-		);
+		return new WP_REST_Response( $result, 200 );
 	}
 
 	/**
@@ -680,14 +607,9 @@ final class RestApi extends WP_REST_Controller {
 		$folder_id = $request->get_param( 'id' );
 		$media_id  = $request->get_param( 'media_id' );
 
-		// Verify media exists.
-		$attachment = get_post( $media_id );
-		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
-			return new WP_Error(
-				'rest_media_not_found',
-				__( 'Media not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
+		$attachment = $this->get_attachment_or_error( $media_id );
+		if ( is_wp_error( $attachment ) ) {
+			return $attachment;
 		}
 
 		$result = wp_remove_object_terms( $media_id, $folder_id, 'media_folder' );
@@ -872,46 +794,23 @@ final class RestApi extends WP_REST_Controller {
 		$media_id  = $request->get_param( 'media_id' );
 		$folder_id = $request->get_param( 'folder_id' );
 
-		// Verify media exists.
-		$attachment = get_post( $media_id );
-		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
-			return new WP_Error(
-				'rest_media_not_found',
-				__( 'Media not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
+		$attachment = $this->get_attachment_or_error( $media_id );
+		if ( is_wp_error( $attachment ) ) {
+			return $attachment;
 		}
 
-		// Verify folder exists.
-		$term = get_term( $folder_id, 'media_folder' );
-		if ( is_wp_error( $term ) || ! $term ) {
-			return new WP_Error(
-				'rest_folder_not_found',
-				__( 'Folder not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
+		$folder = $this->get_folder_or_error( $folder_id );
+		if ( is_wp_error( $folder ) ) {
+			return $folder;
 		}
 
-		// Apply the folder.
-		$result = wp_set_object_terms( $media_id, [ $folder_id ], 'media_folder', true );
+		$result = $this->assign_media_to_folder( $media_id, $folder_id );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		// Clear suggestions after applying.
-		delete_post_meta( $media_id, '_vmf_folder_suggestions' );
-		delete_post_meta( $media_id, '_vmf_suggestions_dismissed' );
-
-		return new WP_REST_Response(
-			[
-				'success'   => true,
-				'media_id'  => $media_id,
-				'folder_id' => $folder_id,
-				'message'   => __( 'Folder suggestion applied.', 'virtual-media-folders' ),
-			],
-			200
-		);
+		return new WP_REST_Response( $result, 200 );
 	}
 
 	/**
@@ -923,14 +822,9 @@ final class RestApi extends WP_REST_Controller {
 	public function dismiss_suggestions( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$media_id = $request->get_param( 'media_id' );
 
-		// Verify media exists.
-		$attachment = get_post( $media_id );
-		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
-			return new WP_Error(
-				'rest_media_not_found',
-				__( 'Media not found.', 'virtual-media-folders' ),
-				[ 'status' => 404 ]
-			);
+		$attachment = $this->get_attachment_or_error( $media_id );
+		if ( is_wp_error( $attachment ) ) {
+			return $attachment;
 		}
 
 		// Mark suggestions as dismissed.
@@ -944,6 +838,96 @@ final class RestApi extends WP_REST_Controller {
 			],
 			200
 		);
+	}
+
+	/**
+	 * Check a capability and return a standard REST error when missing.
+	 *
+	 * @param string $capability Capability to check.
+	 * @param string $message    Error message when unauthorized.
+	 * @return bool|WP_Error
+	 */
+	private function check_capability( string $capability, string $message ) {
+		if ( ! current_user_can( $capability ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				$message,
+				[ 'status' => rest_authorization_required_code() ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Fetch a folder term or return a REST-friendly error.
+	 *
+	 * @param int $folder_id Folder term ID.
+	 * @return \WP_Term|WP_Error
+	 */
+	private function get_folder_or_error( int $folder_id ) {
+		$term = get_term( $folder_id, 'media_folder' );
+
+		if ( is_wp_error( $term ) ) {
+			return $term;
+		}
+
+		if ( ! $term ) {
+			return new WP_Error(
+				'rest_folder_not_found',
+				__( 'Folder not found.', 'virtual-media-folders' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		return $term;
+	}
+
+	/**
+	 * Fetch an attachment or return a REST-friendly error.
+	 *
+	 * @param int $media_id Attachment post ID.
+	 * @return \WP_Post|WP_Error
+	 */
+	private function get_attachment_or_error( int $media_id ) {
+		$attachment = get_post( $media_id );
+
+		if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
+			return new WP_Error(
+				'rest_media_not_found',
+				__( 'Media not found.', 'virtual-media-folders' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		return $attachment;
+	}
+
+	/**
+	 * Assign media to a folder and clear suggestion metadata.
+	 *
+	 * @param int $media_id  Attachment ID.
+	 * @param int $folder_id Folder term ID.
+	 * @return array|WP_Error
+	 */
+	private function assign_media_to_folder( int $media_id, int $folder_id, string $message = '' ) {
+		$result = wp_set_object_terms( $media_id, [ $folder_id ], 'media_folder', true );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		delete_post_meta( $media_id, '_vmf_folder_suggestions' );
+		delete_post_meta( $media_id, '_vmf_suggestions_dismissed' );
+
+		$success_message = $message !== '' ? $message : __( 'Media added to folder.', 'virtual-media-folders' );
+
+		return [
+			'success'   => true,
+			'media_id'  => $media_id,
+			'folder_id' => $folder_id,
+			'message'   => $success_message,
+		];
 	}
 
 	/**

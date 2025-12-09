@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { Icon, folder as folderIcon } from '@wordpress/icons';
-import apiFetch from '@wordpress/api-fetch';
+import { fetchAllFolders } from '../../shared/utils/folderApi';
 
 /**
  * MoveToFolderMenu component.
@@ -27,9 +27,7 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 	// Fetch folders function
 	const fetchFolders = useCallback(async () => {
 		try {
-			const response = await apiFetch({
-				path: '/wp/v2/media-folders?per_page=100',
-			});
+			const response = await fetchAllFolders();
 			setFolders(response);
 		} catch (error) {
 			console.error('Error fetching folders:', error);

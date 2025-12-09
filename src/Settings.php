@@ -251,16 +251,10 @@ final class Settings {
 			$sanitized[ $field ] = ! empty( $input[ $field ] );
 		}
 
-		// Enforce interdependency: at least one of show_all_media or show_uncategorized must be true.
-		if ( ! $sanitized[ 'show_all_media' ] && ! $sanitized[ 'show_uncategorized' ] ) {
-			// If both are unchecked, force show_all_media on.
-			$sanitized[ 'show_all_media' ] = true;
-		}
-
 		// Integer fields.
 		$sanitized[ 'default_folder' ] = isset( $input[ 'default_folder' ] ) ? absint( $input[ 'default_folder' ] ) : 0;
 
-		return $sanitized;
+		return self::normalize_visibility( $sanitized );
 	}
 
 	/**
@@ -293,30 +287,10 @@ final class Settings {
 	 * @return mixed Setting value, filtered via 'vmf_setting_{$key}'.
 	 */
 	public static function get( string $key, $default = null ) {
+		$options  = self::get_options();
 		$defaults = self::get_defaults();
-		$options  = get_option( self::OPTION_NAME, $defaults );
 
-		/**
-		 * Filter all settings at once.
-		 *
-		 * @since 1.0.5
-		 *
-		 * @param array $options All settings.
-		 */
-		$options = apply_filters( 'vmf_settings', $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
-
-		// Enforce interdependency: at least one of show_all_media or show_uncategorized must be true.
-		if ( empty( $options[ 'show_all_media' ] ) && empty( $options[ 'show_uncategorized' ] ) ) {
-			$options[ 'show_all_media' ] = true;
-		}
-
-		if ( isset( $options[ $key ] ) ) {
-			$value = $options[ $key ];
-		} elseif ( $default !== null ) {
-			$value = $default;
-		} else {
-			$value = $defaults[ $key ] ?? null;
-		}
+		$value = $options[ $key ] ?? ( $default !== null ? $default : ( $defaults[ $key ] ?? null ) );
 
 		/**
 		 * Filter a specific setting value.
@@ -329,19 +303,52 @@ final class Settings {
 		 */
 		$value = apply_filters( "vmf_setting_{$key}", $value, $key, $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
 
-		// Final enforcement after individual filter: if requesting show_all_media or show_uncategorized,
-		// ensure at least one is true.
-		if ( $key === 'show_all_media' || $key === 'show_uncategorized' ) {
-			$other_key   = $key === 'show_all_media' ? 'show_uncategorized' : 'show_all_media';
-			$other_value = apply_filters( "vmf_setting_{$other_key}", $options[ $other_key ] ?? true, $other_key, $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
+		return $value;
+	}
 
-			// If both would be false, force the current one to true.
-			if ( ! $value && ! $other_value ) {
-				$value = true;
-			}
+	/**
+	 * Get all settings merged with defaults and filtered, with visibility constraint enforced.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function get_options(): array {
+		$defaults = self::get_defaults();
+		$options  = get_option( self::OPTION_NAME, $defaults );
+
+		if ( ! is_array( $options ) ) {
+			$options = $defaults;
+		} else {
+			$options = array_merge( $defaults, $options );
 		}
 
-		return $value;
+		/**
+		 * Filter all settings at once.
+		 *
+		 * @since 1.0.5
+		 *
+		 * @param array $options All settings.
+		 */
+		$options = apply_filters( 'vmf_settings', $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
+
+		return self::normalize_visibility( $options );
+	}
+
+	/**
+	 * Ensure at least one sidebar entry (All or Uncategorized) remains visible.
+	 *
+	 * @param array<string, mixed> $options Raw options array.
+	 * @return array<string, mixed>
+	 */
+	private static function normalize_visibility( array $options ): array {
+		$show_all           = ! empty( $options[ 'show_all_media' ] );
+		$show_uncategorized = ! empty( $options[ 'show_uncategorized' ] );
+
+		if ( ! $show_all && ! $show_uncategorized ) {
+			$options[ 'show_all_media' ]     = true;
+			$options[ 'show_uncategorized' ] = false;
+		}
+
+		return $options;
 	}
 
 	/**
@@ -404,7 +411,7 @@ final class Settings {
 	 * @return void
 	 */
 	public static function render_checkbox_field( array $args ): void {
-		$options = get_option( self::OPTION_NAME, self::DEFAULTS );
+		$options = self::get_options();
 		$value   = $options[ $args[ 'id' ] ] ?? self::DEFAULTS[ $args[ 'id' ] ] ?? false;
 		$name    = self::OPTION_NAME . '[' . $args[ 'id' ] . ']';
 
@@ -448,7 +455,7 @@ final class Settings {
 	 * @return void
 	 */
 	public static function render_folder_select_field( array $args ): void {
-		$options = get_option( self::OPTION_NAME, self::DEFAULTS );
+		$options = self::get_options();
 		$value   = $options[ $args[ 'id' ] ] ?? self::DEFAULTS[ $args[ 'id' ] ] ?? 0;
 		$name    = self::OPTION_NAME . '[' . $args[ 'id' ] . ']';
 

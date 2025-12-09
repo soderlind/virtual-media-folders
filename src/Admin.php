@@ -107,9 +107,9 @@ class Admin {
 
 		if ( $default_folder > 0 ) {
 			// Verify the folder exists
-			$term = get_term( $default_folder, 'media_folder' );
+			$term = get_term( $default_folder, Taxonomy::TAXONOMY );
 			if ( $term && ! is_wp_error( $term ) ) {
-				wp_set_object_terms( $attachment_id, [ $default_folder ], 'media_folder' );
+				wp_set_object_terms( $attachment_id, [ $default_folder ], Taxonomy::TAXONOMY );
 			}
 		}
 	}
@@ -154,7 +154,7 @@ class Admin {
 
 		// Handle special cases: remove from all folders.
 		if ( $folder_id === 'uncategorized' || $folder_id === '' || $folder_id === 'root' ) {
-			wp_set_object_terms( $media_id, [], 'media_folder' );
+			wp_set_object_terms( $media_id, [], Taxonomy::TAXONOMY );
 			wp_send_json_success( [
 				'message'   => __( 'Media removed from all folders.', 'virtual-media-folders' ),
 				'media_id'  => $media_id,
@@ -164,13 +164,13 @@ class Admin {
 
 		// Verify the target folder exists.
 		$folder_id = absint( $folder_id );
-		$term      = get_term( $folder_id, 'media_folder' );
+		$term      = get_term( $folder_id, Taxonomy::TAXONOMY );
 		if ( ! $term || is_wp_error( $term ) ) {
 			wp_send_json_error( [ 'message' => __( 'Folder not found.', 'virtual-media-folders' ) ], 404 );
 		}
 
 		// Assign media to folder (replaces existing assignments).
-		$result = wp_set_object_terms( $media_id, [ $folder_id ], 'media_folder' );
+		$result = wp_set_object_terms( $media_id, [ $folder_id ], Taxonomy::TAXONOMY );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [ 'message' => $result->get_error_message() ], 500 );

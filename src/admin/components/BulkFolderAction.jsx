@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import apiFetch from '@wordpress/api-fetch';
+import { fetchAllFolders } from '../../shared/utils/folderApi';
 
 /**
  * BulkFolderAction component.
@@ -24,9 +24,7 @@ export default function BulkFolderAction({ onComplete }) {
 	// Fetch folders function
 	const fetchFolders = useCallback(async () => {
 		try {
-			const response = await apiFetch({
-				path: '/wp/v2/media-folders?per_page=100',
-			});
+			const response = await fetchAllFolders();
 			setFolders(response);
 		} catch (error) {
 			console.error('Error fetching folders:', error);

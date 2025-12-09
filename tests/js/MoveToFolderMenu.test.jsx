@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { useState } from 'react';
 import { MoveToFolderMenu } from '../../src/admin/components/MoveToFolderMenu.jsx';
 
@@ -51,7 +51,9 @@ describe('MoveToFolderMenu', () => {
 	});
 
 	it('renders toggle button with folder icon', () => {
-		render(<MoveToFolderMenu mediaId={1} currentFolderId={null} onMove={vi.fn()} />);
+		act(() => {
+			render(<MoveToFolderMenu mediaId={1} currentFolderId={null} onMove={vi.fn()} />);
+		});
 
 		const button = screen.getByRole('button');
 		expect(button).toBeInTheDocument();
@@ -62,7 +64,9 @@ describe('MoveToFolderMenu', () => {
 		const apiFetch = (await import('@wordpress/api-fetch')).default;
 		apiFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
 
-		render(<MoveToFolderMenu mediaId={1} currentFolderId={null} onMove={vi.fn()} />);
+		act(() => {
+			render(<MoveToFolderMenu mediaId={1} currentFolderId={null} onMove={vi.fn()} />);
+		});
 
 		// Open dropdown
 		fireEvent.click(screen.getByRole('button'));
@@ -79,7 +83,9 @@ describe('MoveToFolderMenu', () => {
 			{ id: 2, name: 'Documents', parent: 0, children: [] },
 		]);
 
-		render(<MoveToFolderMenu mediaId={1} currentFolderId={null} onMove={vi.fn()} />);
+		act(() => {
+			render(<MoveToFolderMenu mediaId={1} currentFolderId={null} onMove={vi.fn()} />);
+		});
 
 		// Open dropdown
 		fireEvent.click(screen.getByRole('button'));
@@ -97,7 +103,9 @@ describe('MoveToFolderMenu', () => {
 		]);
 
 		const onMove = vi.fn();
-		render(<MoveToFolderMenu mediaId={42} currentFolderId={null} onMove={onMove} />);
+		act(() => {
+			render(<MoveToFolderMenu mediaId={42} currentFolderId={null} onMove={onMove} />);
+		});
 
 		// Open dropdown
 		fireEvent.click(screen.getByRole('button'));
@@ -115,7 +123,9 @@ describe('MoveToFolderMenu', () => {
 		const apiFetch = (await import('@wordpress/api-fetch')).default;
 		apiFetch.mockResolvedValue([]);
 
-		render(<MoveToFolderMenu mediaId={1} currentFolderId={2} onMove={vi.fn()} />);
+		act(() => {
+			render(<MoveToFolderMenu mediaId={1} currentFolderId={2} onMove={vi.fn()} />);
+		});
 
 		fireEvent.click(screen.getByRole('button'));
 
