@@ -32,6 +32,7 @@ import {
 } from '@dnd-kit/sortable';
 import apiFetch from '@wordpress/api-fetch';
 import useFolderData from '../../shared/hooks/useFolderData';
+import { setCachedFolders } from '../../shared/utils/folderApi';
 import { BaseFolderTree } from '../../shared/components';
 import { DroppableFolder } from './DroppableFolder';
 import { SortableFolderItem } from './SortableFolderItem';
@@ -148,11 +149,12 @@ export default function FolderTree({ onFolderSelect }) {
 	}, [uncategorizedCount, setSelectedId, onFolderSelect]);
 
 	// Refresh handler that also dispatches event for other components
-	const handleRefresh = useCallback(() => {
-		fetchFolders();
-		// Dispatch custom event so other components can refresh their folder lists
+	const handleRefresh = useCallback(async () => {
+		// Fetch fresh data (this will update the cache internally)
+		await fetchFolders(mediaType, true); // forceRefresh=true
+		// Dispatch custom event AFTER fetch completes so other components get fresh cache
 		window.dispatchEvent(new CustomEvent('vmf:folders-updated'));
-	}, [fetchFolders]);
+	}, [fetchFolders, mediaType]);
 
 	useEffect(() => {
 		// Expose refresh function globally
@@ -202,7 +204,19 @@ export default function FolderTree({ onFolderSelect }) {
 		const newOrder = arrayMove(rootFolderIds, oldIndex, newIndex);
 
 		// Optimistic UI update - reorder folders immediately
-		setFolders((prevFolders) => arrayMove(prevFolders, oldIndex, newIndex));
+		const reorderedFolders = arrayMove(folders, oldIndex, newIndex);
+		setFolders(reorderedFolders);
+
+		// Update cache with new order so other components get correct order
+		// Map tree folders back to flat structure with updated vmf_order
+		const updatedFlatFolders = reorderedFolders.map((f, idx) => ({
+			...flatFolders.find((ff) => ff.id === f.id),
+			vmf_order: idx,
+		}));
+		setCachedFolders(updatedFlatFolders);
+
+		// Notify other components of the change
+		window.dispatchEvent(new CustomEvent('vmf:folders-updated'));
 
 		// Save to server in background (don't await)
 		apiFetch({
@@ -217,7 +231,7 @@ export default function FolderTree({ onFolderSelect }) {
 			// Revert on error - fetch fresh data
 			fetchFolders();
 		});
-	}, [folders, fetchFolders]);
+	}, [folders, flatFolders, fetchFolders]);
 
 	// Get root folder IDs for sortable context
 	const rootFolderIds = folders.map((f) => f.id);

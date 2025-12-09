@@ -38,6 +38,43 @@ class Admin {
 		add_action( 'wp_ajax_vmf_move_to_folder', [ static::class, 'ajax_move_to_folder' ] );
 		add_action( 'add_attachment', [ static::class, 'assign_default_folder' ] );
 		add_action( 'admin_head-upload.php', [ static::class, 'add_help_tab' ] );
+		add_action( 'admin_head-upload.php', [ static::class, 'add_critical_css' ] );
+	}
+
+	/**
+	 * Add critical inline CSS to prevent layout shift.
+	 *
+	 * Outputs minimal CSS rules immediately in the head to reserve space
+	 * for the folder sidebar before the main stylesheet loads.
+	 *
+	 * @return void
+	 */
+public static function add_critical_css(): void {
+		// Check if folder view preference is enabled (cookie/localStorage check happens client-side,
+		// but we output the CSS anyway - it only applies when classes are present)
+		?>
+		<style id="vmf-critical-css">
+			/* Critical CSS to prevent layout shift - loaded inline before main styles */
+			.vmf-folder-tree-sidebar {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 220px;
+				display: none;
+				z-index: 75;
+			}
+			.vmf-folder-tree-sidebar.is-visible {
+				display: block;
+				visibility: hidden; /* Hide until JS positions it */
+			}
+			.vmf-folder-tree-sidebar.is-visible.vmf-positioned {
+				visibility: visible;
+			}
+			.attachments-browser.vmf-sidebar-visible .attachments {
+				margin-left: 220px !important;
+			}
+		</style>
+		<?php
 	}
 
 	/**
@@ -227,7 +264,7 @@ class Admin {
 			$asset[ 'version' ] ?? VMF_VERSION
 		);
 
-		// Provide AJAX configuration to JavaScript.
+		// Provide AJAX configuration and preloaded folders to JavaScript.
 		wp_add_inline_script(
 			'vmf-admin',
 			'var vmfData = ' . wp_json_encode( [
@@ -236,11 +273,70 @@ class Admin {
 				'jumpToFolderAfterMove' => (bool) Settings::get( 'jump_to_folder_after_move', false ),
 				'showAllMedia'          => (bool) Settings::get( 'show_all_media', true ),
 				'showUncategorized'     => (bool) Settings::get( 'show_uncategorized', true ),
+				'folders'               => self::get_preloaded_folders(),
 			] ) . ';',
 			'before'
 		);
 
 		// Enable translations for JavaScript strings.
 		wp_set_script_translations( 'vmf-admin', 'virtual-media-folders', VMF_PATH . 'languages' );
+	}
+
+	/**
+	 * Get preloaded folders for instant display.
+	 *
+	 * Returns folder data in the same format as the REST API response
+	 * for optimistic loading before background refresh.
+	 *
+	 * @return array<int, array<string, mixed>> Array of folder data.
+	 */
+	private static function get_preloaded_folders(): array {
+		$terms = get_terms(
+			[
+				'taxonomy'   => Taxonomy::TAXONOMY,
+				'hide_empty' => false,
+			]
+		);
+
+		if ( is_wp_error( $terms ) || ! is_array( $terms ) ) {
+			return [];
+		}
+
+		// Pre-fetch all term meta to avoid N+1 queries.
+		$term_ids = wp_list_pluck( $terms, 'term_id' );
+		\update_meta_cache( 'term', $term_ids );
+
+		// Build folder list with order meta.
+		$folders = [];
+		foreach ( $terms as $term ) {
+			$order     = get_term_meta( $term->term_id, 'vmf_order', true );
+			$folders[] = [
+				'id'        => $term->term_id,
+				'name'      => $term->name,
+				'slug'      => $term->slug,
+				'parent'    => $term->parent,
+				'count'     => $term->count,
+				'vmf_order' => $order !== '' ? (int) $order : null,
+			];
+		}
+
+		// Sort: folders with vmf_order first (by order), then by name.
+		usort( $folders, function ( $a, $b ) {
+			$order_a = $a[ 'vmf_order' ];
+			$order_b = $b[ 'vmf_order' ];
+
+			if ( $order_a !== null && $order_b !== null ) {
+				return $order_a - $order_b;
+			}
+			if ( $order_a !== null ) {
+				return -1;
+			}
+			if ( $order_b !== null ) {
+				return 1;
+			}
+			return strcasecmp( $a[ 'name' ], $b[ 'name' ] );
+		} );
+
+		return $folders;
 	}
 }

@@ -118,6 +118,9 @@ class RestApiTest extends TestCase {
 	 * Test prepare_folder_for_response using reflection.
 	 */
 	public function test_prepare_folder_for_response(): void {
+		// Mock get_term_meta for vmf_order
+		Functions\when( 'get_term_meta' )->justReturn( 3 );
+
 		$term = new \WP_Term( [
 			'term_id'     => 42,
 			'name'        => 'Test Folder',
@@ -140,6 +143,7 @@ class RestApiTest extends TestCase {
 		$this->assertEquals( 'A test folder', $result[ 'description' ] );
 		$this->assertEquals( 0, $result[ 'parent' ] );
 		$this->assertEquals( 5, $result[ 'count' ] );
+		$this->assertEquals( 3, $result[ 'vmf_order' ] );
 		$this->assertArrayHasKey( '_links', $result );
 	}
 
@@ -147,6 +151,9 @@ class RestApiTest extends TestCase {
 	 * Test response links structure.
 	 */
 	public function test_prepare_folder_response_links(): void {
+		// Mock get_term_meta for vmf_order
+		Functions\when( 'get_term_meta' )->justReturn( '' );
+
 		$term = new \WP_Term( [
 			'term_id' => 42,
 			'name'    => 'Test Folder',

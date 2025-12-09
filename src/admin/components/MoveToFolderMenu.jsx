@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { Icon, folder as folderIcon } from '@wordpress/icons';
-import { fetchAllFolders } from '../../shared/utils/folderApi';
+import { fetchAllFolders, getCachedFolders } from '../../shared/utils/folderApi';
 
 /**
  * MoveToFolderMenu component.
@@ -24,9 +24,16 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 	const [folders, setFolders] = useState([]);
 	const [loading, setLoading] = useState(true);
 
-	// Fetch folders function
+	// Fetch folders function with optimistic loading
 	const fetchFolders = useCallback(async () => {
 		try {
+			// Show cached folders immediately
+			const cached = getCachedFolders();
+			if (cached && cached.length > 0) {
+				setFolders(cached);
+				setLoading(false);
+			}
+			// Fetch fresh data in background
 			const response = await fetchAllFolders();
 			setFolders(response);
 		} catch (error) {
@@ -41,8 +48,12 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 		fetchFolders();
 
 		// Listen for custom folder refresh event
+		// Just re-read from cache - FolderTree already fetched fresh data
 		const handleFolderRefresh = () => {
-			fetchFolders();
+			const cached = getCachedFolders();
+			if (cached && cached.length > 0) {
+				setFolders(cached);
+			}
 		};
 
 		window.addEventListener('vmf:folders-updated', handleFolderRefresh);

@@ -5,6 +5,23 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2025-12-09
+
+### Added
+- Optimistic folder loading with localStorage caching for instant sidebar display
+- Critical inline CSS to prevent layout shift during sidebar positioning
+- REST API now returns `vmf_order` field for proper client-side sorting
+
+### Changed
+- Secondary components (MoveToFolderMenu, BulkFolderAction) now read from cache instead of making API calls
+- Event-driven architecture with single `vmf:folders-updated` event for cross-component sync
+- Async refresh handler ensures cache is updated before notifying other components
+
+### Fixed
+- Layout shift eliminated - sidebar now hidden until positioned, then revealed
+- Folder order persists correctly when dropping files on folders
+- Drag-and-drop reorder updates cache with correct vmf_order values
+
 ## [1.1.4] - 2025-12-09
 
 ### Changed

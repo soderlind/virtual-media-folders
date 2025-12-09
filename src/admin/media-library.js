@@ -281,6 +281,8 @@ function setupStickySidebar(browser) {
 			// Ensure offset is never negative
 			if (initialOffset < 0) initialOffset = 0;
 			updateSidebarPosition();
+			// Show sidebar after positioning (removes visibility:hidden)
+			sidebar.classList.add('vmf-positioned');
 		}
 		
 		// Initial calculation with delays to ensure content is rendered
@@ -448,9 +450,23 @@ function injectFolderTree(browser) {
 		return;
 	}
 
+	// Check if folder view should be active BEFORE creating container
+	const savedPref = localStorage.getItem('vmf_folder_view');
+	const urlParams = new URLSearchParams(window.location.search);
+	const shouldBeVisible = savedPref === '1' || urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder';
+
 	const container = document.createElement('div');
 	container.id = 'vmf-folder-tree';
 	container.className = 'vmf-folder-tree-sidebar';
+	
+	// Add is-visible class immediately if folder view should be active
+	// This prevents layout shift when React renders
+	if (shouldBeVisible) {
+		container.classList.add('is-visible');
+		browser.$el.addClass('vmf-sidebar-visible');
+		document.body.classList.add('vmf-folder-view-active');
+		folderViewActive = true;
+	}
 
 	// Find the best insertion point - we want the sidebar next to attachments,
 	// not overlapping the uploader
