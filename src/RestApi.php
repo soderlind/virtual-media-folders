@@ -937,6 +937,8 @@ final class RestApi extends WP_REST_Controller {
 	 * @return array<string, mixed>
 	 */
 	private function prepare_folder_for_response( object $term ): array {
+		$vmf_order = get_term_meta( $term->term_id, 'vmf_order', true );
+
 		return [
 			'id'          => $term->term_id,
 			'name'        => $term->name,
@@ -944,6 +946,7 @@ final class RestApi extends WP_REST_Controller {
 			'description' => $term->description,
 			'parent'      => $term->parent,
 			'count'       => $term->count,
+			'vmf_order'   => $vmf_order !== '' ? (int) $vmf_order : null,
 			'_links'      => [
 				'self'       => [
 					[

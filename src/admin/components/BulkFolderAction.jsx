@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { fetchAllFolders } from '../../shared/utils/folderApi';
+import { fetchAllFolders, getCachedFolders } from '../../shared/utils/folderApi';
 
 /**
  * BulkFolderAction component.
@@ -21,9 +21,15 @@ export default function BulkFolderAction({ onComplete }) {
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [selectedCount, setSelectedCount] = useState(0);
 
-	// Fetch folders function
+	// Fetch folders function with optimistic loading
 	const fetchFolders = useCallback(async () => {
 		try {
+			// Show cached folders immediately
+			const cached = getCachedFolders();
+			if (cached && cached.length > 0) {
+				setFolders(cached);
+			}
+			// Fetch fresh data in background
 			const response = await fetchAllFolders();
 			setFolders(response);
 		} catch (error) {
@@ -36,8 +42,12 @@ export default function BulkFolderAction({ onComplete }) {
 		fetchFolders();
 
 		// Listen for custom folder refresh event
+		// Just re-read from cache - FolderTree already fetched fresh data
 		const handleFolderRefresh = () => {
-			fetchFolders();
+			const cached = getCachedFolders();
+			if (cached && cached.length > 0) {
+				setFolders(cached);
+			}
 		};
 
 		window.addEventListener('vmf:folders-updated', handleFolderRefresh);

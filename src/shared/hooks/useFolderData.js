@@ -1,12 +1,20 @@
 /**
  * Shared hook for fetching and managing folder data.
  *
+ * Uses optimistic loading: displays cached folders instantly,
+ * then fetches fresh data and counts in the background.
+ *
  * Used by both Media Library FolderTree and Gutenberg FolderSidebar.
  * Supports filtering counts by media type to match WordPress filter dropdown.
  */
 
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import {
+	getCachedFolders,
+	setCachedFolders,
+	foldersEqual,
+} from '../utils/folderApi';
 
 /**
  * Build a hierarchical tree from flat taxonomy terms.
@@ -63,7 +71,10 @@ function normalizeMediaType(mediaType) {
 }
 
 /**
- * Custom hook for fetching folder data.
+ * Custom hook for fetching folder data with optimistic loading.
+ *
+ * Displays cached folders instantly, then fetches fresh data in background.
+ * Only updates state if folder structure has changed.
  *
  * @param {Object} options Hook options.
  * @param {boolean} options.trackUrl Whether to sync with URL params (admin only).
@@ -73,98 +84,122 @@ function normalizeMediaType(mediaType) {
  * @return {Object} Folder data and state.
  */
 export default function useFolderData({ trackUrl = false, onFolderSelect, mediaType = '', defaultFolder = null } = {}) {
-	const [folders, setFolders] = useState([]);
-	const [flatFolders, setFlatFolders] = useState([]);
+	// Initialize with cached/preloaded data for instant render
+	const initialFolders = getCachedFolders() || [];
+	const initialTree = initialFolders.length > 0 ? buildTree(initialFolders) : [];
+	const hasInitialData = initialFolders.length > 0;
+
+	const [folders, setFolders] = useState(initialTree);
+	const [flatFolders, setFlatFolders] = useState(initialFolders);
 	const [selectedId, setSelectedId] = useState(defaultFolder);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(!hasInitialData);
 	const [uncategorizedCount, setUncategorizedCount] = useState(0);
+	const lastFetchedFolders = useRef(hasInitialData ? initialFolders : null);
 
 	/**
-	 * Fetch folders from REST API with optional media type filtering.
+	 * Sort folders by vmf_order (if present) then by name.
 	 */
-	const fetchFolders = useCallback(async (typeFilter = mediaType) => {
+	const sortFolders = useCallback((folderList) => {
+		return [...folderList].sort((a, b) => {
+			const orderA = a.vmf_order;
+			const orderB = b.vmf_order;
+			// If both have custom order, use it
+			if (orderA !== undefined && orderA !== null && orderB !== undefined && orderB !== null) {
+				return orderA - orderB;
+			}
+			// If only one has order, it comes first
+			if (orderA !== undefined && orderA !== null) return -1;
+			if (orderB !== undefined && orderB !== null) return 1;
+			// Neither has order, sort by name
+			return a.name.localeCompare(b.name);
+		});
+	}, []);
+
+	/**
+	 * Apply folder data to state (used by both cache and fresh data).
+	 */
+	const applyFolderData = useCallback((folderList, counts = null) => {
+		const sorted = sortFolders(folderList);
+		const withCounts = counts
+			? sorted.map((f) => ({ ...f, count: counts[f.id] ?? f.count }))
+			: sorted;
+
+		setFlatFolders(withCounts);
+		setFolders(buildTree(withCounts));
+	}, [sortFolders]);
+
+	/**
+	 * Fetch uncategorized count in background.
+	 */
+	const fetchUncategorizedCount = useCallback(async (typeFilter, foldersWithCounts) => {
 		try {
-			// Fetch folders from standard endpoint
-			const response = await apiFetch({
-				path: '/wp/v2/media-folders?per_page=100',
-			});
-
-			// Fetch custom order from our endpoint (only for sorting)
-			let orderMap = {};
-			try {
-				const orderedFolders = await apiFetch({
-					path: '/vmf/v1/folders',
-				});
-				// Create a map of id -> position
-				orderedFolders.forEach((folder, index) => {
-					orderMap[folder.id] = index;
-				});
-			} catch (orderError) {
-				// If we can't get the order, folders will sort by name
-				console.log('Could not fetch folder order, using default');
-			}
-
-			// Sort folders by our custom order
-			const sortedResponse = [...response].sort((a, b) => {
-				const orderA = orderMap[a.id];
-				const orderB = orderMap[b.id];
-				// If both have custom order, use it
-				if (orderA !== undefined && orderB !== undefined) {
-					return orderA - orderB;
-				}
-				// If only one has order, it comes first
-				if (orderA !== undefined) return -1;
-				if (orderB !== undefined) return 1;
-				// Neither has order, sort by name
-				return a.name.localeCompare(b.name);
-			});
-
-			// If media type filter is applied, fetch filtered counts from our custom endpoint
-			let filteredCounts = null;
-			if (typeFilter) {
-				filteredCounts = await apiFetch({
-					path: `/vmf/v1/folders/counts?media_type=${encodeURIComponent(typeFilter)}`,
-				});
-			}
-
-			// Apply filtered counts to folders
-			const foldersWithCounts = sortedResponse.map((folder) => ({
-				...folder,
-				count: filteredCounts ? (filteredCounts[folder.id] || 0) : folder.count,
-			}));
-
-			// Store flat list for manager components (preserve order from API)
-			setFlatFolders(foldersWithCounts);
-
-			// Build tree structure (preserves order of roots)
-			const tree = buildTree(foldersWithCounts);
-			setFolders(tree);
-
-			// Fetch total media count to calculate uncategorized
-			// Normalize media type for WP REST API (only accepts simple types)
 			const normalizedType = normalizeMediaType(typeFilter);
 			let mediaPath = '/wp/v2/media?per_page=1';
 			if (normalizedType) {
 				mediaPath += `&media_type=${encodeURIComponent(normalizedType)}`;
 			}
-			
+
 			const totalResponse = await apiFetch({ path: mediaPath, parse: false });
 			const totalCount = parseInt(totalResponse.headers.get('X-WP-Total'), 10) || 0;
 
-			// Calculate uncategorized as total minus sum of folder counts
 			let categorizedCount = 0;
 			foldersWithCounts.forEach((folder) => {
 				categorizedCount += folder.count || 0;
 			});
 
-			// Account for items in multiple folders (use max of 0)
 			setUncategorizedCount(Math.max(0, totalCount - categorizedCount));
+		} catch (error) {
+			// Silently fail - uncategorized count is non-critical
+		}
+	}, []);
+
+	/**
+	 * Fetch folders from REST API with optional media type filtering.
+	 * Uses optimistic loading: state is already initialized with cached data,
+	 * this function refreshes in background and updates if changed.
+	 */
+	const fetchFolders = useCallback(async (typeFilter = mediaType, forceRefresh = false) => {
+		try {
+			// Fetch fresh folder structure from custom endpoint
+			// This endpoint already includes vmf_order and is sorted
+			const freshFolders = await apiFetch({
+				path: '/vmf/v1/folders',
+			});
+
+			// Check if structure changed (deep equality on essential props)
+			const structureChanged = forceRefresh || !foldersEqual(lastFetchedFolders.current, freshFolders);
+
+			if (structureChanged) {
+				applyFolderData(freshFolders);
+				setCachedFolders(freshFolders);
+				lastFetchedFolders.current = freshFolders;
+			}
+
+			// Fetch filtered counts in background (if media type filter active)
+			let finalFolders = freshFolders;
+			if (typeFilter) {
+				try {
+					const filteredCounts = await apiFetch({
+						path: `/vmf/v1/folders/counts?media_type=${encodeURIComponent(typeFilter)}`,
+					});
+					finalFolders = freshFolders.map((f) => ({
+						...f,
+						count: filteredCounts[f.id] ?? f.count,
+					}));
+					applyFolderData(finalFolders);
+				} catch (countError) {
+					// Use default counts
+				}
+			}
+
+			// Fetch uncategorized count in background
+			fetchUncategorizedCount(typeFilter, finalFolders);
 		} catch (error) {
 			console.error('Error fetching folders:', error);
 		} finally {
 			setLoading(false);
 		}
-	}, [mediaType]);
+	}, [mediaType, applyFolderData, fetchUncategorizedCount]);
 
 	useEffect(() => {
 		// Get initial folder from URL (admin only)
