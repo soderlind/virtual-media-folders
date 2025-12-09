@@ -5,6 +5,20 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2025-12-09
+
+### Changed
+- Refactored PHP REST API with shared helpers for capability checks, folder/attachment lookups, and media assignment
+- Refactored Settings class with centralized `get_options()` and `normalize_visibility()` helpers
+- Admin class now uses `Taxonomy::TAXONOMY` constant instead of hardcoded `'media_folder'` strings
+- JavaScript folder API calls consolidated into `src/shared/utils/folderApi.js`
+
+### Fixed
+- Test mock for `useFolderData` to properly handle `parse: false` API responses
+
+### Removed
+- Unused `SortableFolderList.jsx` component
+
 ## [1.1.3] - 2025-12-07
 
 ### Fixed
