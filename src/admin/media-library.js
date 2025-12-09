@@ -445,17 +445,47 @@ function addFolderToggleButton(browser) {
  * Inject folder tree into an AttachmentsBrowser instance.
  */
 function injectFolderTree(browser) {
-	// Don't inject twice
+	// Check if sidebar already exists in this browser
 	if (browser.$el.find('#vmf-folder-tree').length) {
 		return;
 	}
 
-	// Check if folder view should be active BEFORE creating container
+	// Check if sidebar exists elsewhere (orphaned from previous browser render)
+	const existingSidebar = document.getElementById('vmf-folder-tree');
+	
+	// Check if folder view should be active
 	const savedPref = localStorage.getItem('vmf_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	const shouldBeVisible = savedPref === '1' || urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder';
+	const shouldBeVisible = savedPref === '1' || urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder' || folderViewActive;
 
-	const container = document.createElement('div');
+	// Find the best insertion point - we want the sidebar next to attachments,
+	// not overlapping the uploader
+	const $attachmentsWrapper = browser.$el.find('.attachments-wrapper').first();
+	const $attachmentsBrowser = browser.$el;
+	
+	let container;
+	
+	if (existingSidebar) {
+		// Reuse existing sidebar - preserve its visibility state
+		container = existingSidebar;
+		// Move it to the new browser element
+		if ($attachmentsWrapper.length) {
+			$attachmentsWrapper.prepend(container);
+		} else {
+			$attachmentsBrowser.prepend(container);
+		}
+		// Ensure visibility classes are applied to the new browser element
+		if (container.classList.contains('is-visible') || shouldBeVisible) {
+			container.classList.add('is-visible');
+			browser.$el.addClass('vmf-sidebar-visible');
+			document.body.classList.add('vmf-folder-view-active');
+			folderViewActive = true;
+		}
+		return; // Don't recreate the React root
+	}
+
+	// Create new container
+	container = document.createElement('div');
 	container.id = 'vmf-folder-tree';
 	container.className = 'vmf-folder-tree-sidebar';
 	
@@ -468,17 +498,9 @@ function injectFolderTree(browser) {
 		folderViewActive = true;
 	}
 
-	// Find the best insertion point - we want the sidebar next to attachments,
-	// not overlapping the uploader
-	const $attachmentsWrapper = browser.$el.find('.attachments-wrapper').first();
-	const $attachmentsBrowser = browser.$el;
-	
 	if ($attachmentsWrapper.length) {
 		// Insert sidebar into attachments-wrapper
 		$attachmentsWrapper.prepend(container);
-		
-		// Make attachments-wrapper a flex container to properly position sidebar
-		// This is set via CSS, but we need to ensure the relationship is correct
 	} else {
 		// Fallback: prepend to browser element
 		$attachmentsBrowser.prepend(container);

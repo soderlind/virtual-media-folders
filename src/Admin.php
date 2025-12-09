@@ -36,6 +36,7 @@ class Admin {
 	public static function init(): void {
 		add_action( 'admin_enqueue_scripts', [ static::class, 'enqueue_scripts' ] );
 		add_action( 'wp_ajax_vmf_move_to_folder', [ static::class, 'ajax_move_to_folder' ] );
+		add_action( 'wp_ajax_vmf_bulk_move_to_folder', [ static::class, 'ajax_bulk_move_to_folder' ] );
 		add_action( 'add_attachment', [ static::class, 'assign_default_folder' ] );
 		add_action( 'admin_head-upload.php', [ static::class, 'add_help_tab' ] );
 		add_action( 'admin_head-upload.php', [ static::class, 'add_critical_css' ] );
@@ -225,6 +226,107 @@ class Admin {
 			),
 			'media_id'  => $media_id,
 			'folder_id' => $folder_id,
+		] );
+	}
+
+	/**
+	 * Handle bulk AJAX request to move multiple media items to a folder.
+	 *
+	 * Moves all specified media IDs to the target folder in a single request.
+	 *
+	 * @return void Sends JSON response and exits.
+	 */
+	public static function ajax_bulk_move_to_folder(): void {
+		// Verify nonce for security.
+		if ( ! check_ajax_referer( 'vmf_move_media', 'nonce', false ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid security token.', 'virtual-media-folders' ) ], 403 );
+		}
+
+		// Verify user has permission to upload/manage media.
+		if ( ! current_user_can( 'upload_files' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Permission denied.', 'virtual-media-folders' ) ], 403 );
+		}
+
+		// Sanitize and validate input.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$media_ids_raw = isset( $_POST[ 'media_ids' ] ) ? wp_unslash( $_POST[ 'media_ids' ] ) : '';
+		$folder_id     = isset( $_POST[ 'folder_id' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'folder_id' ] ) ) : '';
+
+		// Parse media IDs (can be JSON array or comma-separated).
+		if ( is_string( $media_ids_raw ) ) {
+			$decoded = json_decode( $media_ids_raw, true );
+			if ( is_array( $decoded ) ) {
+				$media_ids = array_map( 'absint', $decoded );
+			} else {
+				$media_ids = array_map( 'absint', explode( ',', $media_ids_raw ) );
+			}
+		} elseif ( is_array( $media_ids_raw ) ) {
+			$media_ids = array_map( 'absint', $media_ids_raw );
+		} else {
+			$media_ids = [];
+		}
+
+		// Filter out invalid IDs.
+		$media_ids = array_filter( $media_ids );
+
+		if ( empty( $media_ids ) ) {
+			wp_send_json_error( [ 'message' => __( 'No valid media IDs provided.', 'virtual-media-folders' ) ], 400 );
+		}
+
+		// Determine target term IDs.
+		$term_ids    = [];
+		$folder_name = __( 'Uncategorized', 'virtual-media-folders' );
+
+		if ( $folder_id !== 'uncategorized' && $folder_id !== '' && $folder_id !== 'root' ) {
+			$folder_id_int = absint( $folder_id );
+			$term          = get_term( $folder_id_int, Taxonomy::TAXONOMY );
+			if ( ! $term || is_wp_error( $term ) ) {
+				wp_send_json_error( [ 'message' => __( 'Folder not found.', 'virtual-media-folders' ) ], 404 );
+			}
+			$term_ids    = [ $folder_id_int ];
+			$folder_name = $term->name;
+		}
+
+		// Move all media items.
+		$success_count = 0;
+		$failed_ids    = [];
+
+		foreach ( $media_ids as $media_id ) {
+			$attachment = get_post( $media_id );
+			if ( ! $attachment || $attachment->post_type !== 'attachment' ) {
+				$failed_ids[] = $media_id;
+				continue;
+			}
+
+			$result = wp_set_object_terms( $media_id, $term_ids, Taxonomy::TAXONOMY );
+			if ( is_wp_error( $result ) ) {
+				$failed_ids[] = $media_id;
+			} else {
+				++$success_count;
+			}
+		}
+
+		if ( $success_count === 0 ) {
+			wp_send_json_error( [ 'message' => __( 'Failed to move any items.', 'virtual-media-folders' ) ], 500 );
+		}
+
+		$message = sprintf(
+			/* translators: 1: number of items, 2: folder name */
+			_n(
+				'%1$d item moved to "%2$s".',
+				'%1$d items moved to "%2$s".',
+				$success_count,
+				'virtual-media-folders'
+			),
+			$success_count,
+			$folder_name
+		);
+
+		wp_send_json_success( [
+			'message'       => $message,
+			'success_count' => $success_count,
+			'failed_ids'    => $failed_ids,
+			'folder_id'     => empty( $term_ids ) ? null : $term_ids[ 0 ],
 		] );
 	}
 
