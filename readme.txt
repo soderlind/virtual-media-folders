@@ -74,6 +74,11 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 == Changelog ==
 
+= 1.1.3 =
+* Fixed: Block editor media modal now respects "Show All Media" and "Show Uncategorized" settings
+* Fixed: Folder sidebar in Gutenberg modal matches Media Library settings visibility
+* Changed: Replaced `wp_localize_script` with `wp_add_inline_script` for proper boolean handling in JS config
+
 = 1.1.2 =
 * Fixed: Default folder filter not applying on initial page load when "Show All Media" is disabled
 * Fixed: Media Library now correctly shows only uncategorized files on load when Uncategorized is the default
