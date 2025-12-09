@@ -49,7 +49,7 @@ class Admin {
 	 *
 	 * @return void
 	 */
-public static function add_critical_css(): void {
+	public static function add_critical_css(): void {
 		// Check if folder view preference is enabled (cookie/localStorage check happens client-side,
 		// but we output the CSS anyway - it only applies when classes are present)
 		?>
@@ -63,13 +63,17 @@ public static function add_critical_css(): void {
 				display: none;
 				z-index: 75;
 			}
+
 			.vmf-folder-tree-sidebar.is-visible {
 				display: block;
-				visibility: hidden; /* Hide until JS positions it */
+				visibility: hidden;
+				/* Hide until JS positions it */
 			}
+
 			.vmf-folder-tree-sidebar.is-visible.vmf-positioned {
 				visibility: visible;
 			}
+
 			.attachments-browser.vmf-sidebar-visible .attachments {
 				margin-left: 220px !important;
 			}
