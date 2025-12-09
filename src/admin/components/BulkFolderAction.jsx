@@ -147,9 +147,13 @@ export default function BulkFolderAction({ onComplete }) {
 				window.vmfRefreshFolders();
 			}
 			
-			// Select the target folder to show moved items (if setting is enabled)
-			const { jumpToFolderAfterMove = false } = window.vmfData || {};
-			if (jumpToFolderAfterMove) {
+			// Check if the current folder will be empty after the move
+			const isAllMediaView = !document.querySelector('.attachments-browser')?.classList.contains('vmf-folder-filtered');
+			const totalAttachments = document.querySelectorAll('.attachments .attachment').length;
+			const willBeEmpty = !isAllMediaView && totalAttachments <= mediaIds.length;
+			
+			// Jump to target folder if current folder will be empty after the move
+			if (willBeEmpty) {
 				// Delay to ensure refresh completes
 				setTimeout(() => {
 					if (window.vmfSelectFolder) {
@@ -159,18 +163,14 @@ export default function BulkFolderAction({ onComplete }) {
 						window.vmfSelectFolder(targetFolderId);
 					}
 				}, 200);
-			} else {
-				// When not jumping to folder, remove the moved items from the current view
-				// BUT only if we're not in "All Media" view (All Media shows all items regardless of folder)
-				const isAllMediaView = !document.querySelector('.attachments-browser')?.classList.contains('vmf-folder-filtered');
-				if (!isAllMediaView) {
-					mediaIds.forEach((id) => {
-						const attachment = document.querySelector(`.attachment[data-id="${id}"]`);
-						if (attachment) {
-							attachment.remove();
-						}
-					});
-				}
+			} else if (!isAllMediaView) {
+				// Remove the moved items from the current view
+				mediaIds.forEach((id) => {
+					const attachment = document.querySelector(`.attachment[data-id="${id}"]`);
+					if (attachment) {
+						attachment.remove();
+					}
+				});
 			}
 			
 			// Disable bulk select mode by triggering WordPress media library's bulk select toggle

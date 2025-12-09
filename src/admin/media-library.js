@@ -132,6 +132,11 @@ async function moveMediaToFolder(mediaId, folderId) {
 		return;
 	}
 
+	// Check if this is the last file in the current folder BEFORE the move
+	const isAllMediaView = !document.querySelector('.attachments-browser')?.classList.contains('vmf-folder-filtered');
+	const totalAttachments = document.querySelectorAll('.attachments .attachment').length;
+	const willBeEmpty = !isAllMediaView && totalAttachments <= 1;
+
 	const formData = new FormData();
 	formData.append('action', 'vmf_move_to_folder');
 	formData.append('nonce', nonce);
@@ -155,8 +160,16 @@ async function moveMediaToFolder(mediaId, folderId) {
 			if (window.vmfRefreshFolders) {
 				window.vmfRefreshFolders();
 			}
-			// Refresh the media library view
-			refreshMediaLibrary();
+			
+			// If current folder is now empty, jump to target folder
+			if (willBeEmpty && window.vmfSelectFolder) {
+				setTimeout(() => {
+					window.vmfSelectFolder(folderId);
+				}, 200);
+			} else {
+				// Refresh the media library view
+				refreshMediaLibrary();
+			}
 		} else {
 			showNotice(data.data?.message || __('Failed to move media.', 'virtual-media-folders'), 'error');
 		}
