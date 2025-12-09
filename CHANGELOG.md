@@ -5,6 +5,11 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.7] - 2025-12-09
+
+### Added
+- Auto-jump to target folder when moving the last file(s) from a folder (single or bulk move)
+
 ## [1.1.6] - 2025-12-09
 
 ### Added
@@ -364,7 +369,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
-
+[1.1.7]: https://github.com/soderlind/virtual-media-folders/compare/1.1.6...1.1.7
 [1.1.6]: https://github.com/soderlind/virtual-media-folders/compare/1.1.5...1.1.6
 [1.1.5]: https://github.com/soderlind/virtual-media-folders/compare/1.1.4...1.1.5
 [1.1.4]: https://github.com/soderlind/virtual-media-folders/compare/1.1.3...1.1.4
