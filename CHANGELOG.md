@@ -5,6 +5,18 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.6] - 2025-12-09
+
+### Added
+- New `vmf_bulk_move_to_folder` AJAX endpoint for efficient bulk operations
+
+### Changed
+- Bulk move now uses single AJAX request instead of one per file (major performance improvement)
+
+### Fixed
+- Missing `sprintf` import in BulkFolderAction causing error when selecting files in bulk mode
+- Sidebar visibility preserved when browser re-renders during bulk select mode
+
 ## [1.1.5] - 2025-12-09
 
 ### Added
@@ -21,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Layout shift eliminated - sidebar now hidden until positioned, then revealed
 - Folder order persists correctly when dropping files on folders
 - Drag-and-drop reorder updates cache with correct vmf_order values
+
 
 ## [1.1.4] - 2025-12-09
 
@@ -351,6 +364,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
+
+[1.1.6]: https://github.com/soderlind/virtual-media-folders/compare/1.1.5...1.1.6
 [1.1.5]: https://github.com/soderlind/virtual-media-folders/compare/1.1.4...1.1.5
 [1.1.4]: https://github.com/soderlind/virtual-media-folders/compare/1.1.3...1.1.4
 [1.1.3]: https://github.com/soderlind/virtual-media-folders/compare/1.1.2...1.1.3

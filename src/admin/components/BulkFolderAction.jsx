@@ -120,38 +120,27 @@ export default function BulkFolderAction({ onComplete }) {
 		const { ajaxUrl, nonce } = window.vmfData || {};
 
 		try {
-			// Process each media item
-			const promises = mediaIds.map(async (mediaId) => {
-				const formData = new FormData();
-				formData.append('action', 'vmf_move_to_folder');
-				formData.append('nonce', nonce);
-				formData.append('media_id', mediaId);
-				formData.append('folder_id', selectedFolder);
+			// Single bulk request instead of multiple individual requests
+			const formData = new FormData();
+			formData.append('action', 'vmf_bulk_move_to_folder');
+			formData.append('nonce', nonce);
+			formData.append('media_ids', JSON.stringify(mediaIds));
+			formData.append('folder_id', selectedFolder);
 
-				const response = await fetch(ajaxUrl, {
-					method: 'POST',
-					credentials: 'same-origin',
-					body: formData,
-				});
-				return response.json();
+			const response = await fetch(ajaxUrl, {
+				method: 'POST',
+				credentials: 'same-origin',
+				body: formData,
 			});
+			const data = await response.json();
 
-			await Promise.all(promises);
-
-			// Show success notice
-			const folderName = selectedFolder === 'uncategorized'
-				? __('Uncategorized', 'virtual-media-folders')
-				: folders.find(f => f.id === parseInt(selectedFolder, 10))?.name || '';
-
-			showNotice(
-				sprintf(
-					/* translators: 1: number of items, 2: folder name */
-					__('%1$d items moved to "%2$s".', 'virtual-media-folders'),
-					mediaIds.length,
-					folderName
-				),
-				'success'
-			);
+			if (data.success) {
+				// Show success notice from server response
+				showNotice(data.data.message, 'success');
+			} else {
+				// Show error from server
+				showNotice(data.data?.message || __('Failed to move items.', 'virtual-media-folders'), 'error');
+			}
 
 			// Refresh folders and media
 			if (window.vmfRefreshFolders) {

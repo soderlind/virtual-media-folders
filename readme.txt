@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -73,6 +73,12 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.1.6 =
+* Added: New bulk move AJAX endpoint for efficient bulk operations
+* Performance: Bulk move now uses single AJAX request instead of one per file
+* Fixed: Missing sprintf import causing error when selecting files in bulk mode
+* Fixed: Sidebar visibility preserved when browser re-renders during bulk select mode
 
 = 1.1.5 =
 * Performance: Optimistic folder loading with localStorage caching for instant sidebar display
