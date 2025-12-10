@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <g stroke="#0073AA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- Virtual/overlay hint -->
+    <rect x="6.5" y="4.5" width="12" height="8.5" rx="1.5"
+          stroke-dasharray="2 2"/>
+
+    <!-- Front folder -->
+    <path d="M4.5 9
+             A1.5 1.5 0 0 1 6 7.5
+             H9
+             L10.4 9
+             H18
+             A1.5 1.5 0 0 1 19.5 10.5
+             V17
+             A1.5 1.5 0 0 1 18 18.5
+             H6
+             A1.5 1.5 0 0 1 4.5 17
+             Z"/>
+  </g>
+</svg>
