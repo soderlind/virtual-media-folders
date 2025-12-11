@@ -5,6 +5,30 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-12-11
+
+### Added
+- Keyboard-accessible move mode: Press M on a focused media item to pick it up for moving
+- Navigate to target folder with arrow keys and press Enter to drop
+- Screen reader announcements for pick up, drop, and cancel actions
+- MoveModeBanner component shows visual feedback during move mode
+- LiveRegion component for ARIA live announcements
+- useAnnounce hook for centralized screen reader announcements
+- useMoveMode hook for keyboard move mode state management
+- Visual drop target highlighting on folders during move mode
+- Comprehensive test suite for all accessibility features (82 tests)
+
+### Changed
+- BaseFolderItem now supports isMoveModeActive prop to coordinate keyboard handling
+- DroppableFolder handles both mouse drag-drop and keyboard move mode
+- Mouse drag automatically cancels keyboard move mode to prevent conflicts
+
+### Fixed
+- Screen reader instructions now properly hidden with vmf-sr-only class
+- Enter key during move mode drops to folder without navigating to it
+- "Jump to Folder After Move" setting now respected for keyboard moves
+- Event handler conflicts between mouse and keyboard interactions resolved
+
 ## [1.1.7] - 2025-12-09
 
 ### Added
@@ -369,6 +393,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
+[1.2.0]: https://github.com/soderlind/virtual-media-folders/compare/1.1.7...1.2.0
 [1.1.7]: https://github.com/soderlind/virtual-media-folders/compare/1.1.6...1.1.7
 [1.1.6]: https://github.com/soderlind/virtual-media-folders/compare/1.1.5...1.1.6
 [1.1.5]: https://github.com/soderlind/virtual-media-folders/compare/1.1.4...1.1.5

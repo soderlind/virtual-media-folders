@@ -36,9 +36,12 @@ https://www.youtube.com/watch?v=bA4lf7ynz24
 
 == Installation ==
 
-1. Upload the `virtual-media-folders` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Media → Library to start organizing your media
+1. Download [`virtual-media-folders.zip`](https://github.com/soderlind/virtual-media-folders/releases/latest/download/virtual-media-folders.zip)
+2. Upload via  Plugins > Add New > Upload Plugin
+3. Activate the plugin.
+
+Plugin [updates are handled automatically](https://github.com/soderlind/wordpress-plugin-github-updater#readme) via GitHub. No need to manually download and install updates.
+
 
 = From WordPress Plugin Directory =
 
@@ -73,6 +76,18 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.2.0 =
+* Added: Keyboard-accessible move mode - press M to pick up media, arrow keys to navigate, Enter to drop
+* Added: Screen reader announcements for all move mode actions
+* Added: MoveModeBanner visual feedback during keyboard move mode
+* Added: LiveRegion component for ARIA live announcements
+* Added: useAnnounce and useMoveMode hooks for accessibility features
+* Added: Visual drop target highlighting on folders during move mode
+* Fixed: Screen reader instructions properly hidden from visual display
+* Fixed: Enter key drops to folder without navigating during move mode
+* Fixed: "Jump to Folder After Move" setting respected for keyboard moves
+* Fixed: Mouse drag now cancels keyboard move mode to prevent conflicts
 
 = 1.1.7 =
 * Added: Auto-jump to target folder when moving the last file(s) from a folder

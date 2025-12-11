@@ -3,6 +3,7 @@
  *
  * Makes a folder item a valid drop target for dragged media items.
  * Uses native HTML5 drag and drop events for compatibility with WordPress media items.
+ * Also supports keyboard-accessible move mode.
  */
 
 import { useState, useCallback, useContext } from '@wordpress/element';
@@ -19,8 +20,16 @@ export const MoveToFolderContext = createContext(null);
  * @param {number|string|null} props.folderId The folder ID (null for root, 'uncategorized' for uncategorized).
  * @param {React.ReactNode}    props.children
  * @param {string}   props.className Additional CSS classes.
+ * @param {Function} props.onKeyboardDrop Called when Enter is pressed in move mode.
+ * @param {boolean}  props.isMoveModeActive Whether keyboard move mode is active.
  */
-export function DroppableFolder({ folderId, children, className = '' }) {
+export function DroppableFolder({ 
+	folderId, 
+	children, 
+	className = '',
+	onKeyboardDrop,
+	isMoveModeActive = false,
+}) {
 	const [isOver, setIsOver] = useState(false);
 
 	const handleDragOver = useCallback((e) => {
@@ -73,13 +82,35 @@ export function DroppableFolder({ folderId, children, className = '' }) {
 		}
 	}, [folderId]);
 
+	// Handle keyboard drop (Enter key when move mode is active)
+	const handleKeyDown = useCallback((e) => {
+		if (!isMoveModeActive || !onKeyboardDrop) return;
+		
+		if (e.key === 'Enter') {
+			const target = e.target;
+			
+			// Skip non-folder buttons and inputs (cancel button, etc.)
+			if (target.tagName === 'INPUT') return;
+			if (target.tagName === 'BUTTON' && !target.classList.contains('vmf-folder-button')) {
+				return;
+			}
+			
+			// Intercept Enter on folder buttons during move mode - drop instead of select
+			e.preventDefault();
+			e.stopPropagation();
+			onKeyboardDrop(folderId);
+		}
+	}, [folderId, isMoveModeActive, onKeyboardDrop]);
+
 	return (
 		<div
-			className={`vmf-droppable-folder ${className} ${isOver ? 'is-over' : ''}`}
+			className={`vmf-droppable-folder ${className} ${isOver ? 'is-over' : ''} ${isMoveModeActive ? 'vmf-drop-target' : ''}`}
 			onDragOver={handleDragOver}
 			onDragEnter={handleDragOver}
 			onDragLeave={handleDragLeave}
 			onDrop={handleDrop}
+			onKeyDown={handleKeyDown}
+			aria-dropeffect={isMoveModeActive ? 'move' : undefined}
 		>
 			{children}
 			{isOver && (

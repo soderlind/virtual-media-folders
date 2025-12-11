@@ -5,4 +5,5 @@
  */
 
 import './styles/folder-tree.css';
+import './styles/drag-drop.css';
 import './media-library';

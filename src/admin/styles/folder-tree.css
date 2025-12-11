@@ -149,6 +149,12 @@
 	outline-offset: -2px;
 }
 
+.vmf-folder-button:focus-visible {
+	outline: 2px solid #007cba;
+	outline-offset: -2px;
+	box-shadow: 0 0 0 4px rgba(0, 124, 186, 0.2);
+}
+
 .vmf-folder-button.is-selected {
 	background: #007cba;
 	color: #fff;
@@ -469,6 +475,19 @@ body.vmf-internal-drag .uploader-window {
 .vmf-sortable-folder__grip:hover {
 	color: #007cba;
 	background: #e0e0e0;
+}
+
+.vmf-sortable-folder__grip:focus {
+	outline: 2px solid #007cba;
+	outline-offset: -2px;
+	color: #007cba;
+	background: #e0e0e0;
+}
+
+.vmf-sortable-folder__grip:focus-visible {
+	outline: 2px solid #007cba;
+	outline-offset: -2px;
+	box-shadow: inset 0 0 0 4px rgba(0, 124, 186, 0.2);
 }
 
 .vmf-sortable-folder__grip:active {

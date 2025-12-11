@@ -4,3 +4,4 @@
 
 export { default as BaseFolderItem } from './BaseFolderItem';
 export { default as BaseFolderTree } from './BaseFolderTree';
+export { default as LiveRegion } from './LiveRegion';

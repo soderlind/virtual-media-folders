@@ -647,6 +647,11 @@ function setupDragAndDrop(browser) {
 
 	// Handle drag start
 	$attachments.on('dragstart.mm', '.attachment', function(e) {
+		// Cancel keyboard move mode if active - mouse drag takes precedence
+		if (window.vmfMoveMode && window.vmfMoveMode.isActive()) {
+			window.vmfMoveMode.cancel();
+		}
+
 		const $attachment = jQuery(this);
 		let mediaId = $attachment.data('attachment-id') || $attachment.data('id');
 		
@@ -679,6 +684,93 @@ function setupDragAndDrop(browser) {
 		jQuery(this).removeClass('vmf-dragging');
 		// Re-enable WordPress uploader overlay
 		document.body.classList.remove('vmf-internal-drag');
+	});
+
+	// Setup keyboard move mode (M key)
+	setupKeyboardMoveMode(browser);
+}
+
+/**
+ * Setup keyboard-accessible move mode for media items.
+ * Press M on a focused attachment to pick it up for moving.
+ */
+function setupKeyboardMoveMode(browser) {
+	const $attachments = browser.$el.find('.attachments');
+	
+	if (!$attachments.length) {
+		return;
+	}
+
+	// Remove existing handler to avoid duplicates
+	$attachments.off('keydown.vmfmove');
+
+	// Handle M key on attachments
+	$attachments.on('keydown.vmfmove', '.attachment', function(e) {
+		// M key to toggle move mode
+		if (e.key === 'm' || e.key === 'M') {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			const $attachment = jQuery(this);
+			let mediaId = $attachment.data('attachment-id') || $attachment.data('id');
+			
+			// Try to get ID from aria-label or other attributes
+			if (!mediaId) {
+				const ariaLabel = $attachment.attr('aria-label');
+				if (ariaLabel) {
+					const match = ariaLabel.match(/id[:\s]+(\d+)/i);
+					if (match) {
+						mediaId = parseInt(match[1], 10);
+					}
+				}
+			}
+
+			if (!mediaId) return;
+
+			// Get title from the attachment
+			const title = $attachment.find('.filename').text() || 
+			              $attachment.attr('aria-label') || 
+			              __('Media item', 'virtual-media-folders');
+
+			// Check if move mode is available
+			if (window.vmfMoveMode) {
+				// Get all selected items if in bulk select mode
+				const $selected = $attachments.find('.attachment.selected, .attachment.details');
+				
+				if ($selected.length > 1 && $selected.is($attachment)) {
+					// Multiple items selected - pick up all of them
+					const items = [];
+					$selected.each(function() {
+						const $el = jQuery(this);
+						const id = $el.data('attachment-id') || $el.data('id');
+						const itemTitle = $el.find('.filename').text() || 
+						                  $el.attr('aria-label') || 
+						                  __('Media item', 'virtual-media-folders');
+						if (id) {
+							items.push({ id, title: itemTitle });
+						}
+					});
+					window.vmfMoveMode.toggle(items);
+				} else {
+					// Single item
+					window.vmfMoveMode.toggle([{ id: mediaId, title }]);
+				}
+			}
+		}
+		
+		// Escape to cancel move mode
+		if (e.key === 'Escape' && window.vmfMoveMode && window.vmfMoveMode.isActive()) {
+			e.preventDefault();
+			window.vmfMoveMode.cancel();
+		}
+	});
+
+	// Also listen at document level for Escape to cancel
+	jQuery(document).off('keydown.vmfmovecancel').on('keydown.vmfmovecancel', function(e) {
+		if (e.key === 'Escape' && window.vmfMoveMode && window.vmfMoveMode.isActive()) {
+			e.preventDefault();
+			window.vmfMoveMode.cancel();
+		}
 	});
 }
 

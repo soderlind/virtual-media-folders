@@ -25,6 +25,7 @@ import BaseFolderItem from './BaseFolderItem';
  * @param {boolean}  props.enableKeyboardNav Enable keyboard navigation.
  * @param {boolean}  props.enableAutoExpand Auto-expand when child is selected.
  * @param {boolean}  props.enableAria Enable full ARIA attributes.
+ * @param {boolean}  props.isMoveModeActive Whether keyboard move mode is active.
  * @param {string}   props.className Additional CSS class.
  * @param {string}   props.loadingText Custom loading text.
  */
@@ -42,6 +43,7 @@ export default function BaseFolderTree({
 	enableKeyboardNav = false,
 	enableAutoExpand = false,
 	enableAria = false,
+	isMoveModeActive = false,
 	className = '',
 	loadingText,
 }) {
@@ -142,6 +144,7 @@ export default function BaseFolderTree({
 						enableKeyboardNav={enableKeyboardNav}
 						enableAutoExpand={enableAutoExpand}
 						enableAria={enableAria}
+						isMoveModeActive={isMoveModeActive}
 					/>
 				))}
 			</ul>

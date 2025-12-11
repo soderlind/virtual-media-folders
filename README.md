@@ -10,7 +10,7 @@ Virtual folder organization and smart management for the WordPress Media Library
 
 Virtual Media Folders brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders **without moving files on disk**—folders are virtual, so your URLs never change.
 
-<a href="https://www.youtube.com/watch?v=bA4lf7ynz24"><img width="899" height="449" alt="virtual-media-folders" src="assets/virtual-media-folders.png" alt="Link to YouTube video"  title="Link to YouTube video"/></a>
+<a href="https://www.youtube.com/watch?v=bA4lf7ynz24"><img width="899" height="449" src="assets/virtual-media-folders.png" alt="Screenshot of Virtual Media Folders showing folder sidebar with drag and drop. Click to watch demo video on YouTube." /></a>
 
 ### Features
 
@@ -21,6 +21,78 @@ Virtual Media Folders brings virtual folder organization to your WordPress Media
 - **Bulk Actions**: Move multiple media items at once
 - **Keyboard Accessible**: Full keyboard navigation support
 - **Internationalized**: Ready for translation (Norwegian Bokmål included)
+
+### Accessibility
+
+Virtual Media Folders is built with accessibility in mind, following WCAG 2.1 guidelines:
+
+#### Keyboard Navigation
+
+The folder tree supports complete keyboard navigation:
+
+| Key | Action |
+|-----|--------|
+| `↓` / `↑` | Move between folders |
+| `→` | Expand folder or move to first child |
+| `←` | Collapse folder or move to parent |
+| `Enter` / `Space` | Select folder |
+| `Home` | Jump to first folder |
+| `End` | Jump to last folder |
+
+#### Accessible Drag and Drop
+
+**Reordering folders** is fully keyboard accessible using the drag handle (⋮⋮):
+
+1. **Tab** to the drag handle next to a folder name
+2. Press **Enter** or **Space** to pick up the folder
+3. Use **Arrow keys** to move the folder up or down
+4. Press **Enter** or **Space** to drop, or **Escape** to cancel
+
+Screen readers announce each step:
+- On focus: *"Reorder, button, sortable. Press Enter to start dragging..."*
+- After drop: *"Photos moved to position 3"*
+
+**Moving media to folders** can be done three ways:
+
+1. **Mouse/Touch**: Drag media items onto a folder in the sidebar
+
+2. **Keyboard Move Mode**:
+   - Focus a media item in the grid (use Tab or arrow keys)
+   - Press **M** to pick up the item (or select multiple first, then press M)
+   - **Tab** to the folder sidebar
+   - Navigate to target folder with **Arrow keys**
+   - Press **Enter** to drop, or **M** / **Escape** to cancel
+   
+3. **Bulk Action Dropdown**: 
+   - Click "Bulk select" in the media library toolbar
+   - Select media items using **Space** or **Enter**
+   - Use the "Move to folder" dropdown and click "Apply"
+
+Screen reader announcements guide you through keyboard move mode:
+- On pick up: *"Photo.jpg picked up. Navigate to a folder and press Enter to drop..."*
+- On drop: *"Moved Photo.jpg to Events"*
+- On cancel: *"Move cancelled"*
+
+#### ARIA Support
+
+- Full ARIA tree pattern (`role="tree"`, `role="treeitem"`)
+- `aria-expanded` for collapsible folders
+- `aria-selected` for current selection
+- `aria-level`, `aria-setsize`, `aria-posinset` for position context
+- Live region announcements for drag-drop operations
+
+#### Screen Reader Support
+
+- Announces folder reordering and deletion
+- Hidden instructions for drag-and-drop operations
+- Item counts announced with folder names
+
+#### Visual Accessibility
+
+- **Focus indicators**: Enhanced `:focus-visible` styles with visible outlines
+- **Reduced motion**: Respects `prefers-reduced-motion` preference
+- **High contrast**: Supports `forced-colors` mode for Windows High Contrast
+- **Color contrast**: Meets WCAG AA contrast requirements
 
 ## Requirements
 
