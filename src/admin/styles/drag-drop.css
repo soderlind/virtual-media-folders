@@ -2,6 +2,19 @@
  * Drag and drop styles for Virtual Media Folders.
  */
 
+/* Screen reader only - visually hidden but accessible */
+.vmf-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
 /* Draggable media item */
 .vmf-draggable-media {
 	cursor: grab;
@@ -120,7 +133,138 @@
 @media (prefers-reduced-motion: reduce) {
 
 	.vmf-draggable-media,
-	.vmf-droppable-folder {
+	.vmf-droppable-folder,
+	.vmf-sortable-folder,
+	.vmf-folder-item,
+	.vmf-folder-button,
+	.vmf-folder-toggle,
+	.attachments {
+		transition: none !important;
+		animation: none !important;
+	}
+}
+
+/* High contrast / forced colors mode support */
+@media (forced-colors: active) {
+	.vmf-folder-button.is-selected {
+		forced-color-adjust: none;
+		background-color: Highlight;
+		color: HighlightText;
+	}
+
+	.vmf-folder-button:focus,
+	.vmf-sortable-folder__grip:focus {
+		outline: 2px solid CanvasText;
+	}
+
+	.vmf-droppable-folder.is-over::after {
+		border-color: Highlight;
+	}
+}
+
+/* ==========================================================================
+   Keyboard Move Mode
+   ========================================================================== */
+
+/* Move mode banner - shows when items are picked up */
+.vmf-move-mode-banner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	margin: 0 0 8px 0;
+	background-color: #007cba;
+	color: #fff;
+	border-radius: 4px;
+	font-size: 13px;
+}
+
+.vmf-move-mode-banner__message {
+	font-weight: 600;
+}
+
+.vmf-move-mode-banner__instructions {
+	opacity: 0.9;
+	font-size: 12px;
+}
+
+.vmf-move-mode-banner__cancel {
+	margin-left: auto;
+}
+
+.vmf-move-mode-banner__cancel.components-button {
+	color: #fff;
+	border-color: rgba(255, 255, 255, 0.5);
+}
+
+.vmf-move-mode-banner__cancel.components-button:hover {
+	color: #fff;
+	border-color: #fff;
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Drop target indicator when move mode is active */
+.vmf-drop-target .vmf-folder-button:focus {
+	background-color: rgba(0, 124, 186, 0.15);
+	outline: 2px dashed #007cba;
+	outline-offset: -2px;
+}
+
+.vmf-drop-target .vmf-folder-button:focus-visible {
+	background-color: rgba(0, 124, 186, 0.2);
+	outline: 2px dashed #007cba;
+	outline-offset: -2px;
+	box-shadow: inset 0 0 0 4px rgba(0, 124, 186, 0.1);
+}
+
+/* Visual hint that folders are drop targets */
+.vmf-drop-target::before {
+	content: '';
+	position: absolute;
+	left: 4px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 4px;
+	height: 4px;
+	background-color: #007cba;
+	border-radius: 50%;
+	opacity: 0.6;
+}
+
+/* Attachment focus for keyboard move */
+.attachment:focus-visible {
+	outline: 2px solid #007cba !important;
+	outline-offset: 2px;
+}
+
+/* Body class when move mode is active */
+body.vmf-move-mode-active .attachment {
+	cursor: default;
+}
+
+body.vmf-move-mode-active .vmf-folder-button {
+	cursor: pointer;
+}
+
+/* Reduced motion for move mode */
+@media (prefers-reduced-motion: reduce) {
+
+	.vmf-move-mode-banner,
+	.vmf-drop-target .vmf-folder-button {
 		transition: none;
+	}
+}
+
+/* High contrast for move mode */
+@media (forced-colors: active) {
+	.vmf-move-mode-banner {
+		forced-color-adjust: none;
+		background-color: Highlight;
+		color: HighlightText;
+	}
+
+	.vmf-drop-target .vmf-folder-button:focus {
+		outline-color: Highlight;
 	}
 }

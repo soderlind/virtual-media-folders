@@ -47,6 +47,7 @@ function ChevronIcon({ expanded }) {
  * @param {boolean}  props.enableKeyboardNav Enable keyboard navigation (arrow keys).
  * @param {boolean}  props.enableAutoExpand Auto-expand when child is selected.
  * @param {boolean}  props.enableAria Enable full ARIA attributes.
+ * @param {boolean}  props.isMoveModeActive Whether keyboard move mode is active (skips Enter/Space selection).
  */
 export default function BaseFolderItem({
 	folder,
@@ -58,6 +59,7 @@ export default function BaseFolderItem({
 	enableKeyboardNav = false,
 	enableAutoExpand = false,
 	enableAria = false,
+	isMoveModeActive = false,
 }) {
 	// Check if any child (recursively) is selected
 	const isChildSelected = (f) => {
@@ -99,6 +101,9 @@ export default function BaseFolderItem({
 				onSelect(parentId);
 			}
 		} else if (e.key === 'Enter' || e.key === ' ') {
+			// When move mode is active, let Enter/Space bubble to DroppableFolder
+			// for drop handling instead of selecting the folder
+			if (isMoveModeActive) return;
 			e.preventDefault();
 			onSelect(folder.id);
 		}
@@ -191,6 +196,7 @@ export default function BaseFolderItem({
 							enableKeyboardNav={enableKeyboardNav}
 							enableAutoExpand={enableAutoExpand}
 							enableAria={enableAria}
+							isMoveModeActive={isMoveModeActive}
 						/>
 					))}
 				</ul>

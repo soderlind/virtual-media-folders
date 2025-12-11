@@ -7,6 +7,7 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { __ } from '@wordpress/i18n';
 
 /**
  * SortableFolderItem component.
@@ -56,7 +57,11 @@ export function SortableFolderItem({ id, children, disabled = false }) {
 				<span 
 					className="vmf-sortable-folder__grip"
 					{...listeners}
-					aria-label="Drag to reorder"
+					role="button"
+					tabIndex={0}
+					aria-label={__('Drag to reorder folder', 'virtual-media-folders')}
+					aria-describedby="vmf-drag-instructions"
+					aria-roledescription={__('sortable', 'virtual-media-folders')}
 				>
 					⋮⋮
 				</span>

@@ -168,6 +168,9 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 			return;
 		}
 
+		// Store folder name before deletion for announcement
+		const deletedFolderName = currentFolder?.name;
+
 		setIsProcessing(true);
 		setError('');
 
@@ -181,7 +184,8 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 			showNotice(__('Folder deleted.', 'virtual-media-folders'), 'success');
 			
 			// Move focus to Uncategorized if it has items, otherwise All Media
-			onDelete?.();
+			// Pass deleted folder name for screen reader announcement
+			onDelete?.(deletedFolderName);
 			onRefresh?.();
 		} catch (err) {
 			setError(err.message || __('Failed to delete folder.', 'virtual-media-folders'));
