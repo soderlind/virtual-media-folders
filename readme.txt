@@ -77,6 +77,10 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 == Changelog ==
 
+= 1.2.1 =
+* Changed: Updated i18n-map.json with new accessibility component mappings
+* Changed: Updated Norwegian (nb_NO) translations for all new accessibility strings
+
 = 1.2.0 =
 * Added: Keyboard-accessible move mode - press M to pick up media, arrow keys to navigate, Enter to drop
 * Added: Screen reader announcements for all move mode actions
