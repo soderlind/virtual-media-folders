@@ -151,12 +151,12 @@
 		background-color: Highlight;
 		color: HighlightText;
 	}
-	
+
 	.vmf-folder-button:focus,
 	.vmf-sortable-folder__grip:focus {
 		outline: 2px solid CanvasText;
 	}
-	
+
 	.vmf-droppable-folder.is-over::after {
 		border-color: Highlight;
 	}
@@ -249,6 +249,7 @@ body.vmf-move-mode-active .vmf-folder-button {
 
 /* Reduced motion for move mode */
 @media (prefers-reduced-motion: reduce) {
+
 	.vmf-move-mode-banner,
 	.vmf-drop-target .vmf-folder-button {
 		transition: none;
@@ -262,7 +263,7 @@ body.vmf-move-mode-active .vmf-folder-button {
 		background-color: Highlight;
 		color: HighlightText;
 	}
-	
+
 	.vmf-drop-target .vmf-folder-button:focus {
 		outline-color: Highlight;
 	}
