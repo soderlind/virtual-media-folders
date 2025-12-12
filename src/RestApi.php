@@ -355,9 +355,7 @@ final class RestApi extends WP_REST_Controller {
 		$args = [
 			'taxonomy'   => 'media_folder',
 			'hide_empty' => false,
-			'orderby'    => 'meta_value_num',
-			'order'      => 'ASC',
-			'meta_key'   => 'vmf_order', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			'number'     => 0, // Ensure no limit
 		];
 
 		$terms = get_terms( $args );
@@ -366,7 +364,7 @@ final class RestApi extends WP_REST_Controller {
 			return $terms;
 		}
 
-		// Sort terms: those with menu_order first (by order), then those without (by name)
+		// Sort terms: those with vmf_order first (by order), then those without (by name)
 		usort( $terms, function ( $a, $b ) {
 			$order_a = get_term_meta( $a->term_id, 'vmf_order', true );
 			$order_b = get_term_meta( $b->term_id, 'vmf_order', true );
