@@ -43,7 +43,7 @@ final class Settings {
 		'suggestions_exif_date'     => true,
 		'suggestions_iptc'          => true,
 		'default_folder'            => 0,
-		'show_all_media'            => true,
+		'show_all_media'            => false,
 		'show_uncategorized'        => true,
 		'jump_to_folder_after_move' => false,
 	];
