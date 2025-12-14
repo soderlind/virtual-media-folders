@@ -6,6 +6,7 @@ module.exports = {
 	entry: {
 		admin: path.resolve(__dirname, 'src/admin/index.js'),
 		editor: path.resolve(__dirname, 'src/editor/index.js'),
+		settings: path.resolve(__dirname, 'src/admin/settings.js'),
 	},
 	output: {
 		...defaultConfig.output,

@@ -100,7 +100,7 @@ if ( ! class_exists( 'WP_Term' ) ) {
 		public string $description = '';
 		public int $parent = 0;
 		public int $count = 0;
-		public string $taxonomy = 'media_folder';
+		public string $taxonomy = 'vmfo_folder';
 
 		public function __construct( array $data = [] ) {
 			$this->term_id     = $data[ 'term_id' ] ?? 0;
@@ -109,7 +109,7 @@ if ( ! class_exists( 'WP_Term' ) ) {
 			$this->description = $data[ 'description' ] ?? '';
 			$this->parent      = $data[ 'parent' ] ?? 0;
 			$this->count       = $data[ 'count' ] ?? 0;
-			$this->taxonomy    = $data[ 'taxonomy' ] ?? 'media_folder';
+			$this->taxonomy    = $data[ 'taxonomy' ] ?? 'vmfo_folder';
 		}
 	}
 }

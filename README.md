@@ -1,392 +1,81 @@
 # Virtual Media Folders
 
-Virtual folder organization and smart management for the WordPress Media Library.
+Virtual folder organization for the WordPress Media Library.
 
-<a href="https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/virtual-media-folders/refs/heads/main/assets/blueprint.json"><img src="https://img.shields.io/badge/▶_Try_in_WordPress_Playground-blue?style=for-the-badge" alt="Try in WordPress Playground" /></a>
-
->Way back in 2006 (almost 20 years ago!), I released [ImageManager 2.0](assets/imagemnager-2006.md), a popular WordPress plugin for image management and editing. Virtual Media Folders is my modern take on media organization for WordPress, built with React and modern tooling.
+[![Try in WordPress Playground](https://img.shields.io/badge/▶_Try_in_WordPress_Playground-blue?style=for-the-badge)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/virtual-media-folders/refs/heads/main/assets/blueprint.json)
 
 ## Description
 
-Virtual Media Folders brings virtual folder organization to your WordPress Media Library. Organize your media files into hierarchical folders **without moving files on disk**—folders are virtual, so your URLs never change.
+Virtual Media Folders brings folder organization to your WordPress Media Library. Organize your media files into hierarchical folders **without moving files on disk**—folders are virtual, so your URLs never change.
 
-<a href="https://www.youtube.com/watch?v=bA4lf7ynz24"><img width="899" height="449" src="assets/virtual-media-folders.png" alt="Screenshot of Virtual Media Folders showing folder sidebar with drag and drop. Click to watch demo video on YouTube." /></a>
+[![Screenshot of Virtual Media Folders](assets/virtual-media-folders.png)](https://www.youtube.com/watch?v=bA4lf7ynz24)
+*Click to watch demo video on YouTube*
 
 ### Features
 
-- **Virtual Folders**: Create hierarchical folder structures to organize media
-- **Drag & Drop**: Easily move media between folders with drag and drop
-- **Sticky Sidebar**: Folder navigation stays visible while scrolling through media
-- **Gutenberg Integration**: Filter media by folder directly in the block editor
-- **Bulk Actions**: Move multiple media items at once
-- **Keyboard Accessible**: Full keyboard navigation support
-- **Internationalized**: Ready for translation (Norwegian Bokmål included)
-
-### Accessibility
-
-Virtual Media Folders is built with accessibility in mind, following WCAG 2.1 guidelines:
-
-#### Keyboard Navigation
-
-The folder tree supports complete keyboard navigation:
-
-| Key | Action |
-|-----|--------|
-| `↓` / `↑` | Move between folders |
-| `→` | Expand folder or move to first child |
-| `←` | Collapse folder or move to parent |
-| `Enter` / `Space` | Select folder |
-| `Home` | Jump to first folder |
-| `End` | Jump to last folder |
-
-#### Accessible Drag and Drop
-
-**Reordering folders** is fully keyboard accessible using the drag handle (⋮⋮):
-
-1. **Tab** to the drag handle next to a folder name
-2. Press **Enter** or **Space** to pick up the folder
-3. Use **Arrow keys** to move the folder up or down
-4. Press **Enter** or **Space** to drop, or **Escape** to cancel
-
-Screen readers announce each step:
-- On focus: *"Reorder, button, sortable. Press Enter to start dragging..."*
-- After drop: *"Photos moved to position 3"*
-
-**Moving media to folders** can be done three ways:
-
-1. **Mouse/Touch**: Drag media items onto a folder in the sidebar
-
-2. **Keyboard Move Mode**:
-   - Focus a media item in the grid (use Tab or arrow keys)
-   - Press **M** to pick up the item (or select multiple first, then press M)
-   - **Tab** to the folder sidebar
-   - Navigate to target folder with **Arrow keys**
-   - Press **Enter** to drop, or **M** / **Escape** to cancel
-   
-3. **Bulk Action Dropdown**: 
-   - Click "Bulk select" in the media library toolbar
-   - Select media items using **Space** or **Enter**
-   - Use the "Move to folder" dropdown and click "Apply"
-
-Screen reader announcements guide you through keyboard move mode:
-- On pick up: *"Photo.jpg picked up. Navigate to a folder and press Enter to drop..."*
-- On drop: *"Moved Photo.jpg to Events"*
-- On cancel: *"Move cancelled"*
-
-#### ARIA Support
-
-- Full ARIA tree pattern (`role="tree"`, `role="treeitem"`)
-- `aria-expanded` for collapsible folders
-- `aria-selected` for current selection
-- `aria-level`, `aria-setsize`, `aria-posinset` for position context
-- Live region announcements for drag-drop operations
-
-#### Screen Reader Support
-
-- Announces folder reordering and deletion
-- Hidden instructions for drag-and-drop operations
-- Item counts announced with folder names
-
-#### Visual Accessibility
-
-- **Focus indicators**: Enhanced `:focus-visible` styles with visible outlines
-- **Reduced motion**: Respects `prefers-reduced-motion` preference
-- **High contrast**: Supports `forced-colors` mode for Windows High Contrast
-- **Color contrast**: Meets WCAG AA contrast requirements
+- **Virtual Folders** – Create hierarchical folder structures to organize media
+- **Drag & Drop** – Move media between folders with drag and drop
+- **Sticky Sidebar** – Folder navigation stays visible while scrolling
+- **Gutenberg Integration** – Filter media by folder in the block editor
+- **Bulk Actions** – Move multiple media items at once
+- **Keyboard Accessible** – Full keyboard navigation with screen reader support
+- **Internationalized** – Translation ready (Norwegian Bokmål included)
 
 ## Requirements
 
-- WordPress 6.8 or higher
-- PHP 8.3 or higher
+- WordPress 6.8+
+- PHP 8.3+
 
 ## Installation
 
-- Download [`virtual-media-folders.zip`](https://github.com/soderlind/virtual-media-folders/releases/latest/download/virtual-media-folders.zip)
-- Upload via  Plugins > Add New > Upload Plugin
-- Activate the plugin.
+### From GitHub
 
-Plugin [updates are handled automatically](https://github.com/soderlind/wordpress-plugin-github-updater#readme) via GitHub. No need to manually download and install updates.
+1. Download [\`virtual-media-folders.zip\`](https://github.com/soderlind/virtual-media-folders/releases/latest/download/virtual-media-folders.zip)
+2. Go to **Plugins > Add New > Upload Plugin**
+3. Upload the zip file and activate
 
-### Development
+### From WordPress.org
 
-```bash
-# Add via Composer
-composer require soderlind/virtual-media-folders
-
-# Install dependencies
-composer install
-npm install
-
-# Start development build with watch
-npm run start
-
-# Build for production
-npm run build
-
-# Run PHP tests
-composer test
-
-# Run JavaScript tests
-npm test
-```
+1. Go to **Plugins > Add New**
+2. Search for "Virtual Media Folders"
+3. Click **Install Now** and **Activate**
 
 ## Usage
 
 ### Organizing Media
 
-1. Go to **Media > Library** in your WordPress admin
-2. Click the folder icon next to the view switcher to show the folder sidebar
-3. Use the **+** button to create new folders
-4. Drag and drop media items onto folders to organize them
-5. Click a folder to filter the media library view
+1. Go to **Media > Library**
+2. Click the folder icon to show the sidebar
+3. Use **+** to create folders
+4. Drag media onto folders to organize
+5. Click a folder to filter the view
 
 ### Settings
 
 Go to **Media > Folder Settings** to configure:
 
-- **Show "All Media"** – Display the "All Media" option in the folder sidebar [I prefer to keep this disabled]
-- **Show "Uncategorized"** – Display the "Uncategorized" folder for media without a folder
-- **Jump to folder after move** – Automatically navigate to the target folder after moving media
-- **Default folder for uploads** – Automatically assign new uploads to a specific folder
+| Setting | Description |
+|---------|-------------|
+| Show "All Media" | Display "All Media" option in sidebar |
+| Show "Uncategorized" | Display folder for unassigned media |
+| Jump to folder after move | Navigate to target folder after moving |
+| Default folder for uploads | Auto-assign new uploads to a folder |
 
-### Gutenberg Block Editor
+### Block Editor
 
-When inserting media in the block editor:
+When inserting media from a block:
 
-1. Open the Media Library modal from a block (e.g., Image or Gallery block etc.)
-2. Use the folder sidebar to filter by folder
-3. Select your media as usual
+1. Open the Media Library modal
+2. Use the folder sidebar to filter
+3. Select your media
 
-## Folder Structure
+## Documentation
 
-```
-virtual-media-folders/
-├── build/              # Compiled assets
-├── docs/               # Documentation
-├── languages/          # Translation files
-├── src/
-│   ├── Admin.php       # Media Library integration
-│   ├── Editor.php      # Gutenberg integration  
-│   ├── RestApi.php     # REST API endpoints
-│   ├── Settings.php    # Settings page
-│   ├── Suggestions.php # Smart suggestions
-│   ├── Taxonomy.php    # Custom taxonomy
-│   ├── admin/          # Media Library UI
-│   │   ├── components/ # React components
-│   │   └── styles/     # CSS
-│   ├── editor/         # Gutenberg integration
-│   └── shared/         # Shared components & hooks
-├── tests/
-│   ├── js/             # Vitest tests
-│   └── php/            # PHPUnit tests
-├── uninstall.php       # Cleanup on uninstall
-└── virtual-media-folders.php    # Main plugin file
-```
+- [Accessibility](docs/a11y.md) – Keyboard navigation and screen reader support
+- [Development](docs/development.md) – Setup, API reference, hooks, and contributing
 
-## REST API
+## License
 
-The plugin provides REST API endpoints under `/wp-json/vmf/v1`:
+Virtual Media Folders is free software licensed under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).
 
-### Folders
-
-- `GET /folders` - List all folders
-- `POST /folders` - Create a folder
-- `GET /folders/{id}` - Get a folder
-- `PUT /folders/{id}` - Update a folder
-- `DELETE /folders/{id}` - Delete a folder
-- `POST /folders/{id}/media` - Add media to folder
-- `DELETE /folders/{id}/media` - Remove media from folder
-
-### Example: Create a Folder and Add Media
-
-Authentication requires [Application Passwords](https://make.wordpress.org/core/2020/11/05/application-passwords-integration-guide/) (WordPress 5.6+). Generate one at **Users > Profile > Application Passwords**. The password format is `xxxx xxxx xxxx xxxx xxxx xxxx` (with spaces).
-
-> **Note:** Replace `username` with your actual WordPress username and `xxxx xxxx xxxx xxxx xxxx xxxx` with your Application Password.
-
-```bash
-# Create a new folder
-curl -X POST "https://example.com/wp-json/vmf/v1/folders" \
-  -u "username:xxxx xxxx xxxx xxxx xxxx xxxx" \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Photos", "parent": 0}'
-
-# Response: {"id": 5, "name": "Photos", "slug": "photos", "parent": 0, "count": 0}
-
-# Add media (ID 123) to the folder (ID 5)
-curl -X POST "https://example.com/wp-json/vmf/v1/folders/5/media" \
-  -u "username:xxxx xxxx xxxx xxxx xxxx xxxx" \
-  -H "Content-Type: application/json" \
-  -d '{"media_id": 123}'
-
-# List all folders
-curl "https://example.com/wp-json/vmf/v1/folders" \
-  -u "username:xxxx xxxx xxxx xxxx xxxx xxxx"
-```
-
-## Hooks & Filters
-
-### Actions
-
-- `vmf_folder_created` - Fired when a folder is created
-- `vmf_folder_deleted` - Fired when a folder is deleted
-- `vmf_media_moved` - Fired when media is moved to a folder
-
-### Settings Filters
-
-#### `vmf_default_settings`
-
-Filter the default settings values.
-
-```php
-add_filter( 'vmf_default_settings', function( $defaults ) {
-    // Change default values
-    $defaults['show_all_media']            = true;
-    $defaults['show_uncategorized']        = true;
-    $defaults['jump_to_folder_after_move'] = false;
-    $defaults['default_folder']            = 0;
-    return $defaults;
-} );
-```
-
-#### `vmf_settings`
-
-Filter all settings at once after loading from the database.
-
-```php
-add_filter( 'vmf_settings', function( $options ) {
-    // Force jump to folder after move for all users
-    $options['jump_to_folder_after_move'] = true;
-    return $options;
-} );
-```
-
-#### `vmf_setting_{$key}`
-
-Filter a specific setting value. Available keys:
-- `show_all_media` - Show "All Media" in sidebar
-- `show_uncategorized` - Show "Uncategorized" in sidebar  
-- `jump_to_folder_after_move` - Navigate to folder after moving files
-- `default_folder` - Default folder for new uploads (0 = none)
-
-```php
-// Hide "All Media" option for non-administrators
-add_filter( 'vmf_setting_show_all_media', function( $value, $key, $options ) {
-    if ( ! current_user_can( 'manage_options' ) ) {
-        return false;
-    }
-    return $value;
-}, 10, 3 );
-
-// Always show uncategorized for editors
-add_filter( 'vmf_setting_show_uncategorized', function( $value ) {
-    if ( current_user_can( 'edit_others_posts' ) ) {
-        return true;
-    }
-    return $value;
-} );
-```
-
-> **Note:** At least one of `show_all_media` or `show_uncategorized` must be `true`. If both are set to `false` via filters, `show_all_media` will automatically be set to `true`.
-
-### Preconfiguring Folders
-
-You can programmatically create folders using the WordPress taxonomy API. Use the `after_setup_theme` or `init` hook with a one-time check to avoid creating duplicates:
-
-```php
-add_action( 'init', function() {
-    // Only run once - use an option flag
-    if ( get_option( 'my_theme_vmf_folders_created' ) ) {
-        return;
-    }
-
-    // Make sure the taxonomy exists
-    if ( ! taxonomy_exists( 'media_folder' ) ) {
-        return;
-    }
-
-    // Define your folder structure
-    $folders = [
-        'Photos' => [
-            'Events',
-            'Products',
-            'Team',
-        ],
-        'Documents' => [
-            'Reports',
-            'Presentations',
-        ],
-        'Videos',
-        'Logos',
-    ];
-
-    // Create folders
-    foreach ( $folders as $parent => $children ) {
-        if ( is_array( $children ) ) {
-            // Parent folder with children
-            $parent_term = wp_insert_term( $parent, 'media_folder' );
-            if ( ! is_wp_error( $parent_term ) ) {
-                foreach ( $children as $child ) {
-                    wp_insert_term( $child, 'media_folder', [
-                        'parent' => $parent_term['term_id'],
-                    ] );
-                }
-            }
-        } else {
-            // Top-level folder (no children)
-            wp_insert_term( $children, 'media_folder' );
-        }
-    }
-
-    // Mark as done so it only runs once
-    update_option( 'my_theme_vmf_folders_created', true );
-}, 20 ); // Priority 20 to run after taxonomy registration
-```
-
-You can also set the custom folder order using term meta:
-
-```php
-// Set custom order for folders (lower numbers appear first)
-update_term_meta( $term_id, 'vmf_order', 0 ); // First position
-update_term_meta( $term_id, 'vmf_order', 1 ); // Second position
-```
-
-### Other Filters
-
-- `vmf_suggestion_matchers` - Customize suggestion matching logic
-- `vmf_folder_capabilities` - Modify capability requirements
-
-## Translation
-
-Generate translation files:
-
-```bash
-# Generate POT file
-npm run i18n:make-pot
-
-# Generate JSON files for JavaScript
-npm run i18n:make-json
-
-# Generate PHP files for faster loading
-npm run i18n:make-php
-```
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Write tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
-
-# Copyright and License
-
-Virtual Media Folders is copyright 2025 Per Soderlind
-
-Virtual Media Folders is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
-
-Virtual Media Folders is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License along with the Extension. If not, see http://www.gnu.org/licenses/.
-
+Copyright 2025 Per Soderlind

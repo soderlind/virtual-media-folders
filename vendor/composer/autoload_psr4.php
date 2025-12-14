@@ -7,9 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'VirtualMediaFolders\\' => array($baseDir . '/src'),
-    'VirtualMediaFoldersTests\\' => array($baseDir . '/tests/php'),
-    'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
-    'Mockery\\' => array($vendorDir . '/mockery/mockery/library/Mockery'),
-    'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
-    'Brain\\Monkey\\' => array($vendorDir . '/brain/monkey/src'),
 );

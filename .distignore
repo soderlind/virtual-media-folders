@@ -1,0 +1,59 @@
+# Distribution Ignore File
+# Files and folders to exclude from the WordPress.org plugin distribution
+
+# Git and GitHub
+.git
+.github
+.gitignore
+.gitattributes
+
+# Development files
+.phpunit.cache
+.editorconfig
+.DS_Store
+
+# Build tools and configs
+node_modules
+package.json
+package-lock.json
+webpack.config.js
+vitest.config.js
+phpunit.xml.dist
+composer.lock
+phpcs.xml
+phpcs.xml.dist
+i18n-map.json
+
+# Source JavaScript/CSS files (compiled versions are in build/)
+src/admin/
+src/editor/
+src/shared/
+
+# Tests
+tests/
+
+# Documentation
+docs/
+assets/
+README.md
+CHANGELOG.md
+
+# Composer dev dependencies
+vendor/phpunit/
+vendor/brain/
+vendor/mockery/
+vendor/sebastian/
+vendor/antecedent/
+vendor/hamcrest/
+vendor/myclabs/
+vendor/nikic/
+vendor/phar-io/
+vendor/staabm/
+vendor/theseer/
+vendor/bin/
+
+# This file
+.distignore
+
+# WordPress.org assets (goes in separate svn assets folder)
+.wordpress-org/

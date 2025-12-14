@@ -26,14 +26,14 @@ class EditorTest extends TestCase {
 		Monkey\setUp();
 
 		// Define constants if not already defined
-		if ( ! defined( 'VMF_PATH' ) ) {
-			define( 'VMF_PATH', '/tmp/vmf-test/' );
+		if ( ! defined( 'VMFO_PATH' ) ) {
+			define( 'VMFO_PATH', '/tmp/vmf-test/' );
 		}
-		if ( ! defined( 'VMF_URL' ) ) {
-			define( 'VMF_URL', 'https://example.com/wp-content/plugins/virtual-media-folders/' );
+		if ( ! defined( 'VMFO_URL' ) ) {
+			define( 'VMFO_URL', 'https://example.com/wp-content/plugins/virtual-media-folders/' );
 		}
-		if ( ! defined( 'VMF_VERSION' ) ) {
-			define( 'VMF_VERSION', '0.1.0' );
+		if ( ! defined( 'VMFO_VERSION' ) ) {
+			define( 'VMFO_VERSION', '0.1.0' );
 		}
 	}
 
@@ -68,7 +68,7 @@ class EditorTest extends TestCase {
 	public function test_filter_ajax_query_args_no_folder(): void {
 		Functions\expect( 'taxonomy_exists' )
 			->once()
-			->with( 'media_folder' )
+			->with( 'vmfo_folder' )
 			->andReturn( true );
 
 		$query_args = [ 'post_type' => 'attachment' ];
@@ -82,11 +82,11 @@ class EditorTest extends TestCase {
 	 * Test filter_ajax_query_args adds tax_query for folder parameter.
 	 */
 	public function test_filter_ajax_query_args_with_folder(): void {
-		$_REQUEST[ 'query' ][ 'media_folder' ] = '5';
+		$_REQUEST[ 'query' ][ 'vmfo_folder' ] = '5';
 
 		Functions\expect( 'taxonomy_exists' )
 			->once()
-			->with( 'media_folder' )
+			->with( 'vmfo_folder' )
 			->andReturn( true );
 
 		Functions\expect( 'sanitize_text_field' )
@@ -108,7 +108,7 @@ class EditorTest extends TestCase {
 
 		Functions\expect( 'apply_filters' )
 			->once()
-			->with( 'vmf_include_child_folders', false, 5 )
+			->with( 'vmfo_include_child_folders', false, 5 )
 			->andReturn( false );
 
 		$query_args = [ 'post_type' => 'attachment' ];
@@ -116,7 +116,7 @@ class EditorTest extends TestCase {
 		$result = Editor::filter_ajax_query_args( $query_args );
 
 		$this->assertArrayHasKey( 'tax_query', $result );
-		$this->assertSame( 'media_folder', $result[ 'tax_query' ][ 0 ][ 'taxonomy' ] );
+		$this->assertSame( 'vmfo_folder', $result[ 'tax_query' ][ 0 ][ 'taxonomy' ] );
 		$this->assertSame( [ 5 ], $result[ 'tax_query' ][ 0 ][ 'terms' ] );
 		$this->assertSame( 'term_id', $result[ 'tax_query' ][ 0 ][ 'field' ] );
 		$this->assertFalse( $result[ 'tax_query' ][ 0 ][ 'include_children' ] );
@@ -128,11 +128,11 @@ class EditorTest extends TestCase {
 	 * Test filter_ajax_query_args handles uncategorized filter.
 	 */
 	public function test_filter_ajax_query_args_uncategorized(): void {
-		$_REQUEST[ 'query' ][ 'media_folder_exclude' ] = 'all';
+		$_REQUEST[ 'query' ][ 'vmfo_folder_exclude' ] = 'all';
 
 		Functions\expect( 'taxonomy_exists' )
 			->once()
-			->with( 'media_folder' )
+			->with( 'vmfo_folder' )
 			->andReturn( true );
 
 		Functions\expect( 'sanitize_text_field' )
@@ -170,11 +170,11 @@ class EditorTest extends TestCase {
 	 * Test filter_ajax_query_args handles empty folders for uncategorized.
 	 */
 	public function test_filter_ajax_query_args_uncategorized_no_folders(): void {
-		$_REQUEST[ 'query' ][ 'media_folder_exclude' ] = 'all';
+		$_REQUEST[ 'query' ][ 'vmfo_folder_exclude' ] = 'all';
 
 		Functions\expect( 'taxonomy_exists' )
 			->once()
-			->with( 'media_folder' )
+			->with( 'vmfo_folder' )
 			->andReturn( true );
 
 		Functions\expect( 'sanitize_text_field' )
@@ -211,13 +211,13 @@ class EditorTest extends TestCase {
 	 * Test filter_ajax_query_args handles WP_Error from get_terms.
 	 */
 	public function test_filter_ajax_query_args_get_terms_error(): void {
-		$_REQUEST[ 'query' ][ 'media_folder_exclude' ] = 'all';
+		$_REQUEST[ 'query' ][ 'vmfo_folder_exclude' ] = 'all';
 
 		$wp_error = \Mockery::mock( 'WP_Error' );
 
 		Functions\expect( 'taxonomy_exists' )
 			->once()
-			->with( 'media_folder' )
+			->with( 'vmfo_folder' )
 			->andReturn( true );
 
 		Functions\expect( 'sanitize_text_field' )
@@ -257,7 +257,7 @@ class EditorTest extends TestCase {
 	public function test_filter_ajax_query_args_taxonomy_not_exists(): void {
 		Functions\expect( 'taxonomy_exists' )
 			->once()
-			->with( 'media_folder' )
+			->with( 'vmfo_folder' )
 			->andReturn( false );
 
 		$query_args = [ 'post_type' => 'attachment' ];

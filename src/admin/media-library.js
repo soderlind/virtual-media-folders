@@ -568,19 +568,19 @@ function injectFolderTree(browser) {
 						}
 						
 						// Clear existing folder filters
-						currentCollection.props.unset('media_folder');
-						currentCollection.props.unset('media_folder_exclude');
+						currentCollection.props.unset('vmfo_folder');
+						currentCollection.props.unset('vmfo_folder_exclude');
 
 						// Set the new filter while preserving sort order
 						if (folderId === 'uncategorized') {
 							currentCollection.props.set({ 
-								media_folder_exclude: 'all',
+								vmfo_folder_exclude: 'all',
 								orderby: currentOrderby,
 								order: currentOrder
 							});
 						} else if (folderId) {
 							currentCollection.props.set({ 
-								media_folder: folderId,
+								vmfo_folder: folderId,
 								orderby: currentOrderby,
 								order: currentOrder
 							});

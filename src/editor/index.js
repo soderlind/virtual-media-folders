@@ -126,13 +126,13 @@ function initGutenbergIntegration() {
 							}
 
 							// Reset existing filters
-							collection.props.unset('media_folder');
-							collection.props.unset('media_folder_exclude');
+							collection.props.unset('vmfo_folder');
+							collection.props.unset('vmfo_folder_exclude');
 
 							if (folderId === 'uncategorized') {
-								collection.props.set({ media_folder_exclude: 'all' });
+								collection.props.set({ vmfo_folder_exclude: 'all' });
 							} else if (folderId && folderId !== '') {
-								collection.props.set({ media_folder: parseInt(folderId, 10) });
+								collection.props.set({ vmfo_folder: parseInt(folderId, 10) });
 							}
 							// null = All Media, no filter needed
 							

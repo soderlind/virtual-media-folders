@@ -21,7 +21,7 @@ final class Editor {
 	/**
 	 * Script handle for editor scripts.
 	 */
-	private const SCRIPT_HANDLE = 'vmf-editor';
+	private const SCRIPT_HANDLE = 'vmfo-editor';
 
 	/**
 	 * Boot the editor integration.
@@ -39,7 +39,7 @@ final class Editor {
 	 * @return void
 	 */
 	public static function enqueue_editor_assets(): void {
-		$asset_file = VMF_PATH . 'build/editor.asset.php';
+		$asset_file = VMFO_PATH . 'build/editor.asset.php';
 
 		if ( file_exists( $asset_file ) ) {
 			$asset = require $asset_file;
@@ -53,13 +53,13 @@ final class Editor {
 					'wp-i18n',
 					'wp-media-utils',
 				],
-				'version'      => VMF_VERSION,
+				'version'      => VMFO_VERSION,
 			];
 		}
 
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
-			VMF_URL . 'build/editor.js',
+			VMFO_URL . 'build/editor.js',
 			$asset[ 'dependencies' ],
 			$asset[ 'version' ],
 			true
@@ -67,7 +67,7 @@ final class Editor {
 
 		wp_enqueue_style(
 			self::SCRIPT_HANDLE,
-			VMF_URL . 'build/editor.css',
+			VMFO_URL . 'build/editor.css',
 			[ 'wp-components' ],
 			$asset[ 'version' ]
 		);
@@ -83,7 +83,7 @@ final class Editor {
 		wp_set_script_translations(
 			self::SCRIPT_HANDLE,
 			'virtual-media-folders',
-			VMF_PATH . 'languages'
+			VMFO_PATH . 'languages'
 		);
 	}
 
@@ -95,7 +95,7 @@ final class Editor {
 	private static function get_editor_data(): array {
 		$folders = get_terms(
 			[
-				'taxonomy'   => 'media_folder',
+				'taxonomy'   => Taxonomy::TAXONOMY,
 				'hide_empty' => false,
 				'orderby'    => 'name',
 				'order'      => 'ASC',
@@ -118,7 +118,7 @@ final class Editor {
 
 		return [
 			'folders'           => $folder_list,
-			'restBase'          => 'media-folders',
+			'restBase'          => 'vmfo-folders',
 			'nonce'             => wp_create_nonce( 'wp_rest' ),
 			'showAllMedia'      => (bool) Settings::get( 'show_all_media', true ),
 			'showUncategorized' => (bool) Settings::get( 'show_uncategorized', true ),
@@ -140,7 +140,7 @@ final class Editor {
 		}
 
 		// Bail early if taxonomy doesn't exist yet.
-		if ( ! function_exists( 'taxonomy_exists' ) || ! taxonomy_exists( 'media_folder' ) ) {
+		if ( ! function_exists( 'taxonomy_exists' ) || ! taxonomy_exists( Taxonomy::TAXONOMY ) ) {
 			return $query_args;
 		}
 
@@ -151,18 +151,18 @@ final class Editor {
 		$folder_exclude = null;
 
 		// First check if it's in the query_args directly (props from Backbone collection)
-		if ( ! empty( $query_args[ 'media_folder' ] ) ) {
-			$folder_value = $query_args[ 'media_folder' ];
-			unset( $query_args[ 'media_folder' ] ); // Remove so it doesn't interfere
-		} elseif ( ! empty( $_REQUEST[ 'query' ][ 'media_folder' ] ) ) {
-			$folder_value = sanitize_text_field( wp_unslash( $_REQUEST[ 'query' ][ 'media_folder' ] ) );
+		if ( ! empty( $query_args[ 'vmfo_folder' ] ) ) {
+			$folder_value = $query_args[ 'vmfo_folder' ];
+			unset( $query_args[ 'vmfo_folder' ] ); // Remove so it doesn't interfere
+		} elseif ( ! empty( $_REQUEST[ 'query' ][ 'vmfo_folder' ] ) ) {
+			$folder_value = sanitize_text_field( wp_unslash( $_REQUEST[ 'query' ][ 'vmfo_folder' ] ) );
 		}
 
-		if ( ! empty( $query_args[ 'media_folder_exclude' ] ) ) {
-			$folder_exclude = $query_args[ 'media_folder_exclude' ];
-			unset( $query_args[ 'media_folder_exclude' ] );
-		} elseif ( ! empty( $_REQUEST[ 'query' ][ 'media_folder_exclude' ] ) ) {
-			$folder_exclude = sanitize_text_field( wp_unslash( $_REQUEST[ 'query' ][ 'media_folder_exclude' ] ) );
+		if ( ! empty( $query_args[ 'vmfo_folder_exclude' ] ) ) {
+			$folder_exclude = $query_args[ 'vmfo_folder_exclude' ];
+			unset( $query_args[ 'vmfo_folder_exclude' ] );
+		} elseif ( ! empty( $_REQUEST[ 'query' ][ 'vmfo_folder_exclude' ] ) ) {
+			$folder_exclude = sanitize_text_field( wp_unslash( $_REQUEST[ 'query' ][ 'vmfo_folder_exclude' ] ) );
 		}
 
 		// Handle specific folder filtering
@@ -184,11 +184,10 @@ final class Editor {
 				 * @param bool $include_children Whether to include child folders. Default false.
 				 * @param int  $folder_id        The folder term ID being filtered.
 				 */
-				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Hook is prefixed with vmf_
-				$include_children = apply_filters( 'vmf_include_child_folders', false, $folder_id );
+				$include_children = apply_filters( 'vmfo_include_child_folders', false, $folder_id );
 
 				$query_args[ 'tax_query' ][] = [
-					'taxonomy'         => 'media_folder',
+					'taxonomy'         => Taxonomy::TAXONOMY,
 					'field'            => 'term_id',
 					'terms'            => [ $folder_id ],
 					'include_children' => $include_children,
@@ -200,7 +199,7 @@ final class Editor {
 		if ( $folder_exclude === 'all' ) {
 			$all_folders = get_terms(
 				[
-					'taxonomy'   => 'media_folder',
+					'taxonomy'   => Taxonomy::TAXONOMY,
 					'hide_empty' => false,
 					'fields'     => 'ids',
 				]
@@ -211,7 +210,7 @@ final class Editor {
 					$query_args[ 'tax_query' ] = [];
 				}
 				$query_args[ 'tax_query' ][] = [
-					'taxonomy' => 'media_folder',
+					'taxonomy' => Taxonomy::TAXONOMY,
 					'field'    => 'term_id',
 					'terms'    => $all_folders,
 					'operator' => 'NOT IN',

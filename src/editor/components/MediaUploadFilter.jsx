@@ -37,10 +37,10 @@ const withFolderFilter = createHigherOrderComponent((MediaUpload) => {
 				if (folderFilter && window.wp?.media?.frame) {
 					const frame = window.wp.media.frame;
 					if (frame?.state()?.get('library')) {
-						const query = { media_folder: folderFilter };
+						const query = { vmfo_folder: folderFilter };
 						if (folderFilter === 'uncategorized') {
-							query.media_folder_exclude = 'all';
-							delete query.media_folder;
+							query.vmfo_folder_exclude = 'all';
+							delete query.vmfo_folder;
 						}
 						frame.state().get('library').props.set(query);
 					}
@@ -59,7 +59,7 @@ const withFolderFilter = createHigherOrderComponent((MediaUpload) => {
 export function registerMediaUploadFilter() {
 	addFilter(
 		'editor.MediaUpload',
-		'vmf/folder-filter',
+		'vmfo/folder-filter',
 		withFolderFilter
 	);
 }

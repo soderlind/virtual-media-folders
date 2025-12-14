@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name: Virtual Media Folders
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 1.2.3
+ * Version: 1.3.0
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Per Soderlind
@@ -55,36 +55,75 @@ if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 /*
  * Define plugin constants.
  */
-define( 'VMF_VERSION', defined( 'WP_DEBUG' ) && WP_DEBUG ? strval( time() ) : '1.0.0' );
-define( 'VMF_FILE', __FILE__ );
-define( 'VMF_PATH', __DIR__ . '/' );
-define( 'VMF_URL', plugin_dir_url( __FILE__ ) );
-
-/**
- * Load plugin text domain for translations.
- * Using 'init' action with priority 0 for early loading.
- *
- * Note: This is required for GitHub-hosted plugins since WordPress.org
- * automatic translation loading doesn't apply.
- *
- * @since 0.1.0
- */
-add_action( 'init', static function () {
-	// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Required for GitHub-hosted plugins.
-	load_plugin_textdomain( 'virtual-media-folders', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}, 0 );
+define( 'VMFO_VERSION', defined( 'WP_DEBUG' ) && WP_DEBUG ? strval( time() ) : '1.3.0' );
+define( 'VMFO_FILE', __FILE__ );
+define( 'VMFO_PATH', __DIR__ . '/' );
+define( 'VMFO_URL', plugin_dir_url( __FILE__ ) );
 
 /*
  * Load Composer autoloader.
  */
-require_once VMF_PATH . 'vendor/autoload.php';
+require_once VMFO_PATH . 'vendor/autoload.php';
+
+/**
+ * Migrate taxonomy from old 'media_folder' to new 'vmfo_folder'.
+ *
+ * This runs once on plugin activation or when the old taxonomy terms exist.
+ * It preserves all folder assignments and metadata.
+ *
+ * @since 1.3.0
+ */
+function vmfo_maybe_migrate_taxonomy(): void {
+	// Check if migration has already run.
+	if ( get_option( 'vmfo_taxonomy_migrated', false ) ) {
+		return;
+	}
+
+	global $wpdb;
+
+	// Check if old taxonomy has any terms.
+	$old_taxonomy = 'media_folder';
+	$new_taxonomy = 'vmfo_folder';
+
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+	$old_term_count = $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE taxonomy = %s",
+			$old_taxonomy
+		)
+	);
+
+	if ( (int) $old_term_count === 0 ) {
+		// No old terms, mark as migrated and return.
+		update_option( 'vmfo_taxonomy_migrated', true );
+		return;
+	}
+
+	// Update all term_taxonomy entries from old to new taxonomy.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->update(
+		$wpdb->term_taxonomy,
+		[ 'taxonomy' => $new_taxonomy ],
+		[ 'taxonomy' => $old_taxonomy ],
+		[ '%s' ],
+		[ '%s' ]
+	);
+
+	// Clear taxonomy caches.
+	wp_cache_delete( 'all_ids', $old_taxonomy );
+	wp_cache_delete( 'all_ids', $new_taxonomy );
+	wp_cache_delete( 'get', $old_taxonomy );
+	wp_cache_delete( 'get', $new_taxonomy );
+
+	// Mark migration as complete.
+	update_option( 'vmfo_taxonomy_migrated', true );
+}
 
 /**
  * Initialize plugin components after all plugins are loaded.
  *
  * Components initialized:
- * - GitHubPluginUpdater: Auto-update from GitHub releases
- * - Taxonomy: Register 'media-folder' custom taxonomy
+ * - Taxonomy: Register 'vmfo_folder' custom taxonomy
  * - Admin: Media Library UI enhancements and folder tree
  * - RestApi: Custom endpoints for folder management
  * - Suggestions: AI-powered folder suggestions
@@ -95,17 +134,10 @@ require_once VMF_PATH . 'vendor/autoload.php';
  */
 add_action( 'plugins_loaded', static function () {
 
-	if ( class_exists( 'VirtualMediaFolders\\GitHubPluginUpdater' ) ) {
-		$updater = \VirtualMediaFolders\GitHubPluginUpdater::create_with_assets(
-			'https://github.com/soderlind/virtual-media-folders',
-			VMF_FILE,
-			'virtual-media-folders',
-			'/virtual-media-folders\.zip/',
-			'main'
-		);
-	}
-
 	\VirtualMediaFolders\Taxonomy::init();
+
+	// Run taxonomy migration after taxonomy is registered.
+	add_action( 'init', 'vmfo_maybe_migrate_taxonomy', 20 );
 
 	if ( class_exists( 'VirtualMediaFolders\\Admin' ) ) {
 		\VirtualMediaFolders\Admin::init();

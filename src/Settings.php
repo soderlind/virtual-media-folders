@@ -20,17 +20,17 @@ final class Settings {
 	/**
 	 * Option group name.
 	 */
-	private const OPTION_GROUP = 'vmf_settings';
+	private const OPTION_GROUP = 'vmfo_settings';
 
 	/**
 	 * Option name for storing settings.
 	 */
-	private const OPTION_NAME = 'vmf_options';
+	private const OPTION_NAME = 'vmfo_options';
 
 	/**
 	 * Settings page slug.
 	 */
-	private const PAGE_SLUG = 'vmf-settings';
+	private const PAGE_SLUG = 'vmfo-settings';
 
 	/**
 	 * Default settings.
@@ -86,11 +86,18 @@ final class Settings {
 			return;
 		}
 
+		$asset_file = VMFO_PATH . 'build/settings.asset.php';
+		if ( ! file_exists( $asset_file ) ) {
+			return;
+		}
+
+		$asset = require $asset_file;
+
 		wp_enqueue_script(
-			'vmf-settings',
-			plugins_url( 'src/admin/settings.js', dirname( __FILE__ ) ),
-			[],
-			filemtime( plugin_dir_path( dirname( __FILE__ ) ) . 'src/admin/settings.js' ),
+			'vmfo-settings',
+			VMFO_URL . 'build/settings.js',
+			$asset[ 'dependencies' ],
+			$asset[ 'version' ],
 			true
 		);
 	}
@@ -115,7 +122,7 @@ final class Settings {
 		// @todo Uncomment when smart suggestions are ready.
 		/*
 		add_settings_section(
-			'vmf_suggestions',
+			'vmfo_suggestions',
 			__( 'Smart Suggestions', 'virtual-media-folders' ),
 			[ self::class, 'render_suggestions_section' ],
 			self::PAGE_SLUG
@@ -126,7 +133,7 @@ final class Settings {
 			__( 'Enable Suggestions', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'vmf_suggestions',
+			'vmfo_suggestions',
 			[
 				'id'          => 'enable_suggestions',
 				'description' => __( 'Show folder suggestions when uploading new media.', 'virtual-media-folders' ),
@@ -138,7 +145,7 @@ final class Settings {
 			__( 'MIME Type Matching', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'vmf_suggestions',
+			'vmfo_suggestions',
 			[
 				'id'          => 'suggestions_mime_types',
 				'description' => __( 'Suggest folders based on file type (images, videos, documents).', 'virtual-media-folders' ),
@@ -150,7 +157,7 @@ final class Settings {
 			__( 'EXIF Date Matching', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'vmf_suggestions',
+			'vmfo_suggestions',
 			[
 				'id'          => 'suggestions_exif_date',
 				'description' => __( 'Suggest folders based on photo creation date from EXIF data.', 'virtual-media-folders' ),
@@ -162,7 +169,7 @@ final class Settings {
 			__( 'IPTC Keywords Matching', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'vmf_suggestions',
+			'vmfo_suggestions',
 			[
 				'id'          => 'suggestions_iptc',
 				'description' => __( 'Suggest folders based on embedded IPTC keywords.', 'virtual-media-folders' ),
@@ -172,7 +179,7 @@ final class Settings {
 
 		// Default behavior section.
 		add_settings_section(
-			'vmf_defaults',
+			'vmfo_defaults',
 			__( 'Default Behavior', 'virtual-media-folders' ),
 			[ self::class, 'render_defaults_section' ],
 			self::PAGE_SLUG
@@ -183,7 +190,7 @@ final class Settings {
 			__( 'Default Folder', 'virtual-media-folders' ),
 			[ self::class, 'render_folder_select_field' ],
 			self::PAGE_SLUG,
-			'vmf_defaults',
+			'vmfo_defaults',
 			[
 				'id'          => 'default_folder',
 				'description' => __( 'Automatically assign new uploads to this folder (0 = none).', 'virtual-media-folders' ),
@@ -195,7 +202,7 @@ final class Settings {
 			__( 'Show All Media', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'vmf_defaults',
+			'vmfo_defaults',
 			[
 				'id'          => 'show_all_media',
 				'description' => __( 'Show the "All Media" option in the sidebar.', 'virtual-media-folders' ),
@@ -207,7 +214,7 @@ final class Settings {
 			__( 'Show Uncategorized', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'vmf_defaults',
+			'vmfo_defaults',
 			[
 				'id'          => 'show_uncategorized',
 				'description' => __( 'Show the "Uncategorized" virtual folder in the sidebar.', 'virtual-media-folders' ),
@@ -219,7 +226,7 @@ final class Settings {
 			__( 'Jump to Folder After Move', 'virtual-media-folders' ),
 			[ self::class, 'render_checkbox_field' ],
 			self::PAGE_SLUG,
-			'vmf_defaults',
+			'vmfo_defaults',
 			[
 				'id'          => 'jump_to_folder_after_move',
 				'description' => __( 'Automatically switch to the target folder after moving files.', 'virtual-media-folders' ),
@@ -260,7 +267,7 @@ final class Settings {
 	/**
 	 * Get the default settings.
 	 *
-	 * @return array<string, mixed> Default settings, filtered via 'vmf_default_settings'.
+	 * @return array<string, mixed> Default settings, filtered via 'vmfo_default_settings'.
 	 */
 	public static function get_defaults(): array {
 		/**
@@ -270,21 +277,21 @@ final class Settings {
 		 *
 		 * @param array $defaults Default settings array.
 		 */
-		return apply_filters( 'vmf_default_settings', self::DEFAULTS ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
+		return apply_filters( 'vmfo_default_settings', self::DEFAULTS );
 	}
 
 	/**
 	 * Get a setting value.
 	 *
-	 * Settings can be overridden via the 'vmf_setting_{$key}' filter or
-	 * the 'vmf_settings' filter for all settings at once.
+	 * Settings can be overridden via the 'vmfo_setting_{$key}' filter or
+	 * the 'vmfo_settings' filter for all settings at once.
 	 *
 	 * Note: At least one of 'show_all_media' or 'show_uncategorized' must be true.
 	 * If both are set to false (via filters), 'show_all_media' will be forced to true.
 	 *
 	 * @param string $key     Setting key.
 	 * @param mixed  $default Default value if not set.
-	 * @return mixed Setting value, filtered via 'vmf_setting_{$key}'.
+	 * @return mixed Setting value, filtered via 'vmfo_setting_{$key}'.
 	 */
 	public static function get( string $key, $default = null ) {
 		$options  = self::get_options();
@@ -301,7 +308,7 @@ final class Settings {
 		 * @param string $key     The setting key.
 		 * @param array  $options All settings.
 		 */
-		$value = apply_filters( "vmf_setting_{$key}", $value, $key, $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
+		$value = apply_filters( "vmfo_setting_{$key}", $value, $key, $options );
 
 		return $value;
 	}
@@ -328,7 +335,7 @@ final class Settings {
 		 *
 		 * @param array $options All settings.
 		 */
-		$options = apply_filters( 'vmf_settings', $options ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'vmf_' is our prefix.
+		$options = apply_filters( 'vmfo_settings', $options );
 
 		return self::normalize_visibility( $options );
 	}
@@ -364,8 +371,8 @@ final class Settings {
 		// Show save confirmation.
 		if ( isset( $_GET[ 'settings-updated' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			add_settings_error(
-				'vmf_messages',
-				'vmf_message',
+				'vmfo_messages',
+				'vmfo_message',
 				__( 'Settings saved.', 'virtual-media-folders' ),
 				'updated'
 			);
@@ -374,7 +381,7 @@ final class Settings {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<?php settings_errors( 'vmf_messages' ); ?>
+			<?php settings_errors( 'vmfo_messages' ); ?>
 			<form action="options.php" method="post">
 				<?php
 				settings_fields( self::OPTION_GROUP );

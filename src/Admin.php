@@ -35,26 +35,29 @@ class Admin {
 	 */
 	public static function init(): void {
 		add_action( 'admin_enqueue_scripts', [ static::class, 'enqueue_scripts' ] );
-		add_action( 'wp_ajax_vmf_move_to_folder', [ static::class, 'ajax_move_to_folder' ] );
-		add_action( 'wp_ajax_vmf_bulk_move_to_folder', [ static::class, 'ajax_bulk_move_to_folder' ] );
+		add_action( 'wp_ajax_vmfo_move_to_folder', [ static::class, 'ajax_move_to_folder' ] );
+		add_action( 'wp_ajax_vmfo_bulk_move_to_folder', [ static::class, 'ajax_bulk_move_to_folder' ] );
 		add_action( 'add_attachment', [ static::class, 'assign_default_folder' ] );
 		add_action( 'admin_head-upload.php', [ static::class, 'add_help_tab' ] );
-		add_action( 'admin_head-upload.php', [ static::class, 'add_critical_css' ] );
+		add_action( 'admin_enqueue_scripts', [ static::class, 'add_critical_css' ] );
 	}
 
 	/**
 	 * Add critical inline CSS to prevent layout shift.
 	 *
-	 * Outputs minimal CSS rules immediately in the head to reserve space
+	 * Uses wp_add_inline_style to add minimal CSS rules to reserve space
 	 * for the folder sidebar before the main stylesheet loads.
 	 *
+	 * @param string $hook_suffix The current admin page hook suffix.
 	 * @return void
 	 */
-	public static function add_critical_css(): void {
-		// Check if folder view preference is enabled (cookie/localStorage check happens client-side,
-		// but we output the CSS anyway - it only applies when classes are present)
-		?>
-		<style id="vmf-critical-css">
+	public static function add_critical_css( string $hook_suffix ): void {
+		// Only load on media library pages.
+		if ( $hook_suffix !== 'upload.php' ) {
+			return;
+		}
+
+		$critical_css = '
 			/* Critical CSS to prevent layout shift - loaded inline before main styles */
 			.vmf-folder-tree-sidebar {
 				position: absolute;
@@ -64,22 +67,19 @@ class Admin {
 				display: none;
 				z-index: 75;
 			}
-
 			.vmf-folder-tree-sidebar.is-visible {
 				display: block;
 				visibility: hidden;
-				/* Hide until JS positions it */
 			}
-
 			.vmf-folder-tree-sidebar.is-visible.vmf-positioned {
 				visibility: visible;
 			}
-
 			.attachments-browser.vmf-sidebar-visible .attachments {
 				margin-left: 220px !important;
 			}
-		</style>
-		<?php
+		';
+
+		wp_add_inline_style( 'vmfo-admin', $critical_css );
 	}
 
 	/**
@@ -95,7 +95,7 @@ class Admin {
 		}
 
 		$screen->add_help_tab( [
-			'id'      => 'vmf-folders-help',
+			'id'      => 'vmfo-folders-help',
 			'title'   => __( 'Virtual Folders', 'virtual-media-folders' ),
 			'content' => self::get_help_content(),
 		] );
@@ -171,7 +171,7 @@ class Admin {
 	 */
 	public static function ajax_move_to_folder(): void {
 		// Verify nonce for security.
-		if ( ! check_ajax_referer( 'vmf_move_media', 'nonce', false ) ) {
+		if ( ! check_ajax_referer( 'vmfo_move_media', 'nonce', false ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid security token.', 'virtual-media-folders' ) ], 403 );
 		}
 
@@ -238,7 +238,7 @@ class Admin {
 	 */
 	public static function ajax_bulk_move_to_folder(): void {
 		// Verify nonce for security.
-		if ( ! check_ajax_referer( 'vmf_move_media', 'nonce', false ) ) {
+		if ( ! check_ajax_referer( 'vmfo_move_media', 'nonce', false ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid security token.', 'virtual-media-folders' ) ], 403 );
 		}
 
@@ -345,7 +345,7 @@ class Admin {
 			return;
 		}
 
-		$asset_file = VMF_PATH . 'build/admin.asset.php';
+		$asset_file = VMFO_PATH . 'build/admin.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -355,27 +355,27 @@ class Admin {
 
 		// Enqueue the main admin JavaScript bundle.
 		wp_enqueue_script(
-			'vmf-admin',
-			VMF_URL . 'build/admin.js',
+			'vmfo-admin',
+			VMFO_URL . 'build/admin.js',
 			$asset[ 'dependencies' ] ?? [ 'wp-element', 'wp-api-fetch', 'wp-i18n', 'wp-icons' ],
-			$asset[ 'version' ] ?? VMF_VERSION,
+			$asset[ 'version' ] ?? VMFO_VERSION,
 			true
 		);
 
 		// Enqueue admin styles.
 		wp_enqueue_style(
-			'vmf-admin',
-			VMF_URL . 'build/admin.css',
+			'vmfo-admin',
+			VMFO_URL . 'build/admin.css',
 			[ 'wp-components' ],
-			$asset[ 'version' ] ?? VMF_VERSION
+			$asset[ 'version' ] ?? VMFO_VERSION
 		);
 
 		// Provide AJAX configuration and preloaded folders to JavaScript.
 		wp_add_inline_script(
-			'vmf-admin',
+			'vmfo-admin',
 			'var vmfData = ' . wp_json_encode( [
 				'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
-				'nonce'                 => wp_create_nonce( 'vmf_move_media' ),
+				'nonce'                 => wp_create_nonce( 'vmfo_move_media' ),
 				'jumpToFolderAfterMove' => (bool) Settings::get( 'jump_to_folder_after_move', false ),
 				'showAllMedia'          => (bool) Settings::get( 'show_all_media', true ),
 				'showUncategorized'     => (bool) Settings::get( 'show_uncategorized', true ),
@@ -385,7 +385,7 @@ class Admin {
 		);
 
 		// Enable translations for JavaScript strings.
-		wp_set_script_translations( 'vmf-admin', 'virtual-media-folders', VMF_PATH . 'languages' );
+		wp_set_script_translations( 'vmfo-admin', 'virtual-media-folders', VMFO_PATH . 'languages' );
 	}
 
 	/**
@@ -415,21 +415,21 @@ class Admin {
 		// Build folder list with order meta.
 		$folders = [];
 		foreach ( $terms as $term ) {
-			$order     = get_term_meta( $term->term_id, 'vmf_order', true );
+			$order     = get_term_meta( $term->term_id, 'vmfo_order', true );
 			$folders[] = [
-				'id'        => $term->term_id,
-				'name'      => $term->name,
-				'slug'      => $term->slug,
-				'parent'    => $term->parent,
-				'count'     => $term->count,
-				'vmf_order' => $order !== '' ? (int) $order : null,
+				'id'         => $term->term_id,
+				'name'       => $term->name,
+				'slug'       => $term->slug,
+				'parent'     => $term->parent,
+				'count'      => $term->count,
+				'vmfo_order' => $order !== '' ? (int) $order : null,
 			];
 		}
 
-		// Sort: folders with vmf_order first (by order), then by name.
+		// Sort: folders with vmfo_order first (by order), then by name.
 		usort( $folders, function ( $a, $b ) {
-			$order_a = $a[ 'vmf_order' ];
-			$order_b = $b[ 'vmf_order' ];
+			$order_a = $a[ 'vmfo_order' ];
+			$order_b = $b[ 'vmfo_order' ];
 
 			if ( $order_a !== null && $order_b !== null ) {
 				return $order_a - $order_b;

@@ -35,7 +35,7 @@ class Suggestions {
 	 *
 	 * @var string
 	 */
-	public const META_KEY = '_vmf_folder_suggestions';
+	public const META_KEY = '_vmfo_folder_suggestions';
 
 	/**
 	 * Initialize suggestion hooks.

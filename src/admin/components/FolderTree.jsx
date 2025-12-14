@@ -233,10 +233,10 @@ export default function FolderTree({ onFolderSelect }) {
 		}
 
 		// Update cache with new order so other components get correct order
-		// Map tree folders back to flat structure with updated vmf_order
+		// Map tree folders back to flat structure with updated vmfo_order
 		const updatedFlatFolders = reorderedFolders.map((f, idx) => ({
 			...flatFolders.find((ff) => ff.id === f.id),
-			vmf_order: idx,
+			vmfo_order: idx,
 		}));
 		setCachedFolders(updatedFlatFolders);
 
@@ -245,7 +245,7 @@ export default function FolderTree({ onFolderSelect }) {
 
 		// Save to server in background (don't await)
 		apiFetch({
-			path: '/vmf/v1/folders/reorder',
+			path: '/vmfo/v1/folders/reorder',
 			method: 'POST',
 			data: {
 				order: newOrder,

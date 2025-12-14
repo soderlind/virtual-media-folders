@@ -29,7 +29,7 @@ final class RestApi extends WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'vmf/v1';
+	protected $namespace = 'vmfo/v1';
 
 	/**
 	 * Initialize the REST API.
@@ -353,7 +353,7 @@ final class RestApi extends WP_REST_Controller {
 	 */
 	public function get_folders( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$args = [
-			'taxonomy'   => 'media_folder',
+			'taxonomy'   => Taxonomy::TAXONOMY,
 			'hide_empty' => false,
 			'number'     => 0, // Ensure no limit
 		];
@@ -364,10 +364,10 @@ final class RestApi extends WP_REST_Controller {
 			return $terms;
 		}
 
-		// Sort terms: those with vmf_order first (by order), then those without (by name)
+		// Sort terms: those with vmfo_order first (by order), then those without (by name)
 		usort( $terms, function ( $a, $b ) {
-			$order_a = get_term_meta( $a->term_id, 'vmf_order', true );
-			$order_b = get_term_meta( $b->term_id, 'vmf_order', true );
+			$order_a = get_term_meta( $a->term_id, 'vmfo_order', true );
+			$order_b = get_term_meta( $b->term_id, 'vmfo_order', true );
 
 			// If both have order, sort by order
 			if ( $order_a !== '' && $order_b !== '' ) {
@@ -421,7 +421,7 @@ final class RestApi extends WP_REST_Controller {
 
 		$result = wp_insert_term(
 			$name,
-			'media_folder',
+			Taxonomy::TAXONOMY,
 			[
 				'parent' => $parent,
 			]
@@ -431,7 +431,7 @@ final class RestApi extends WP_REST_Controller {
 			return $result;
 		}
 
-		$term = get_term( $result[ 'term_id' ], 'media_folder' );
+		$term = get_term( $result[ 'term_id' ], Taxonomy::TAXONOMY );
 
 		return new WP_REST_Response( $this->prepare_folder_for_response( $term ), 201 );
 	}
@@ -474,13 +474,13 @@ final class RestApi extends WP_REST_Controller {
 			return new WP_REST_Response( $this->prepare_folder_for_response( $term ), 200 );
 		}
 
-		$result = wp_update_term( $folder_id, 'media_folder', $args );
+		$result = wp_update_term( $folder_id, Taxonomy::TAXONOMY, $args );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		$term = get_term( $result[ 'term_id' ], 'media_folder' );
+		$term = get_term( $result[ 'term_id' ], Taxonomy::TAXONOMY );
 
 		return new WP_REST_Response( $this->prepare_folder_for_response( $term ), 200 );
 	}
@@ -499,7 +499,7 @@ final class RestApi extends WP_REST_Controller {
 			return $term;
 		}
 
-		$result = wp_delete_term( $folder_id, 'media_folder' );
+		$result = wp_delete_term( $folder_id, Taxonomy::TAXONOMY );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -543,7 +543,7 @@ final class RestApi extends WP_REST_Controller {
 		// Update menu_order for each folder
 		foreach ( $order as $position => $folder_id ) {
 			$folder_id = absint( $folder_id );
-			$term      = get_term( $folder_id, 'media_folder' );
+			$term      = get_term( $folder_id, Taxonomy::TAXONOMY );
 
 			if ( ! $term || is_wp_error( $term ) ) {
 				continue;
@@ -554,7 +554,7 @@ final class RestApi extends WP_REST_Controller {
 				continue;
 			}
 
-			update_term_meta( $folder_id, 'vmf_order', $position );
+			update_term_meta( $folder_id, 'vmfo_order', $position );
 		}
 
 		return new WP_REST_Response(
@@ -610,7 +610,7 @@ final class RestApi extends WP_REST_Controller {
 			return $attachment;
 		}
 
-		$result = wp_remove_object_terms( $media_id, $folder_id, 'media_folder' );
+		$result = wp_remove_object_terms( $media_id, $folder_id, Taxonomy::TAXONOMY );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -639,7 +639,7 @@ final class RestApi extends WP_REST_Controller {
 		// Get all folders.
 		$terms = get_terms(
 			[
-				'taxonomy'   => 'media_folder',
+				'taxonomy'   => Taxonomy::TAXONOMY,
 				'hide_empty' => false,
 			]
 		);
@@ -661,7 +661,7 @@ final class RestApi extends WP_REST_Controller {
 				'fields'         => 'ids',
 				'tax_query'      => [
 					[
-						'taxonomy' => 'media_folder',
+						'taxonomy' => Taxonomy::TAXONOMY,
 						'field'    => 'term_id',
 						'terms'    => $term->term_id,
 					],
@@ -747,7 +747,7 @@ final class RestApi extends WP_REST_Controller {
 		}
 
 		// Check if suggestions were dismissed.
-		$dismissed = get_post_meta( $media_id, '_vmf_suggestions_dismissed', true );
+		$dismissed = get_post_meta( $media_id, '_vmfo_suggestions_dismissed', true );
 		if ( $dismissed ) {
 			return new WP_REST_Response(
 				[
@@ -759,7 +759,7 @@ final class RestApi extends WP_REST_Controller {
 		}
 
 		// Get stored suggestions.
-		$suggestions = get_post_meta( $media_id, '_vmf_folder_suggestions', true );
+		$suggestions = get_post_meta( $media_id, '_vmfo_folder_suggestions', true );
 		if ( ! is_array( $suggestions ) ) {
 			$suggestions = [];
 		}
@@ -767,7 +767,7 @@ final class RestApi extends WP_REST_Controller {
 		// Enrich suggestions with folder data.
 		$enriched = [];
 		foreach ( $suggestions as $folder_id ) {
-			$term = get_term( $folder_id, 'media_folder' );
+			$term = get_term( $folder_id, Taxonomy::TAXONOMY );
 			if ( $term && ! is_wp_error( $term ) ) {
 				$enriched[] = $this->prepare_folder_for_response( $term );
 			}
@@ -826,7 +826,7 @@ final class RestApi extends WP_REST_Controller {
 		}
 
 		// Mark suggestions as dismissed.
-		update_post_meta( $media_id, '_vmf_suggestions_dismissed', true );
+		update_post_meta( $media_id, '_vmfo_suggestions_dismissed', true );
 
 		return new WP_REST_Response(
 			[
@@ -864,7 +864,7 @@ final class RestApi extends WP_REST_Controller {
 	 * @return \WP_Term|WP_Error
 	 */
 	private function get_folder_or_error( int $folder_id ) {
-		$term = get_term( $folder_id, 'media_folder' );
+		$term = get_term( $folder_id, Taxonomy::TAXONOMY );
 
 		if ( is_wp_error( $term ) ) {
 			return $term;
@@ -909,14 +909,14 @@ final class RestApi extends WP_REST_Controller {
 	 * @return array|WP_Error
 	 */
 	private function assign_media_to_folder( int $media_id, int $folder_id, string $message = '' ) {
-		$result = wp_set_object_terms( $media_id, [ $folder_id ], 'media_folder', true );
+		$result = wp_set_object_terms( $media_id, [ $folder_id ], Taxonomy::TAXONOMY, true );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		delete_post_meta( $media_id, '_vmf_folder_suggestions' );
-		delete_post_meta( $media_id, '_vmf_suggestions_dismissed' );
+		delete_post_meta( $media_id, '_vmfo_folder_suggestions' );
+		delete_post_meta( $media_id, '_vmfo_suggestions_dismissed' );
 
 		$success_message = $message !== '' ? $message : __( 'Media added to folder.', 'virtual-media-folders' );
 
@@ -935,7 +935,7 @@ final class RestApi extends WP_REST_Controller {
 	 * @return array<string, mixed>
 	 */
 	private function prepare_folder_for_response( object $term ): array {
-		$vmf_order = get_term_meta( $term->term_id, 'vmf_order', true );
+		$vmfo_order = get_term_meta( $term->term_id, 'vmfo_order', true );
 
 		return [
 			'id'          => $term->term_id,
@@ -944,7 +944,7 @@ final class RestApi extends WP_REST_Controller {
 			'description' => $term->description,
 			'parent'      => $term->parent,
 			'count'       => $term->count,
-			'vmf_order'   => $vmf_order !== '' ? (int) $vmf_order : null,
+			'vmfo_order'   => $vmfo_order !== '' ? (int) $vmfo_order : null,
 			'_links'      => [
 				'self'       => [
 					[
