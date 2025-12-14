@@ -74,7 +74,7 @@ class RestApiTest extends TestCase {
 		$this->assertArrayHasKey( 'title', $schema );
 		$this->assertArrayHasKey( 'type', $schema );
 		$this->assertArrayHasKey( 'properties', $schema );
-		$this->assertEquals( 'media-folder', $schema[ 'title' ] );
+		$this->assertEquals( 'vmfo-folder', $schema[ 'title' ] );
 		$this->assertEquals( 'object', $schema[ 'type' ] );
 	}
 

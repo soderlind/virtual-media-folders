@@ -27,7 +27,7 @@ class TaxonomyTest extends TestCase {
 		$this->assertTrue( true ); // Expectation verified by Brain\Monkey
 	}
 
-	public function test_register_taxonomy_registers_media_folder(): void {
+	public function test_register_taxonomy_registers_vmfo_folder(): void {
 		Monkey\Functions\expect( 'register_taxonomy' )
 			->once();
 

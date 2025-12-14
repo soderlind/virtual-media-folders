@@ -207,7 +207,7 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 		
 		if (trackUrl) {
 			const params = new URLSearchParams(window.location.search);
-			const urlFolder = params.get('vmf_folder');
+			const urlFolder = params.get('vmfo_folder');
 			const urlMode = params.get('mode');
 			
 			if (urlFolder) {

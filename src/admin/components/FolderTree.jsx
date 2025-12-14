@@ -233,17 +233,22 @@ export default function FolderTree({ onFolderSelect }) {
 		}
 
 		// Update cache with new order so other components get correct order
-		// Map tree folders back to flat structure with updated vmfo_order
-		const updatedFlatFolders = reorderedFolders.map((f, idx) => ({
-			...flatFolders.find((ff) => ff.id === f.id),
-			vmfo_order: idx,
-		}));
+		// Update vmfo_order for reordered root folders while keeping all folders
+		const updatedFlatFolders = flatFolders.map((f) => {
+			// Find if this folder is in the reordered list (root folders only)
+			const newPosition = newOrder.indexOf(f.id);
+			if (newPosition !== -1) {
+				return { ...f, vmfo_order: newPosition };
+			}
+			// Keep existing order for non-root folders
+			return f;
+		});
 		setCachedFolders(updatedFlatFolders);
 
 		// Notify other components of the change
 		window.dispatchEvent(new CustomEvent('vmf:folders-updated'));
 
-		// Save to server in background (don't await)
+		// Save to server in background
 		apiFetch({
 			path: '/vmfo/v1/folders/reorder',
 			method: 'POST',
@@ -251,6 +256,9 @@ export default function FolderTree({ onFolderSelect }) {
 				order: newOrder,
 				parent: 0,
 			},
+		}).then(() => {
+			// Refresh from server to ensure cache is in sync
+			fetchFolders('', true);
 		}).catch((error) => {
 			console.error('Failed to reorder folders:', error);
 			// Revert on error - fetch fresh data

@@ -5,6 +5,14 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2025-12-14
+
+### Fixed
+- Settings page default folder dropdown now uses correct taxonomy (`vmfo_folder`)
+- Block editor folder filter now uses correct REST API endpoint (`/wp/v2/vmfo_folder`)
+- REST API schema title updated to `vmfo-folder` for consistency
+- Folder drag-drop reorder now persists correctly after page refresh
+
 ## [1.3.0] - 2025-12-13
 
 ### Added
