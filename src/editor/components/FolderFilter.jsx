@@ -25,7 +25,7 @@ export function FolderFilter({ onFilterChange, value = '' }) {
 		async function fetchFolders() {
 			try {
 				const response = await apiFetch({
-					path: '/wp/v2/media-folders?per_page=100',
+					path: '/wp/v2/vmfo_folder?per_page=100',
 				});
 
 				// Build hierarchical options

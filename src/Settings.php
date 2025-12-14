@@ -468,7 +468,7 @@ final class Settings {
 
 		$folders = get_terms(
 			[
-				'taxonomy'   => 'media_folder',
+				'taxonomy'   => 'vmfo_folder',
 				'hide_empty' => false,
 				'orderby'    => 'name',
 				'order'      => 'ASC',

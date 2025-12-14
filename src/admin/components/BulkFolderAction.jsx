@@ -122,7 +122,7 @@ export default function BulkFolderAction({ onComplete }) {
 		try {
 			// Single bulk request instead of multiple individual requests
 			const formData = new FormData();
-			formData.append('action', 'vmf_bulk_move_to_folder');
+			formData.append('action', 'vmfo_bulk_move_to_folder');
 			formData.append('nonce', nonce);
 			formData.append('media_ids', JSON.stringify(mediaIds));
 			formData.append('folder_id', selectedFolder);

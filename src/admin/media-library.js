@@ -20,7 +20,7 @@ let currentBrowser = null;
  */
 function hideFolderView() {
 	folderViewActive = false;
-	localStorage.setItem('vmf_folder_view', '0');
+	localStorage.setItem('vmfo_folder_view', '0');
 	
 	const $container = jQuery('#vmf-folder-tree');
 	const $toggle = jQuery('.vmf-folder-toggle-button');
@@ -54,10 +54,10 @@ jQuery(document).on('click', '.page-title-action', function() {
 function addFolderToggleButtonToPage() {
 	// Check if folder view should be active on load
 	// Priority: URL params > localStorage > default (false)
-	const savedPref = localStorage.getItem('vmf_folder_view');
+	const savedPref = localStorage.getItem('vmfo_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
 	
-	let shouldBeActive = urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder';
+	let shouldBeActive = urlParams.has('vmfo_folder') || urlParams.get('mode') === 'folder';
 	if (!shouldBeActive && savedPref !== null) {
 		// Use localStorage if set
 		shouldBeActive = savedPref === '1';
@@ -98,7 +98,7 @@ function addFolderToggleButtonToPage() {
 			const urlParams = new URLSearchParams(window.location.search);
 			if (urlParams.get('mode') === 'list') {
 				// Navigate to grid mode with folder view enabled
-				localStorage.setItem('vmf_folder_view', '1');
+				localStorage.setItem('vmfo_folder_view', '1');
 				window.location.href = window.location.pathname + '?mode=grid';
 				return;
 			}
@@ -108,7 +108,7 @@ function addFolderToggleButtonToPage() {
 				toggleFolderView(currentBrowser, true);
 			} else {
 				// Set preference, will be applied when browser renders
-				localStorage.setItem('vmf_folder_view', '1');
+				localStorage.setItem('vmfo_folder_view', '1');
 				folderViewActive = true;
 				$button.addClass('is-active');
 			}
@@ -138,7 +138,7 @@ async function moveMediaToFolder(mediaId, folderId) {
 	const willBeEmpty = !isAllMediaView && totalAttachments <= 1;
 
 	const formData = new FormData();
-	formData.append('action', 'vmf_move_to_folder');
+	formData.append('action', 'vmfo_move_to_folder');
 	formData.append('nonce', nonce);
 	formData.append('media_id', mediaId);
 	formData.append('folder_id', folderId ?? '');
@@ -411,7 +411,7 @@ function toggleFolderView(browser, show) {
 	}
 	
 	// Save preference
-	localStorage.setItem('vmf_folder_view', show ? '1' : '0');
+	localStorage.setItem('vmfo_folder_view', show ? '1' : '0');
 }
 
 /**
@@ -447,9 +447,9 @@ function addFolderToggleButton(browser) {
 	}
 	
 	// Check saved preference or URL param and apply
-	const savedPref = localStorage.getItem('vmf_folder_view');
+	const savedPref = localStorage.getItem('vmfo_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	if (savedPref === '1' || urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder') {
+	if (savedPref === '1' || urlParams.has('vmfo_folder') || urlParams.get('mode') === 'folder') {
 		toggleFolderView(browser, true);
 	}
 }
@@ -467,9 +467,9 @@ function injectFolderTree(browser) {
 	const existingSidebar = document.getElementById('vmf-folder-tree');
 	
 	// Check if folder view should be active
-	const savedPref = localStorage.getItem('vmf_folder_view');
+	const savedPref = localStorage.getItem('vmfo_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
-	const shouldBeVisible = savedPref === '1' || urlParams.has('vmf_folder') || urlParams.get('mode') === 'folder' || folderViewActive;
+	const shouldBeVisible = savedPref === '1' || urlParams.has('vmfo_folder') || urlParams.get('mode') === 'folder' || folderViewActive;
 
 	// Find the best insertion point - we want the sidebar next to attachments,
 	// not overlapping the uploader
@@ -528,9 +528,9 @@ function injectFolderTree(browser) {
 					// Update URL state with mode=folder when folder view is active
 					const url = new URL(window.location);
 					if (folderId) {
-						url.searchParams.set('vmf_folder', folderId);
+						url.searchParams.set('vmfo_folder', folderId);
 					} else {
-						url.searchParams.delete('vmf_folder');
+						url.searchParams.delete('vmfo_folder');
 					}
 					// Always use mode=folder when in folder view (sidebar visible)
 					url.searchParams.set('mode', 'folder');

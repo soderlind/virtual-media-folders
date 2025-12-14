@@ -69,7 +69,7 @@ describe('FolderFilter', () => {
 
 		await waitFor(() => {
 			expect(apiFetch).toHaveBeenCalledWith({
-				path: '/wp/v2/media-folders?per_page=100',
+				path: '/wp/v2/vmfo_folder?per_page=100',
 			});
 		});
 	});

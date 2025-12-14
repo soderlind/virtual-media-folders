@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -103,6 +103,12 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.3.1 =
+* Fixed: Settings page default folder dropdown now uses correct taxonomy (vmfo_folder)
+* Fixed: Block editor folder filter now uses correct REST API endpoint (/wp/v2/vmfo_folder)
+* Fixed: REST API schema title updated to vmfo-folder for consistency
+* Fixed: Folder drag-drop reorder now persists correctly after page refresh
 
 = 1.3.0 =
 * Changed: Renamed all prefixes from VMF_ to VMFO_ for WordPress.org compliance
