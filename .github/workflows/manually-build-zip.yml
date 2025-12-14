@@ -36,4 +36,3 @@ jobs:
         with:
           files: virtual-media-folders.zip
           tag_name: ${{ github.event.inputs.tag }}
-          tag_name: ${{ github.event.inputs.tag }}
