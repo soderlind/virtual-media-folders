@@ -60,7 +60,7 @@ class RestApiTest extends TestCase {
 		$property   = $reflection->getProperty( 'namespace' );
 		$property->setAccessible( true );
 
-		$this->assertEquals( 'vmf/v1', $property->getValue( $this->api ) );
+		$this->assertEquals( 'vmfo/v1', $property->getValue( $this->api ) );
 	}
 
 	/**
@@ -118,7 +118,7 @@ class RestApiTest extends TestCase {
 	 * Test prepare_folder_for_response using reflection.
 	 */
 	public function test_prepare_folder_for_response(): void {
-		// Mock get_term_meta for vmf_order
+		// Mock get_term_meta for vmfo_order
 		Functions\when( 'get_term_meta' )->justReturn( 3 );
 
 		$term = new \WP_Term( [
@@ -143,7 +143,7 @@ class RestApiTest extends TestCase {
 		$this->assertEquals( 'A test folder', $result[ 'description' ] );
 		$this->assertEquals( 0, $result[ 'parent' ] );
 		$this->assertEquals( 5, $result[ 'count' ] );
-		$this->assertEquals( 3, $result[ 'vmf_order' ] );
+		$this->assertEquals( 3, $result[ 'vmfo_order' ] );
 		$this->assertArrayHasKey( '_links', $result );
 	}
 
@@ -151,7 +151,7 @@ class RestApiTest extends TestCase {
 	 * Test response links structure.
 	 */
 	public function test_prepare_folder_response_links(): void {
-		// Mock get_term_meta for vmf_order
+		// Mock get_term_meta for vmfo_order
 		Functions\when( 'get_term_meta' )->justReturn( '' );
 
 		$term = new \WP_Term( [

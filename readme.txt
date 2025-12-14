@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.2.3
+Stable tag: 1.3.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -24,6 +24,8 @@ Virtual Media Folders brings virtual folder organization to your WordPress Media
 * **Keyboard Accessible** – Full keyboard navigation support
 * **Internationalized** – Ready for translation (Norwegian Bokmål included)
 
+https://www.youtube.com/watch?v=bA4lf7ynz24
+
 = How It Works =
 
 Virtual Media Folders uses a custom taxonomy to assign media to folders. This means:
@@ -32,16 +34,12 @@ Virtual Media Folders uses a custom taxonomy to assign media to folders. This me
 * URLs never change when you reorganize
 * Folders can be nested to create hierarchies
 
-https://www.youtube.com/watch?v=bA4lf7ynz24
+= Documentation =
+
+* [Accessibility](https://github.com/soderlind/virtual-media-folders/blob/main/docs/a11y.md) – Keyboard navigation and screen reader support
+* [Development](https://github.com/soderlind/virtual-media-folders/blob/main/docs/development.md) – Setup, API reference, hooks, and contributing
 
 == Installation ==
-
-1. Download [`virtual-media-folders.zip`](https://github.com/soderlind/virtual-media-folders/releases/latest/download/virtual-media-folders.zip)
-2. Upload via  Plugins > Add New > Upload Plugin
-3. Activate the plugin.
-
-Plugin [updates are handled automatically](https://github.com/soderlind/wordpress-plugin-github-updater#readme) via GitHub. No need to manually download and install updates.
-
 
 = From WordPress Plugin Directory =
 
@@ -76,6 +74,14 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.3.0 =
+* Changed: Renamed all prefixes from VMF_ to VMFO_ for WordPress.org compliance
+* Changed: Renamed taxonomy from media_folder to vmfo_folder for uniqueness
+* Changed: Inline CSS now uses wp_add_inline_style() instead of embedded style tag
+* Removed: GitHub update checker (WordPress.org handles updates)
+* Added: Automatic migration for existing folder assignments from old taxonomy
+* Added: .distignore file for proper distribution builds
 
 = 1.2.3 =
 * Changed: "All Media" folder now disabled by default in settings

@@ -33,23 +33,23 @@ describe('FolderTree', () => {
 
 		// Clear any cached folders from localStorage
 		try {
-			localStorage.removeItem('vmf_folders_cache');
+			localStorage.removeItem('vmfo_folders_cache');
 		} catch (e) {
 			// localStorage not available in test
 		}
 
 		// Mock successful API response
 		apiFetch.mockImplementation(({ path, parse }) => {
-			// Handle /vmf/v1/folders (custom endpoint with vmf_order)
-			if (path === '/vmf/v1/folders') {
+			// Handle /vmfo/v1/folders (custom endpoint with vmfo_order)
+			if (path === '/vmfo/v1/folders') {
 				return Promise.resolve([
-					{ id: 1, name: 'Images', parent: 0, count: 10, vmf_order: 0 },
-					{ id: 2, name: 'Documents', parent: 0, count: 5, vmf_order: 1 },
-					{ id: 3, name: 'Screenshots', parent: 1, count: 3, vmf_order: 2 },
+					{ id: 1, name: 'Images', parent: 0, count: 10, vmfo_order: 0 },
+					{ id: 2, name: 'Documents', parent: 0, count: 5, vmfo_order: 1 },
+					{ id: 3, name: 'Screenshots', parent: 1, count: 3, vmfo_order: 2 },
 				]);
 			}
-			// Handle /wp/v2/media-folders (WordPress REST API)
-			if (path.includes('media-folders')) {
+			// Handle /wp/v2/vmfo-folders (WordPress REST API)
+			if (path.includes('vmfo-folders')) {
 				return Promise.resolve([
 					{ id: 1, name: 'Images', parent: 0, count: 10 },
 					{ id: 2, name: 'Documents', parent: 0, count: 5 },
@@ -64,7 +64,7 @@ describe('FolderTree', () => {
 					},
 				});
 			}
-			if (path.includes('media_folder_exclude')) {
+			if (path.includes('vmfo_folder_exclude')) {
 				return Promise.resolve({
 					headers: {
 						get: (name) => (name === 'X-WP-Total' ? '7' : null),

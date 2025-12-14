@@ -4,7 +4,7 @@
 
 import apiFetch from '@wordpress/api-fetch';
 
-const CACHE_KEY = 'vmf_folders_cache';
+const CACHE_KEY = 'vmfo_folders_cache';
 
 /**
  * Get cached folders from localStorage or preloaded vmfData.
@@ -78,7 +78,7 @@ export function foldersEqual(a, b) {
 				id: f.id,
 				name: f.name,
 				parent: f.parent,
-				vmf_order: f.vmf_order,
+				vmfo_order: f.vmfo_order,
 			}))
 		);
 
@@ -87,12 +87,12 @@ export function foldersEqual(a, b) {
 
 /**
  * Fetch all folders from REST API.
- * Uses custom endpoint which returns folders sorted by vmf_order.
+ * Uses custom endpoint which returns folders sorted by vmfo_order.
  *
  * @return {Promise<Array>} Folder array.
  */
 export async function fetchAllFolders() {
 	return apiFetch({
-		path: '/vmf/v1/folders',
+		path: '/vmfo/v1/folders',
 	});
 }

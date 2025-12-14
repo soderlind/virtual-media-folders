@@ -5,6 +5,24 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-12-13
+
+### Added
+- Automatic migration for existing folder assignments from old taxonomy (media_folder → vmfo_folder)
+- .distignore file for proper distribution builds
+
+### Changed
+- Renamed all constants from VMF_ to VMFO_ for WordPress.org compliance (4+ character prefix required)
+- Renamed taxonomy from `media_folder` to `vmfo_folder` for uniqueness
+- Renamed all AJAX actions from `vmf_` to `vmfo_` prefix
+- Renamed all option names from `vmf_` to `vmfo_` prefix
+- Renamed all filter and action hooks from `vmf_` to `vmfo_` prefix
+- Inline CSS now uses `wp_add_inline_style()` instead of embedded style tag
+
+### Removed
+- GitHub update checker library (WordPress.org handles updates)
+- `load_plugin_textdomain` call (WordPress.org handles translations)
+
 ## [1.2.3] - 2025-12-13
 
 ### Changed

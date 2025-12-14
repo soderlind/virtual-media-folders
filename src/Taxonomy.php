@@ -2,7 +2,7 @@
 /**
  * Media Folder Taxonomy.
  *
- * Registers the custom 'media_folder' taxonomy for organizing
+ * Registers the custom 'vmfo_folder' taxonomy for organizing
  * WordPress media library attachments into virtual folders.
  *
  * @package VirtualMediaFolders
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Taxonomy handler for media folders.
  *
- * This class registers and configures the hierarchical 'media_folder' taxonomy
+ * This class registers and configures the hierarchical 'vmfo_folder' taxonomy
  * that allows users to organize media attachments into a folder structure.
  * The folders are virtual - files are not moved on disk.
  */
@@ -31,7 +31,7 @@ class Taxonomy {
 	 *
 	 * @var string
 	 */
-	public const TAXONOMY = 'media_folder';
+	public const TAXONOMY = 'vmfo_folder';
 
 	/**
 	 * Initialize the taxonomy registration.
@@ -45,7 +45,7 @@ class Taxonomy {
 	}
 
 	/**
-	 * Register the media_folder taxonomy.
+	 * Register the vmfo_folder taxonomy.
 	 *
 	 * Creates a hierarchical taxonomy attached to the 'attachment' post type.
 	 * Includes REST API support for use with the block editor and React components.
@@ -77,9 +77,9 @@ class Taxonomy {
 			'show_admin_column'     => false,
 			// Enable REST API for React-based UI components.
 			'show_in_rest'          => true,
-			'rest_base'             => 'media-folders',
+			'rest_base'             => 'vmfo-folders',
 			'query_var'             => true,
-			'rewrite'               => [ 'slug' => 'media-folder' ],
+			'rewrite'               => [ 'slug' => 'vmfo-folder' ],
 			// Use generic term count for attachments (includes all statuses).
 			'update_count_callback' => '_update_generic_term_count',
 		];

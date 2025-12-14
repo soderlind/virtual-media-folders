@@ -97,12 +97,12 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 	const lastFetchedFolders = useRef(hasInitialData ? initialFolders : null);
 
 	/**
-	 * Sort folders by vmf_order (if present) then by name.
+	 * Sort folders by vmfo_order (if present) then by name.
 	 */
 	const sortFolders = useCallback((folderList) => {
 		return [...folderList].sort((a, b) => {
-			const orderA = a.vmf_order;
-			const orderB = b.vmf_order;
+			const orderA = a.vmfo_order;
+			const orderB = b.vmfo_order;
 			// If both have custom order, use it
 			if (orderA !== undefined && orderA !== null && orderB !== undefined && orderB !== null) {
 				return orderA - orderB;
@@ -161,9 +161,9 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 	const fetchFolders = useCallback(async (typeFilter = mediaType, forceRefresh = false) => {
 		try {
 			// Fetch fresh folder structure from custom endpoint
-			// This endpoint already includes vmf_order and is sorted
+			// This endpoint already includes vmfo_order and is sorted
 			const freshFolders = await apiFetch({
-				path: '/vmf/v1/folders',
+				path: '/vmfo/v1/folders',
 			});
 
 			// Check if structure changed (deep equality on essential props)
@@ -180,7 +180,7 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 			if (typeFilter) {
 				try {
 					const filteredCounts = await apiFetch({
-						path: `/vmf/v1/folders/counts?media_type=${encodeURIComponent(typeFilter)}`,
+						path: `/vmfo/v1/folders/counts?media_type=${encodeURIComponent(typeFilter)}`,
 					});
 					finalFolders = freshFolders.map((f) => ({
 						...f,

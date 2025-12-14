@@ -63,8 +63,8 @@ class AdminTest extends TestCase {
 	 * Test enqueue_scripts returns early when asset file doesn't exist.
 	 */
 	public function test_enqueue_scripts_skips_when_no_asset_file(): void {
-		if ( ! defined( 'VMF_PATH' ) ) {
-			define( 'VMF_PATH', '/tmp/vmf-test/' );
+		if ( ! defined( 'VMFO_PATH' ) ) {
+			define( 'VMFO_PATH', '/tmp/vmf-test/' );
 		}
 
 		Functions\expect( 'wp_enqueue_script' )->never();

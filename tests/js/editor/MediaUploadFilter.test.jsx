@@ -55,7 +55,7 @@ describe('MediaUploadFilter', () => {
 
 			expect(addFilter).toHaveBeenCalledWith(
 				'editor.MediaUpload',
-				'vmf/folder-filter',
+				'vmfo/folder-filter',
 				expect.any(Function)
 			);
 		});

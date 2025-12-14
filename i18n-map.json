@@ -1,6 +1,7 @@
 {
 	"src/admin/index.js": "build/admin.js",
 	"src/admin/media-library.js": "build/admin.js",
+	"src/admin/settings.js": "build/settings.js",
 	"src/admin/components/BulkFolderAction.jsx": "build/admin.js",
 	"src/admin/components/DroppableFolder.jsx": "build/admin.js",
 	"src/admin/components/FolderManager.jsx": "build/admin.js",
