@@ -34,6 +34,33 @@ Virtual Media Folders uses a custom taxonomy to assign media to folders. This me
 * URLs never change when you reorganize
 * Folders can be nested to create hierarchies
 
+= Usage =
+
+** Organizing Media **
+
+1. Go to **Media > Library**
+2. Click the folder icon to show the sidebar
+3. Use **+** to create folders
+4. Drag media onto folders to organize
+5. Click a folder to filter the view
+
+** Settings **
+
+Go to **Media > Folder Settings** to configure:
+
+* **Show "All Media"** – Display "All Media" option in sidebar
+* **Show "Uncategorized"** – Display folder for unassigned media
+* **Jump to folder after move** – Navigate to target folder after moving
+* **Default folder for uploads** – Auto-assign new uploads to a folder
+
+** Block Editor **
+
+When inserting media from a block (Image, Gallery, etc.):
+
+1. Open the Media Library modal
+2. Use the folder sidebar to filter
+3. Select your media as usual
+
 = Documentation =
 
 * [Accessibility](https://github.com/soderlind/virtual-media-folders/blob/main/docs/a11y.md) – Keyboard navigation and screen reader support
@@ -46,6 +73,8 @@ Virtual Media Folders uses a custom taxonomy to assign media to folders. This me
 1. Go to Plugins → Add New in your WordPress admin
 2. Search for "Virtual Media Folders"
 3. Click "Install Now" and then "Activate"
+
+
 
 == Frequently Asked Questions ==
 
