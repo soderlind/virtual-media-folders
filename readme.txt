@@ -36,7 +36,7 @@ Virtual Media Folders uses a custom taxonomy to assign media to folders. This me
 
 = Usage =
 
-** Organizing Media **
+**Organizing Media**
 
 1. Go to **Media > Library**
 2. Click the folder icon to show the sidebar
@@ -44,7 +44,7 @@ Virtual Media Folders uses a custom taxonomy to assign media to folders. This me
 4. Drag media onto folders to organize
 5. Click a folder to filter the view
 
-** Settings **
+**Settings**
 
 Go to **Media > Folder Settings** to configure:
 
@@ -53,7 +53,7 @@ Go to **Media > Folder Settings** to configure:
 * **Jump to folder after move** – Navigate to target folder after moving
 * **Default folder for uploads** – Auto-assign new uploads to a folder
 
-** Block Editor **
+**Block Editor**
 
 When inserting media from a block (Image, Gallery, etc.):
 
