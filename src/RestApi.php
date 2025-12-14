@@ -944,7 +944,7 @@ final class RestApi extends WP_REST_Controller {
 			'description' => $term->description,
 			'parent'      => $term->parent,
 			'count'       => $term->count,
-			'vmfo_order'   => $vmfo_order !== '' ? (int) $vmfo_order : null,
+			'vmfo_order'  => $vmfo_order !== '' ? (int) $vmfo_order : null,
 			'_links'      => [
 				'self'       => [
 					[
