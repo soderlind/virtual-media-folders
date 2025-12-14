@@ -2,7 +2,7 @@
 
 Virtual folder organization for the WordPress Media Library.
 
-[![Try in WordPress Playground](https://img.shields.io/badge/▶_Try_in_WordPress_Playground-blue?style=for-the-badge)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/virtual-media-folders/refs/heads/main/assets/blueprint.json)
+[![Try in WordPress Playground](https://img.shields.io/badge/▶_Try_in_WordPress_Playground-blue?style=for-the-badge)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/soderlind/virtual-media-folders/refs/heads/main/.wordpress-org/blueprint.json)
 
 ## Description
 
