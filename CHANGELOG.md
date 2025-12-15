@@ -5,6 +5,16 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2025-12-15
+
+### Changed
+- Folder counts endpoint now avoids per-folder queries for better performance
+
+### Fixed
+- Suggestions REST response now matches stored suggestion labels (string-based suggestions)
+- Admin UI: hardened notice rendering to avoid HTML injection
+- Admin UI: reduced risk of duplicate event handlers/observers when scripts re-run
+
 ## [1.3.1] - 2025-12-14
 
 ### Fixed

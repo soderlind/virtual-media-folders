@@ -45,12 +45,18 @@ vi.mock('@wordpress/components', () => ({
 	),
 }));
 
+import apiFetch from '@wordpress/api-fetch';
+
 describe('MoveToFolderMenu', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it('renders toggle button with folder icon', () => {
+		// Prevent the background folder fetch from resolving and updating state
+		// after the test has completed.
+		apiFetch.mockImplementation(() => new Promise(() => {}));
+
 		act(() => {
 			render(<MoveToFolderMenu mediaId={1} currentFolderId={null} onMove={vi.fn()} />);
 		});

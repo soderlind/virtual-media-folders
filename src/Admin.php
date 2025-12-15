@@ -102,7 +102,7 @@ class Admin {
 
 		// Append to existing help sidebar.
 		$sidebar  = $screen->get_help_sidebar();
-		$sidebar .= '<p><a href="https://github.com/soderlind/virtual-media-folders" target="_blank">' . esc_html__( 'Virtual Media Folders on GitHub', 'virtual-media-folders' ) . '</a></p>';
+		$sidebar .= '<p><a href="https://github.com/soderlind/virtual-media-folders" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Virtual Media Folders on GitHub', 'virtual-media-folders' ) . '</a></p>';
 		$screen->set_help_sidebar( $sidebar );
 	}
 

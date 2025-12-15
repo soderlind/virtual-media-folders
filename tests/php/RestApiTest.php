@@ -169,4 +169,67 @@ class RestApiTest extends TestCase {
 		$this->assertArrayHasKey( 'self', $result[ '_links' ] );
 		$this->assertArrayHasKey( 'collection', $result[ '_links' ] );
 	}
+
+	/**
+	 * Test get_suggestions returns stored suggestion labels.
+	 */
+	public function test_get_suggestions_returns_labels(): void {
+		Functions\when( 'get_post' )->justReturn( (object) [ 'post_type' => 'attachment' ] );
+		Functions\when( 'get_post_meta' )->alias(
+			function ( $post_id, $key, $single = true ) {
+				if ( $key === '_vmfo_suggestions_dismissed' ) {
+					return false;
+				}
+				if ( $key === '_vmfo_folder_suggestions' ) {
+					return [ 'Images', '2025/11' ];
+				}
+				return null;
+			}
+		);
+
+		$request = new \WP_REST_Request();
+		$request->set_param( 'media_id', 123 );
+
+		$response = $this->api->get_suggestions( $request );
+		$this->assertInstanceOf( \WP_REST_Response::class, $response );
+
+		$data = $response->get_data();
+		$this->assertSame(
+			[
+				'suggestions' => [ 'Images', '2025/11' ],
+				'dismissed'   => false,
+			],
+			$data
+		);
+	}
+
+	/**
+	 * Test get_suggestions returns empty when dismissed.
+	 */
+	public function test_get_suggestions_returns_empty_when_dismissed(): void {
+		Functions\when( 'get_post' )->justReturn( (object) [ 'post_type' => 'attachment' ] );
+		Functions\when( 'get_post_meta' )->alias(
+			function ( $post_id, $key, $single = true ) {
+				if ( $key === '_vmfo_suggestions_dismissed' ) {
+					return true;
+				}
+				return null;
+			}
+		);
+
+		$request = new \WP_REST_Request();
+		$request->set_param( 'media_id', 123 );
+
+		$response = $this->api->get_suggestions( $request );
+		$this->assertInstanceOf( \WP_REST_Response::class, $response );
+
+		$data = $response->get_data();
+		$this->assertSame(
+			[
+				'suggestions' => [],
+				'dismissed'   => true,
+			],
+			$data
+		);
+	}
 }

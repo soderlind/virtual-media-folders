@@ -636,11 +636,18 @@ final class RestApi extends WP_REST_Controller {
 	public function get_folder_counts( WP_REST_Request $request ): WP_REST_Response {
 		$media_type = $request->get_param( 'media_type' );
 
+		// Build mime type query based on media_type.
+		$mime_types = $this->get_mime_types_for_filter( $media_type );
+
 		// Get all folders.
+		// When no filter is active, ask WP to pad counts for hierarchical taxonomies.
 		$terms = get_terms(
 			[
-				'taxonomy'   => Taxonomy::TAXONOMY,
-				'hide_empty' => false,
+				'taxonomy'     => Taxonomy::TAXONOMY,
+				'hide_empty'   => false,
+				'pad_counts'   => empty( $mime_types ),
+				'number'       => 0,
+				'hierarchical' => true,
 			]
 		);
 
@@ -648,35 +655,89 @@ final class RestApi extends WP_REST_Controller {
 			return new WP_REST_Response( [], 200 );
 		}
 
-		$counts = [];
-
-		// Build mime type query based on media_type.
-		$mime_types = $this->get_mime_types_for_filter( $media_type );
-
-		foreach ( $terms as $term ) {
-			$query_args = [
-				'post_type'      => 'attachment',
-				'post_status'    => 'inherit',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-				'tax_query'      => [
-					[
-						'taxonomy' => Taxonomy::TAXONOMY,
-						'field'    => 'term_id',
-						'terms'    => $term->term_id,
-					],
-				],
-			];
-
-			if ( ! empty( $mime_types ) ) {
-				$query_args[ 'post_mime_type' ] = $mime_types;
+		// Fast path: use the (padded) term counts already computed by WP.
+		if ( empty( $mime_types ) ) {
+			$counts = [];
+			foreach ( $terms as $term ) {
+				$counts[ (int) $term->term_id ] = (int) $term->count;
 			}
-
-			$query                    = new \WP_Query( $query_args );
-			$counts[ $term->term_id ] = $query->found_posts;
+			return new WP_REST_Response( $counts, 200 );
 		}
 
-		return new WP_REST_Response( $counts, 200 );
+		global $wpdb;
+
+		// Aggregate direct counts per term in a single query.
+		$placeholders = implode( ',', array_fill( 0, count( $mime_types ), '%s' ) );
+		$sql          = "SELECT tt.term_id, COUNT(DISTINCT p.ID) AS cnt\n" .
+			"FROM {$wpdb->term_relationships} tr\n" .
+			"INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id\n" .
+			"INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id\n" .
+			"WHERE tt.taxonomy = %s\n" .
+			"AND p.post_type = 'attachment'\n" .
+			"AND p.post_status = 'inherit'\n" .
+			"AND p.post_mime_type IN ({$placeholders})\n" .
+			"GROUP BY tt.term_id";
+
+		$params = array_merge( [ Taxonomy::TAXONOMY ], $mime_types );
+		$rows   = $wpdb->get_results( $wpdb->prepare( $sql, $params ), 'ARRAY_A' );
+
+		$direct_counts = [];
+		foreach ( $rows as $row ) {
+			$term_id                   = (int) ( $row[ 'term_id' ] ?? 0 );
+			$direct_counts[ $term_id ] = (int) ( $row[ 'cnt' ] ?? 0 );
+		}
+
+		// Build parent/children maps from term hierarchy and pad counts (include children).
+		$children = [];
+		$totals   = [];
+		foreach ( $terms as $term ) {
+			$term_id              = (int) $term->term_id;
+			$children[ $term_id ] = [];
+			$totals[ $term_id ]   = $direct_counts[ $term_id ] ?? 0;
+		}
+		foreach ( $terms as $term ) {
+			$term_id = (int) $term->term_id;
+			$parent  = (int) $term->parent;
+			if ( $parent > 0 && isset( $children[ $parent ] ) ) {
+				$children[ $parent ][] = $term_id;
+			}
+		}
+
+		$state = [];
+		foreach ( array_keys( $children ) as $root_id ) {
+			if ( ( $state[ $root_id ] ?? 0 ) === 2 ) {
+				continue;
+			}
+
+			$stack = [ [ $root_id, false ] ];
+			while ( ! empty( $stack ) ) {
+				[ $node, $done ] = array_pop( $stack );
+
+				if ( $done ) {
+					$sum = $totals[ $node ] ?? 0;
+					foreach ( $children[ $node ] ?? [] as $child ) {
+						$sum += $totals[ $child ] ?? 0;
+					}
+					$totals[ $node ] = $sum;
+					$state[ $node ]  = 2;
+					continue;
+				}
+
+				if ( ( $state[ $node ] ?? 0 ) === 2 ) {
+					continue;
+				}
+
+				$state[ $node ] = 1;
+				$stack[]        = [ $node, true ];
+				foreach ( $children[ $node ] ?? [] as $child ) {
+					if ( ( $state[ $child ] ?? 0 ) !== 2 ) {
+						$stack[] = [ $child, false ];
+					}
+				}
+			}
+		}
+
+		return new WP_REST_Response( $totals, 200 );
 	}
 
 	/**
@@ -759,27 +820,56 @@ final class RestApi extends WP_REST_Controller {
 		}
 
 		// Get stored suggestions.
+		// Note: Suggestions are stored as strings (e.g. "Images", "2025/11").
+		// For backward compatibility, numeric values are treated as term IDs and resolved to term names.
 		$suggestions = get_post_meta( $media_id, '_vmfo_folder_suggestions', true );
 		if ( ! is_array( $suggestions ) ) {
 			$suggestions = [];
 		}
 
-		// Enrich suggestions with folder data.
-		$enriched = [];
-		foreach ( $suggestions as $folder_id ) {
-			$term = get_term( $folder_id, Taxonomy::TAXONOMY );
-			if ( $term && ! is_wp_error( $term ) ) {
-				$enriched[] = $this->prepare_folder_for_response( $term );
+		$labels = [];
+		foreach ( $suggestions as $suggestion ) {
+			$label = $this->normalize_suggestion_label( $suggestion );
+			if ( $label !== '' ) {
+				$labels[] = $label;
 			}
 		}
 
+		$labels = array_values( array_unique( $labels ) );
+
 		return new WP_REST_Response(
 			[
-				'suggestions' => $enriched,
+				'suggestions' => $labels,
 				'dismissed'   => false,
 			],
 			200
 		);
+	}
+
+	/**
+	 * Normalize a stored suggestion into a human-readable label.
+	 *
+	 * @param mixed $value Stored suggestion value.
+	 * @return string Suggestion label.
+	 */
+	private function normalize_suggestion_label( $value ): string {
+		if ( is_int( $value ) || ( is_string( $value ) && ctype_digit( $value ) ) ) {
+			$term_id = is_int( $value ) ? $value : (int) $value;
+			$term_id = abs( $term_id );
+			if ( $term_id > 0 ) {
+				$term = get_term( $term_id, Taxonomy::TAXONOMY );
+				if ( $term && ! is_wp_error( $term ) && isset( $term->name ) ) {
+					return (string) $term->name;
+				}
+			}
+			return '';
+		}
+
+		if ( is_string( $value ) ) {
+			return trim( $value );
+		}
+
+		return '';
 	}
 
 	/**
