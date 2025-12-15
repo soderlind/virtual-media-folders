@@ -212,7 +212,9 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	function showNotice(message, type = 'success') {
 		const notice = document.createElement('div');
 		notice.className = `notice notice-${type} vmf-notice is-dismissible`;
-		notice.innerHTML = `<p>${message}</p>`;
+		const p = document.createElement('p');
+		p.textContent = String(message ?? '');
+		notice.appendChild(p);
 		notice.style.cssText = 'position: fixed; top: 40px; right: 20px; z-index: 100000; max-width: 300px;';
 		document.body.appendChild(notice);
 		setTimeout(() => notice.remove(), 3000);

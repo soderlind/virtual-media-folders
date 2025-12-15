@@ -76,6 +76,10 @@ describe('FolderTree', () => {
 	});
 
 	it('renders loading state initially', () => {
+		// Keep the initial folder fetch pending so the component stays in the
+		// loading state without triggering async state updates after the test.
+		apiFetch.mockImplementation(() => new Promise(() => {}));
+
 		act(() => {
 			render(<FolderTree onFolderSelect={() => {}} />);
 		});

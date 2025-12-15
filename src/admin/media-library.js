@@ -32,12 +32,13 @@ function hideFolderView() {
 }
 
 // Listen for clicks on view switcher at document level (before page load completes)
-jQuery(document).on('click', '.view-switch a', function() {
+// Namespace the handler to avoid duplicate bindings if scripts re-run.
+jQuery(document).off('click.vmfo', '.view-switch a').on('click.vmfo', '.view-switch a', function() {
 	hideFolderView();
 });
 
 // When "Add Media File" button is clicked while a folder is selected, switch to All Media
-jQuery(document).on('click', '.page-title-action', function() {
+jQuery(document).off('click.vmfo', '.page-title-action').on('click.vmfo', '.page-title-action', function() {
 	// Check if a folder is currently selected (not All Media)
 	if (jQuery('.attachments-browser').hasClass('vmf-folder-filtered')) {
 		// Select All Media via the global function
@@ -235,7 +236,9 @@ window.vmfMoveToFolder = moveMediaToFolder;
 function showNotice(message, type = 'success') {
 	const notice = document.createElement('div');
 	notice.className = `notice notice-${type} vmf-notice is-dismissible`;
-	notice.innerHTML = `<p>${message}</p>`;
+	const p = document.createElement('p');
+	p.textContent = String(message ?? '');
+	notice.appendChild(p);
 	notice.style.cssText = 'position: fixed; top: 40px; right: 20px; z-index: 100000; max-width: 300px;';
 	document.body.appendChild(notice);
 	setTimeout(() => notice.remove(), 3000);
@@ -267,6 +270,16 @@ function setupStickySidebar(browser) {
 		
 		if (!attachmentsWrapper || !attachments) {
 			return;
+		}
+
+		// If sticky behavior was previously initialized, clean it up first to avoid
+		// accumulating scroll/resize listeners and MutationObservers.
+		if (typeof sidebar._cleanupSticky === 'function') {
+			sidebar._cleanupSticky();
+		}
+		if (sidebar._vmfoUploaderObserver) {
+			sidebar._vmfoUploaderObserver.disconnect();
+			delete sidebar._vmfoUploaderObserver;
 		}
 		
 		const adminBarHeight = 32;
@@ -313,6 +326,7 @@ function setupStickySidebar(browser) {
 				attributes: true, 
 				attributeFilter: ['style', 'class'] 
 			});
+			sidebar._vmfoUploaderObserver = observer;
 		}
 		
 		function updateSidebarPosition() {
@@ -363,6 +377,10 @@ function setupStickySidebar(browser) {
 		sidebar._cleanupSticky = () => {
 			window.removeEventListener('scroll', onScroll);
 			window.removeEventListener('resize', onResize);
+			if (sidebar._vmfoUploaderObserver) {
+				sidebar._vmfoUploaderObserver.disconnect();
+				delete sidebar._vmfoUploaderObserver;
+			}
 		};
 	};
 	
@@ -406,6 +424,20 @@ function toggleFolderView(browser, show) {
 		document.body.classList.remove('vmf-folder-view-active');
 		// Remove the class
 		browser.$el.removeClass('vmf-sidebar-visible');
+
+		// Cleanup sticky listeners/observers if they were installed.
+		const sidebar = document.querySelector('.vmf-folder-tree-sidebar');
+		if (sidebar && typeof sidebar._cleanupSticky === 'function') {
+			sidebar._cleanupSticky();
+		}
+
+		// Cleanup drag observer + handlers to avoid duplicate work.
+		const attachmentsEl = browser.$el.find('.attachments')[0];
+		if (attachmentsEl && attachmentsEl._vmfoDragObserver) {
+			attachmentsEl._vmfoDragObserver.disconnect();
+			delete attachmentsEl._vmfoDragObserver;
+		}
+		browser.$el.find('.attachments').off('dragstart.vmfo dragend.vmfo');
 		// Restore 'current' class to grid icon (we're in grid mode)
 		jQuery('.view-switch a.view-grid').addClass('current');
 	}
@@ -638,15 +670,22 @@ function setupDragAndDrop(browser) {
 	// Initial setup
 	makeAttachmentsDraggable();
 
-	// Watch for new attachments being added
+	// Watch for new attachments being added (disconnect any previous observer first)
+	const attachmentsEl = $attachments[0];
+	if (attachmentsEl && attachmentsEl._vmfoDragObserver) {
+		attachmentsEl._vmfoDragObserver.disconnect();
+		delete attachmentsEl._vmfoDragObserver;
+	}
 	const observer = new MutationObserver(makeAttachmentsDraggable);
-	observer.observe($attachments[0], { childList: true, subtree: true });
+	observer.observe(attachmentsEl, { childList: true, subtree: true });
+	attachmentsEl._vmfoDragObserver = observer;
 
-	// Remove existing handlers to avoid duplicates
-	$attachments.off('dragstart.mm dragend.mm');
+	// Remove existing handlers to avoid duplicates.
+	// Use a plugin-specific namespace to avoid clobbering other plugins.
+	$attachments.off('dragstart.vmfo dragend.vmfo');
 
 	// Handle drag start
-	$attachments.on('dragstart.mm', '.attachment', function(e) {
+	$attachments.on('dragstart.vmfo', '.attachment', function(e) {
 		// Cancel keyboard move mode if active - mouse drag takes precedence
 		if (window.vmfMoveMode && window.vmfMoveMode.isActive()) {
 			window.vmfMoveMode.cancel();
@@ -680,7 +719,7 @@ function setupDragAndDrop(browser) {
 		}
 	});
 
-	$attachments.on('dragend.mm', '.attachment', function() {
+	$attachments.on('dragend.vmfo', '.attachment', function() {
 		jQuery(this).removeClass('vmf-dragging');
 		// Re-enable WordPress uploader overlay
 		document.body.classList.remove('vmf-internal-drag');

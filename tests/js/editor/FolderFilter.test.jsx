@@ -117,6 +117,7 @@ describe('FolderFilter', () => {
 	});
 
 	it('should handle API error gracefully', async () => {
+		const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 		apiFetch.mockRejectedValue(new Error('API Error'));
 
 		// Should not throw
@@ -126,6 +127,9 @@ describe('FolderFilter', () => {
 			const select = screen.getByTestId('folder-select');
 			expect(select).toBeDefined();
 		});
+
+		expect(consoleError).toHaveBeenCalled();
+		consoleError.mockRestore();
 	});
 
 	it('should indent child folders in the list', async () => {
