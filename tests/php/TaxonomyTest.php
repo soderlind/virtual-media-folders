@@ -54,7 +54,7 @@ class TaxonomyTest extends TestCase {
 		Monkey\Functions\when( 'sanitize_text_field' )->alias( static fn( $v ) => $v );
 		Monkey\Functions\when( 'wp_unslash' )->alias( static fn( $v ) => $v );
 
-		$GLOBALS['pagenow'] = 'edit.php';
+		$GLOBALS[ 'pagenow' ] = 'edit.php';
 
 		$pieces = [ 'join' => '', 'orderby' => 'ORDER BY t.name ASC' ];
 		$result = Taxonomy::filter_terms_clauses_vmfo_order( $pieces, [ Taxonomy::TAXONOMY ], [] );
@@ -68,24 +68,24 @@ class TaxonomyTest extends TestCase {
 		Monkey\Functions\when( 'wp_unslash' )->alias( static fn( $v ) => $v );
 
 		global $wpdb;
-		$GLOBALS['pagenow'] = 'edit-tags.php';
-		$wpdb              = (object) [ 'termmeta' => 'wp_termmeta' ];
+		$GLOBALS[ 'pagenow' ] = 'edit-tags.php';
+		$wpdb               = (object) [ 'termmeta' => 'wp_termmeta' ];
 
-		$_GET['taxonomy']  = Taxonomy::TAXONOMY;
-		$_GET['post_type'] = 'attachment';
-		unset( $_GET['orderby'] );
+		$_GET[ 'taxonomy' ]  = Taxonomy::TAXONOMY;
+		$_GET[ 'post_type' ] = 'attachment';
+		unset( $_GET[ 'orderby' ] );
 
 		$pieces = [ 'join' => '', 'orderby' => 'ORDER BY t.name ASC', 'fields' => 't.*' ];
 		$result = Taxonomy::filter_terms_clauses_vmfo_order( $pieces, [ Taxonomy::TAXONOMY ], [] );
 
-		$this->assertStringContainsString( 'vmfo_order_meta', $result['join'] );
-		$this->assertStringContainsString( "meta_key = 'vmfo_order'", $result['join'] );
-		$this->assertStringContainsString( 'vmfo_parent', $result['fields'] );
-		$this->assertStringContainsString( 'vmfo_order_missing', $result['fields'] );
-		$this->assertStringContainsString( 'vmfo_order_num', $result['fields'] );
-		$this->assertStringContainsString( 'vmfo_parent', $result['orderby'] );
-		$this->assertStringContainsString( 'vmfo_order_num', $result['orderby'] );
-		$this->assertStringContainsString( 't.name', $result['orderby'] );
+		$this->assertStringContainsString( 'vmfo_order_meta', $result[ 'join' ] );
+		$this->assertStringContainsString( "meta_key = 'vmfo_order'", $result[ 'join' ] );
+		$this->assertStringContainsString( 'vmfo_parent', $result[ 'fields' ] );
+		$this->assertStringContainsString( 'vmfo_order_missing', $result[ 'fields' ] );
+		$this->assertStringContainsString( 'vmfo_order_num', $result[ 'fields' ] );
+		$this->assertStringContainsString( 'vmfo_parent', $result[ 'orderby' ] );
+		$this->assertStringContainsString( 'vmfo_order_num', $result[ 'orderby' ] );
+		$this->assertStringContainsString( 't.name', $result[ 'orderby' ] );
 	}
 
 	public function test_register_taxonomy_registers_vmfo_folder(): void {

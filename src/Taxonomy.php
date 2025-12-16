@@ -87,28 +87,28 @@ class Taxonomy {
 		}
 
 		// Allow explicit sorting by other columns (e.g. count) when requested.
-		if ( isset( $_GET['orderby'] ) && $_GET['orderby'] !== '' && $_GET['orderby'] !== 'name' ) {
+		if ( isset( $_GET[ 'orderby' ] ) && $_GET[ 'orderby' ] !== '' && $_GET[ 'orderby' ] !== 'name' ) {
 			return $pieces;
 		}
 
 		// Only adjust ordering for queries that return full term rows.
 		// (Ordering a non-all fields query by meta can lead to SQL errors with DISTINCT.)
-		if ( isset( $args['fields'] ) && ! in_array( $args['fields'], [ 'all', 'all_with_object_id', '' ], true ) ) {
+		if ( isset( $args[ 'fields' ] ) && ! in_array( $args[ 'fields' ], [ 'all', 'all_with_object_id', '' ], true ) ) {
 			return $pieces;
 		}
 
 		global $wpdb;
 		$alias = 'vmfo_order_meta';
 
-		$join = $pieces['join'] ?? '';
+		$join = $pieces[ 'join' ] ?? '';
 		if ( ! str_contains( $join, $alias ) ) {
 			$join .= " LEFT JOIN {$wpdb->termmeta} AS {$alias} ON {$alias}.term_id = t.term_id AND {$alias}.meta_key = 'vmfo_order' ";
 		}
-		$pieces['join'] = $join;
+		$pieces[ 'join' ] = $join;
 
 		// If DISTINCT is used, MySQL can require ORDER BY expressions to appear in the SELECT list.
 		// Add computed fields and order by aliases for compatibility.
-		$fields = trim( $pieces['fields'] ?? '' );
+		$fields = trim( $pieces[ 'fields' ] ?? '' );
 		if ( $fields === '' ) {
 			$fields = 't.*';
 		}
@@ -117,15 +117,15 @@ class Taxonomy {
 			$fields .= ", CASE WHEN {$alias}.meta_value IS NULL OR {$alias}.meta_value = '' THEN 1 ELSE 0 END AS vmfo_order_missing";
 			$fields .= ", CAST({$alias}.meta_value AS UNSIGNED) AS vmfo_order_num";
 		}
-		$pieces['fields'] = $fields;
+		$pieces[ 'fields' ] = $fields;
 
 		// Order by parent first so siblings are grouped, then vmfo_order, then name.
 		$orderby_list = 'vmfo_parent, vmfo_order_missing, vmfo_order_num, t.name';
-		$current      = $pieces['orderby'] ?? '';
+		$current      = $pieces[ 'orderby' ] ?? '';
 		if ( stripos( $current, 'order by' ) !== false ) {
-			$pieces['orderby'] = 'ORDER BY ' . $orderby_list;
+			$pieces[ 'orderby' ] = 'ORDER BY ' . $orderby_list;
 		} else {
-			$pieces['orderby'] = $orderby_list;
+			$pieces[ 'orderby' ] = $orderby_list;
 		}
 
 		return $pieces;
@@ -141,13 +141,13 @@ class Taxonomy {
 			return false;
 		}
 
-		$pagenow = $GLOBALS['pagenow'] ?? '';
+		$pagenow = $GLOBALS[ 'pagenow' ] ?? '';
 		if ( $pagenow !== 'edit-tags.php' ) {
 			return false;
 		}
 
-		$taxonomy  = isset( $_GET['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_GET['taxonomy'] ) ) : '';
-		$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : '';
+		$taxonomy  = isset( $_GET[ 'taxonomy' ] ) ? sanitize_text_field( wp_unslash( $_GET[ 'taxonomy' ] ) ) : '';
+		$post_type = isset( $_GET[ 'post_type' ] ) ? sanitize_text_field( wp_unslash( $_GET[ 'post_type' ] ) ) : '';
 
 		return $taxonomy === self::TAXONOMY && $post_type === 'attachment';
 	}
