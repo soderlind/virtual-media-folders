@@ -5,8 +5,8 @@
 npm-debug.log*
 yarn-error.log*
 coverage/
-/.phpunit.result.cache/
-/.phpunit.cache/
+.phpunit.result.cache/
+.phpunit.cache/
 .env
 .env.local
 *.log
