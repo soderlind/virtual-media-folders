@@ -5,6 +5,13 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - 2025-12-17
+
+### Changed
+- Admin taxonomy screen for `vmfo_folder` now follows the same ordering as the sidebar
+- Removed sortable column UI from the Media Folders taxonomy list table
+- Media Folders taxonomy UI is only shown when `WP_DEBUG` is true
+
 ## [1.3.2] - 2025-12-15
 
 ### Changed
@@ -445,6 +452,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
+[1.3.3]: https://github.com/soderlind/virtual-media-folders/compare/1.3.2...1.3.3
+[1.3.2]: https://github.com/soderlind/virtual-media-folders/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/soderlind/virtual-media-folders/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/soderlind/virtual-media-folders/compare/1.2.3...1.3.0
+[1.2.3]: https://github.com/soderlind/virtual-media-folders/compare/1.2.2...1.2.3
+[1.2.2]: https://github.com/soderlind/virtual-media-folders/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/soderlind/virtual-media-folders/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/soderlind/virtual-media-folders/compare/1.1.7...1.2.0
 [1.1.7]: https://github.com/soderlind/virtual-media-folders/compare/1.1.6...1.1.7
