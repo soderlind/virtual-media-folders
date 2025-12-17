@@ -36,7 +36,7 @@ Virtual Media Folders brings folder organization to your WordPress Media Library
 2. Go to **Plugins > Add New > Upload Plugin**
 3. Upload the zip file and activate
 
-### From WordPress.org
+### From [WordPress.org](https://wordpress.org/plugins/virtual-media-folders/)
 
 1. Go to **Plugins > Add New**
 2. Search for "Virtual Media Folders"
