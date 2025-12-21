@@ -108,6 +108,8 @@ The plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 ### Authentication
 
 Use [Application Passwords](https://make.wordpress.org/core/2020/11/05/application-passwords-integration-guide/) (WordPress 5.6+). Generate one at **Users > Profile > Application Passwords**.
+- `username`: your WordPress username
+- `xxxx xxxx xxxx xxxx xxxx xxxx`: the generated application password
 
 ### Examples
 
