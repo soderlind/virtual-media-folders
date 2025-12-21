@@ -16,6 +16,62 @@ let folderTreeRoot = null;
 let currentBrowser = null;
 
 /**
+ * If the user lands on upload.php with mode=folder, WordPress may still render
+ * the list table (it only recognizes grid/list). Folder view requires the grid
+ * (wp.media AttachmentsBrowser), so redirect to grid while preserving intent.
+ */
+function ensureGridModeForFolderView() {
+	const urlParams = new URLSearchParams(window.location.search);
+	const redirectKey = 'vmfo_folder_mode_redirected';
+
+	// Clear the one-time redirect guard on any non-folder page so future
+	// navigations to mode=folder can still trigger a redirect.
+	if (urlParams.get('mode') !== 'folder') {
+		try {
+			if (window.sessionStorage) {
+				sessionStorage.removeItem(redirectKey);
+			}
+		} catch (e) {
+			// Ignore storage errors.
+		}
+	}
+
+	const wantsFolderMode = urlParams.get('mode') === 'folder' || urlParams.has('vmfo_folder');
+	if (!wantsFolderMode) {
+		return;
+	}
+
+	// Detect list-table view (no AttachmentsBrowser DOM).
+	const isListTableView = !!document.querySelector('.wp-list-table') && !document.querySelector('.attachments-browser');
+	if (!isListTableView) {
+		return;
+	}
+
+	// Prevent potential redirect loops in edge cases.
+	try {
+		if (window.sessionStorage && sessionStorage.getItem(redirectKey) === '1') {
+			return;
+		}
+		sessionStorage.setItem(redirectKey, '1');
+	} catch (e) {
+		// Ignore storage errors.
+	}
+
+	// Ensure folder view is enabled once we reach grid mode.
+	try {
+		localStorage.setItem('vmfo_folder_view', '1');
+	} catch (e) {
+		// Ignore storage errors.
+	}
+
+	const url = new URL(window.location.href);
+	url.searchParams.set('mode', 'grid');
+	window.location.replace(url.toString());
+}
+
+ensureGridModeForFolderView();
+
+/**
  * Global function to hide folder view - can be called from anywhere
  */
 function hideFolderView() {
@@ -76,13 +132,14 @@ function addFolderToggleButtonToPage() {
 	
 	// Folder icon SVG - using a bolder folder-like icon
 	const folderIcon = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7.5l-2-2H4z"/></svg>`;
+	const folderHref = 'upload.php?mode=folder';
 	
 	// Find the view switcher - it's in the page header area on upload.php
 	const $viewSwitcher = jQuery('.view-switch');
 	
 	if ($viewSwitcher.length) {
 		const $button = jQuery(`
-			<a href="#" class="vmf-folder-toggle-button${shouldBeActive ? ' is-active' : ''}" title="${__('Show Folders', 'virtual-media-folders')}">
+			<a href="${folderHref}" class="vmf-folder-toggle-button${shouldBeActive ? ' is-active' : ''}" title="${__('Show Folders', 'virtual-media-folders')}">
 				<span class="screen-reader-text">${__('Show Folders', 'virtual-media-folders')}</span>
 				${folderIcon}
 			</a>
@@ -93,14 +150,22 @@ function addFolderToggleButtonToPage() {
 		
 		// Folder button click - only works in grid mode, navigates to grid mode if in list
 		$button.on('click', (e) => {
+			// Allow normal link behavior for new-tab / modified clicks.
+			if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+				return;
+			}
+
 			e.preventDefault();
 			
-			// Check if we're in list mode (URL has mode=list)
+			// Check if we're in list mode (URL has mode=list) OR if grid isn't rendered yet
 			const urlParams = new URLSearchParams(window.location.search);
-			if (urlParams.get('mode') === 'list') {
+			const isListMode = urlParams.get('mode') === 'list';
+			const hasGridView = !!document.querySelector('.attachments-browser');
+			
+			if (isListMode || !hasGridView) {
 				// Navigate to grid mode with folder view enabled
 				localStorage.setItem('vmfo_folder_view', '1');
-				window.location.href = window.location.pathname + '?mode=grid';
+				window.location.href = 'upload.php?mode=grid';
 				return;
 			}
 			
@@ -418,6 +483,15 @@ function toggleFolderView(browser, show) {
 		alignSidebarWithGrid(browser);
 		// Setup sticky behavior
 		setupStickySidebar(browser);
+
+		// Keep URL in sync with folder mode.
+		try {
+			const url = new URL(window.location.href);
+			url.searchParams.set('mode', 'folder');
+			window.history.replaceState({}, '', url);
+		} catch (e) {
+			// Ignore URL errors.
+		}
 	} else {
 		$container.removeClass('is-visible');
 		$toggle.removeClass('is-active');
@@ -438,6 +512,17 @@ function toggleFolderView(browser, show) {
 			delete attachmentsEl._vmfoDragObserver;
 		}
 		browser.$el.find('.attachments').off('dragstart.vmfo dragend.vmfo');
+
+		// Revert URL back to grid mode if we were using mode=folder.
+		try {
+			const url = new URL(window.location.href);
+			if (url.searchParams.get('mode') === 'folder') {
+				url.searchParams.set('mode', 'grid');
+				window.history.replaceState({}, '', url);
+			}
+		} catch (e) {
+			// Ignore URL errors.
+		}
 		// Restore 'current' class to grid icon (we're in grid mode)
 		jQuery('.view-switch a.view-grid').addClass('current');
 	}

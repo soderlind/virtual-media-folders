@@ -5,6 +5,16 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.4] - 2025-12-21
+
+### Added
+- Direct URL support for folder view via `upload.php?mode=folder`
+- Folder icon now links to `upload.php?mode=folder` for right-click/new-tab support
+
+### Fixed
+- Clicking folder icon from list view now correctly opens folder view
+- URL mode parameter stays in sync when toggling folder view
+
 ## [1.3.3] - 2025-12-17
 
 ### Changed
