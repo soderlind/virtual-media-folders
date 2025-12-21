@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Direct URL support for folder view via `upload.php?mode=folder`
-- Folder icon now links to `upload.php?mode=folder` for right-click/new-tab support
 
 ### Fixed
 - Clicking folder icon from list view now correctly opens folder view

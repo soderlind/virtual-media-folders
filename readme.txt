@@ -106,7 +106,6 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 = 1.3.4 =
 * Added: Direct URL support for folder view via upload.php?mode=folder
-* Fixed: Folder icon now links to upload.php?mode=folder for right-click/new-tab support
 * Fixed: Clicking folder icon from list view now correctly opens folder view
 
 = 1.3.3 =
