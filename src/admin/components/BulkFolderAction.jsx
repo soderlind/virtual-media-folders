@@ -5,9 +5,92 @@
  * The folder list is dynamically updated when folders are added/deleted.
  */
 
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { fetchAllFolders, getCachedFolders } from '../../shared/utils/folderApi';
+
+/**
+ * Sort folders by vmfo_order (if present) then by name.
+ *
+ * @param {Array} folderList Array of folder objects.
+ * @return {Array} Sorted array.
+ */
+function sortFolders(folderList) {
+	return [...folderList].sort((a, b) => {
+		const orderA = a.vmfo_order;
+		const orderB = b.vmfo_order;
+		// If both have custom order, use it
+		if (orderA !== undefined && orderA !== null && orderB !== undefined && orderB !== null) {
+			return orderA - orderB;
+		}
+		// If only one has order, it comes first
+		if (orderA !== undefined && orderA !== null) return -1;
+		if (orderB !== undefined && orderB !== null) return 1;
+		// Neither has order, sort by name
+		return a.name.localeCompare(b.name);
+	});
+}
+
+/**
+ * Build hierarchical tree from flat folder list and flatten for dropdown.
+ * Returns folders in tree order with depth info for indentation.
+ *
+ * @param {Array} folders Flat array of folder objects.
+ * @return {Array} Flattened tree-ordered array with depth property.
+ */
+function buildFlattenedTree(folders) {
+	const sorted = sortFolders(folders);
+	const map = {};
+	const roots = [];
+
+	// Create map
+	sorted.forEach((folder) => {
+		map[folder.id] = { ...folder, children: [], depth: 0 };
+	});
+
+	// Build tree
+	sorted.forEach((folder) => {
+		if (folder.parent && map[folder.parent]) {
+			map[folder.parent].children.push(map[folder.id]);
+		} else {
+			roots.push(map[folder.id]);
+		}
+	});
+
+	// Sort children at each level
+	function sortChildren(items) {
+		items.sort((a, b) => {
+			const orderA = a.vmfo_order;
+			const orderB = b.vmfo_order;
+			if (orderA !== undefined && orderA !== null && orderB !== undefined && orderB !== null) {
+				return orderA - orderB;
+			}
+			if (orderA !== undefined && orderA !== null) return -1;
+			if (orderB !== undefined && orderB !== null) return 1;
+			return a.name.localeCompare(b.name);
+		});
+		items.forEach((item) => {
+			if (item.children.length > 0) {
+				sortChildren(item.children);
+			}
+		});
+	}
+	sortChildren(roots);
+
+	// Flatten tree in order with depth
+	const result = [];
+	function flatten(items, depth) {
+		items.forEach((item) => {
+			result.push({ ...item, depth });
+			if (item.children.length > 0) {
+				flatten(item.children, depth + 1);
+			}
+		});
+	}
+	flatten(roots, 0);
+
+	return result;
+}
 
 /**
  * BulkFolderAction component.
@@ -142,27 +225,22 @@ export default function BulkFolderAction({ onComplete }) {
 				showNotice(data.data?.message || __('Failed to move items.', 'virtual-media-folders'), 'error');
 			}
 
-			// Refresh folders and media
-			if (window.vmfRefreshFolders) {
-				window.vmfRefreshFolders();
-			}
-			
 			// Check if the current folder will be empty after the move
 			const isAllMediaView = !document.querySelector('.attachments-browser')?.classList.contains('vmf-folder-filtered');
 			const totalAttachments = document.querySelectorAll('.attachments .attachment').length;
 			const willBeEmpty = !isAllMediaView && totalAttachments <= mediaIds.length;
+
+			// Refresh folders and media (await to avoid race condition)
+			if (window.vmfRefreshFolders) {
+				await window.vmfRefreshFolders();
+			}
 			
 			// Jump to target folder if current folder will be empty after the move
-			if (willBeEmpty) {
-				// Delay to ensure refresh completes
-				setTimeout(() => {
-					if (window.vmfSelectFolder) {
-						const targetFolderId = selectedFolder === 'uncategorized' 
-							? 'uncategorized' 
-							: parseInt(selectedFolder, 10);
-						window.vmfSelectFolder(targetFolderId);
-					}
-				}, 200);
+			if (willBeEmpty && window.vmfSelectFolder) {
+				const targetFolderId = selectedFolder === 'uncategorized' 
+					? 'uncategorized' 
+					: parseInt(selectedFolder, 10);
+				window.vmfSelectFolder(targetFolderId);
 			} else if (!isAllMediaView) {
 				// Remove the moved items from the current view
 				mediaIds.forEach((id) => {
@@ -203,6 +281,10 @@ export default function BulkFolderAction({ onComplete }) {
 		setTimeout(() => notice.remove(), 3000);
 	}
 
+	// Build tree-ordered folder list for dropdown
+	// This must be called before any early returns to avoid hooks order issues
+	const orderedFolders = useMemo(() => buildFlattenedTree(folders), [folders]);
+
 	if (selectedCount === 0) {
 		return null;
 	}
@@ -217,9 +299,9 @@ export default function BulkFolderAction({ onComplete }) {
 			>
 				<option value="">{__('Move to folder…', 'virtual-media-folders')}</option>
 				<option value="uncategorized">{__('Uncategorized', 'virtual-media-folders')}</option>
-				{folders.map((folder) => (
+				{orderedFolders.map((folder) => (
 					<option key={folder.id} value={folder.id}>
-						{folder.name}
+						{'—'.repeat(folder.depth) + (folder.depth > 0 ? ' ' : '') + folder.name}
 					</option>
 				))}
 			</select>

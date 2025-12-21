@@ -5,6 +5,13 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.5] - 2025-12-21
+
+### Fixed
+- React hook order error (#310) when entering bulk select mode
+- Race condition in folder refresh when moving media to folders
+- Bulk move folder dropdown now ordered like folder tree with hierarchy
+
 ## [1.3.4] - 2025-12-21
 
 ### Added

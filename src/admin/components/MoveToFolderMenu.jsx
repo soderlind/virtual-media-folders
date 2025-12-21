@@ -68,23 +68,60 @@ export function MoveToFolderMenu({ mediaId, currentFolderId, onMove }) {
 	}
 
 	/**
+	 * Sort folders by vmfo_order (if present) then by name.
+	 */
+	function sortFolders(folderList) {
+		return [...folderList].sort((a, b) => {
+			const orderA = a.vmfo_order;
+			const orderB = b.vmfo_order;
+			if (orderA !== undefined && orderA !== null && orderB !== undefined && orderB !== null) {
+				return orderA - orderB;
+			}
+			if (orderA !== undefined && orderA !== null) return -1;
+			if (orderB !== undefined && orderB !== null) return 1;
+			return a.name.localeCompare(b.name);
+		});
+	}
+
+	/**
 	 * Build a hierarchical tree for rendering.
 	 */
 	function buildTree(terms) {
+		const sorted = sortFolders(terms);
 		const map = {};
 		const roots = [];
 
-		terms.forEach((term) => {
+		sorted.forEach((term) => {
 			map[term.id] = { ...term, children: [] };
 		});
 
-		terms.forEach((term) => {
+		sorted.forEach((term) => {
 			if (term.parent && map[term.parent]) {
 				map[term.parent].children.push(map[term.id]);
 			} else {
 				roots.push(map[term.id]);
 			}
 		});
+
+		// Sort children at each level
+		function sortChildren(items) {
+			items.sort((a, b) => {
+				const orderA = a.vmfo_order;
+				const orderB = b.vmfo_order;
+				if (orderA !== undefined && orderA !== null && orderB !== undefined && orderB !== null) {
+					return orderA - orderB;
+				}
+				if (orderA !== undefined && orderA !== null) return -1;
+				if (orderB !== undefined && orderB !== null) return 1;
+				return a.name.localeCompare(b.name);
+			});
+			items.forEach((item) => {
+				if (item.children.length > 0) {
+					sortChildren(item.children);
+				}
+			});
+		}
+		sortChildren(roots);
 
 		return roots;
 	}

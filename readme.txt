@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -103,6 +103,11 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.3.5 =
+* Fixed: React hook order error when entering bulk select mode
+* Fixed: Race condition in folder refresh when moving media
+* Improved: Bulk move folder dropdown now ordered like folder tree with hierarchy
 
 = 1.3.4 =
 * Added: Direct URL support for folder view via upload.php?mode=folder

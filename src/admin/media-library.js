@@ -69,7 +69,12 @@ function ensureGridModeForFolderView() {
 	window.location.replace(url.toString());
 }
 
-ensureGridModeForFolderView();
+// Run after DOM is ready to ensure elements are available for detection
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', ensureGridModeForFolderView);
+} else {
+	ensureGridModeForFolderView();
+}
 
 /**
  * Global function to hide folder view - can be called from anywhere
@@ -89,7 +94,16 @@ function hideFolderView() {
 
 // Listen for clicks on view switcher at document level (before page load completes)
 // Namespace the handler to avoid duplicate bindings if scripts re-run.
-jQuery(document).off('click.vmfo', '.view-switch a').on('click.vmfo', '.view-switch a', function() {
+// IMPORTANT: Only handle actual view-switch links, not the folder toggle button
+jQuery(document).off('click.vmfo', '.view-switch a').on('click.vmfo', '.view-switch a', function(e) {
+	// Don't hide folder view if clicking on our folder toggle button
+	if (jQuery(this).hasClass('vmf-folder-toggle-button')) {
+		return;
+	}
+	// Only respond to actual view switch links (list/grid icons)
+	if (!jQuery(this).hasClass('view-list') && !jQuery(this).hasClass('view-grid')) {
+		return;
+	}
 	hideFolderView();
 });
 
@@ -222,16 +236,14 @@ async function moveMediaToFolder(mediaId, folderId) {
 			if (data.data?.message) {
 				showNotice(data.data.message, 'success');
 			}
-			// Refresh the folder counts
+			// Refresh the folder counts (await to avoid race condition)
 			if (window.vmfRefreshFolders) {
-				window.vmfRefreshFolders();
+				await window.vmfRefreshFolders();
 			}
 			
 			// If current folder is now empty, jump to target folder
 			if (willBeEmpty && window.vmfSelectFolder) {
-				setTimeout(() => {
-					window.vmfSelectFolder(folderId);
-				}, 200);
+				window.vmfSelectFolder(folderId);
 			} else {
 				// Refresh the media library view
 				refreshMediaLibrary();
@@ -575,13 +587,25 @@ function addFolderToggleButton(browser) {
  * Inject folder tree into an AttachmentsBrowser instance.
  */
 function injectFolderTree(browser) {
+	// Always update the browser reference
+	currentBrowser = browser;
+
 	// Check if sidebar already exists in this browser
 	if (browser.$el.find('#vmf-folder-tree').length) {
+		// Sidebar is already in this browser, just ensure visibility classes are correct
+		if (folderViewActive) {
+			browser.$el.addClass('vmf-sidebar-visible');
+			document.body.classList.add('vmf-folder-view-active');
+		}
 		return;
 	}
 
 	// Check if sidebar exists elsewhere (orphaned from previous browser render)
 	const existingSidebar = document.getElementById('vmf-folder-tree');
+	
+	// Check if the existing sidebar is actually attached to the document
+	// If it's detached (orphaned), we need to recreate it
+	const sidebarIsAttached = existingSidebar && document.body.contains(existingSidebar);
 	
 	// Check if folder view should be active
 	const savedPref = localStorage.getItem('vmfo_folder_view');
@@ -595,7 +619,7 @@ function injectFolderTree(browser) {
 	
 	let container;
 	
-	if (existingSidebar) {
+	if (sidebarIsAttached) {
 		// Reuse existing sidebar - preserve its visibility state
 		container = existingSidebar;
 		// Move it to the new browser element
@@ -611,7 +635,26 @@ function injectFolderTree(browser) {
 			document.body.classList.add('vmf-folder-view-active');
 			folderViewActive = true;
 		}
+		
+		// Re-setup toggle button reference and drag/drop if folder view is active
+		if (folderViewActive) {
+			addFolderToggleButton(browser);
+			setupDragAndDrop(browser);
+			setupStickySidebar(browser);
+		}
 		return; // Don't recreate the React root
+	}
+	
+	// If there's a detached sidebar, clean up the old React root
+	if (existingSidebar && !sidebarIsAttached) {
+		if (folderTreeRoot) {
+			try {
+				folderTreeRoot.unmount();
+			} catch (e) {
+				// Ignore unmount errors
+			}
+			folderTreeRoot = null;
+		}
 	}
 
 	// Create new container
