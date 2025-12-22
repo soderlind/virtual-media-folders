@@ -3,6 +3,16 @@
 	"description": "Virtual folder organization and smart management for the WordPress Media Library.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"media",
+		"folders",
+		"media-library",
+		"organization",
+		"taxonomy",
+		"drag-and-drop",
+		"gutenberg"
+	],
 	"authors": [
 		{
 			"name": "Per Soderlind",

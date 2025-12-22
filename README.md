@@ -49,7 +49,7 @@ Virtual Media Folders brings folder organization to your WordPress Media Library
 1. Go to **Media > Library**
 2. Click the folder icon to show the sidebar
 3. Use **+** to create folders
-4. Drag media onto folders to organize
+4. Drag media onto folders to organize / Bulk select media and use the "Move to Folder" action
 5. Click a folder to filter the view
 
 ### Settings
