@@ -60,6 +60,8 @@
 	overflow-x: hidden;
 	z-index: 75;
 	display: none;
+	margin-top: 8px;
+	box-sizing: border-box;
 	/* Ensure scrolling works on all browsers */
 	-webkit-overflow-scrolling: touch;
 }
