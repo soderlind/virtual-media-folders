@@ -49,19 +49,24 @@
 
 /* Folder tree sidebar - hidden by default */
 .vmf-folder-tree-sidebar {
-	position: absolute;
+	position: fixed;
 	top: 0;
 	left: 0;
 	width: 220px;
-	max-height: calc(100vh - 32px);
-	/* Viewport height minus admin bar */
+	/* Height is calculated by JS based on actual position */
 	border-right: 1px solid #dcdcde;
 	background: #f6f7f7;
 	overflow-y: auto;
+	overflow-x: hidden;
 	z-index: 75;
 	display: none;
-	will-change: transform;
-	/* Initial transform will be set by JS to align with attachments */
+	/* Ensure scrolling works on all browsers */
+	-webkit-overflow-scrolling: touch;
+}
+
+/* Inner container should not constrain height */
+.vmf-folder-tree-sidebar>.vmf-folder-tree {
+	min-height: 100%;
 }
 
 /* Show when folder view is active */
@@ -73,6 +78,7 @@
 .attachments-browser.vmf-sidebar-visible .attachments-wrapper {
 	position: relative;
 	min-height: 400px;
+	overflow: visible !important;
 }
 
 /* Push attachments content to make room for sidebar */

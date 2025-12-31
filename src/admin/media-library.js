@@ -362,17 +362,21 @@ function setupStickySidebar(browser) {
 		const adminBarHeight = 32;
 		let ticking = false;
 		
-		// Get the offset from wrapper top to attachments grid
+		// Get the offset to align sidebar with first image thumbnail
 		function getContentOffset() {
-			// Use the attachments container offsetTop plus padding/margin adjustments
+			// Find the first attachment thumbnail to get exact alignment
+			const firstAttachment = attachments.querySelector('.attachment');
+			if (firstAttachment) {
+				// Get the position of the first attachment relative to the wrapper
+				const attachmentRect = firstAttachment.getBoundingClientRect();
+				const wrapperRect = attachmentsWrapper.getBoundingClientRect();
+				return attachmentRect.top - wrapperRect.top;
+			}
+			
+			// Fallback: use attachments container offset
 			const style = window.getComputedStyle(attachments);
 			const paddingTop = parseInt(style.paddingTop, 10) || 0;
-			
-			// Grid items have spacing that's not captured by margin (could be gap or padding)
-			// Add 8px to align sidebar with actual image top
-			const gridSpacing = 8;
-			
-			return (attachments.offsetTop || 0) + paddingTop + gridSpacing;
+			return (attachments.offsetTop || 0) + paddingTop;
 		}
 		
 		// Cache initial offset
@@ -415,19 +419,25 @@ function setupStickySidebar(browser) {
 			// Target position: just below admin bar
 			const targetTop = adminBarHeight;
 			
+			// Always use fixed positioning to avoid parent clipping issues
+			sidebar.style.position = 'fixed';
+			sidebar.style.left = `${wrapperRect.left}px`;
+			sidebar.style.transform = 'none';
+			
 			if (attachmentsTop >= targetTop) {
 				// Attachments haven't scrolled past the admin bar yet
-				// Position sidebar at the attachments level using stable offset
-				sidebar.style.position = 'absolute';
-				sidebar.style.top = '0';
-				sidebar.style.left = '0';
-				sidebar.style.transform = `translateY(${initialOffset}px)`;
+				// Position sidebar at the attachments level
+				const sidebarTop = wrapperRect.top + initialOffset;
+				sidebar.style.top = `${sidebarTop}px`;
+				// Height from sidebar top to viewport bottom
+				const availableHeight = window.innerHeight - sidebarTop;
+				sidebar.style.height = `${Math.max(availableHeight, 200)}px`;
 			} else {
-				// Attachments have scrolled past - make sidebar fixed at admin bar
-				sidebar.style.position = 'fixed';
+				// Attachments have scrolled past - fix sidebar at admin bar
 				sidebar.style.top = `${adminBarHeight}px`;
-				sidebar.style.left = `${wrapperRect.left}px`;
-				sidebar.style.transform = 'translateY(0)';
+				// Height from admin bar to viewport bottom
+				const availableHeight = window.innerHeight - adminBarHeight;
+				sidebar.style.height = `${availableHeight}px`;
 			}
 			
 			ticking = false;
