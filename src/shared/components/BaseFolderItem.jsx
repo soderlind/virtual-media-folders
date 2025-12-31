@@ -154,7 +154,7 @@ export default function BaseFolderItem({
 				</span>
 			)}
 			<span className="vmf-folder-name">{folder.name}</span>
-			{typeof folder.count === 'number' && (
+			{typeof folder.count === 'number' && !(hasChildren && folder.count === 0) && (
 				<span 
 					className="vmf-folder-count" 
 					aria-label={enableAria ? `${folder.count} ${__('items', 'virtual-media-folders')}` : undefined}
