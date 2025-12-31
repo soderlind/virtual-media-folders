@@ -362,21 +362,10 @@ function setupStickySidebar(browser) {
 		const adminBarHeight = 32;
 		let ticking = false;
 		
-		// Get the offset to align sidebar with first image thumbnail
+		// Get the offset to align sidebar with attachments-wrapper top
 		function getContentOffset() {
-			// Find the first attachment thumbnail to get exact alignment
-			const firstAttachment = attachments.querySelector('.attachment');
-			if (firstAttachment) {
-				// Get the position of the first attachment relative to the wrapper
-				const attachmentRect = firstAttachment.getBoundingClientRect();
-				const wrapperRect = attachmentsWrapper.getBoundingClientRect();
-				return attachmentRect.top - wrapperRect.top;
-			}
-			
-			// Fallback: use attachments container offset
-			const style = window.getComputedStyle(attachments);
-			const paddingTop = parseInt(style.paddingTop, 10) || 0;
-			return (attachments.offsetTop || 0) + paddingTop;
+			// Align with the top of attachments-wrapper (offset = 0)
+			return 0;
 		}
 		
 		// Cache initial offset

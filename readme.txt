@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.3.6
+Stable tag: 1.3.7
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -106,6 +106,9 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.3.7 =
+* Changed: Sidebar top now aligns horizontally with attachments-wrapper instead of first thumbnail
 
 = 1.3.6 =
 * Fixed: Folder sidebar now properly extends to viewport bottom and scrolls when content exceeds screen height
