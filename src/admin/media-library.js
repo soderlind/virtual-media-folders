@@ -90,6 +90,37 @@ function hideFolderView() {
 	$toggle.removeClass('is-active');
 	document.body.classList.remove('vmf-folder-view-active');
 	jQuery('.attachments-browser').removeClass('vmf-sidebar-visible');
+
+	// Cleanup sticky listeners/observers if they were installed
+	const sidebar = document.querySelector('.vmf-folder-tree-sidebar');
+	if (sidebar && typeof sidebar._cleanupSticky === 'function') {
+		sidebar._cleanupSticky();
+	}
+
+	// Cleanup drag observer + handlers to avoid duplicate work
+	if (currentBrowser) {
+		const attachmentsEl = currentBrowser.$el.find('.attachments')[0];
+		if (attachmentsEl && attachmentsEl._vmfoDragObserver) {
+			attachmentsEl._vmfoDragObserver.disconnect();
+			delete attachmentsEl._vmfoDragObserver;
+		}
+		currentBrowser.$el.find('.attachments').off('dragstart.vmfo dragend.vmfo');
+	}
+
+	// Update URL to grid mode if we were using mode=folder
+	// This prevents re-activation when the browser re-renders
+	try {
+		const url = new URL(window.location.href);
+		if (url.searchParams.get('mode') === 'folder') {
+			url.searchParams.set('mode', 'grid');
+			window.history.replaceState({}, '', url);
+		}
+	} catch (e) {
+		// Ignore URL errors.
+	}
+
+	// Restore 'current' class to grid icon (we're in grid mode)
+	jQuery('.view-switch a.view-grid').addClass('current');
 }
 
 // Listen for clicks on view switcher at document level (before page load completes)
@@ -104,7 +135,15 @@ jQuery(document).off('click.vmfo', '.view-switch a').on('click.vmfo', '.view-swi
 	if (!jQuery(this).hasClass('view-list') && !jQuery(this).hasClass('view-grid')) {
 		return;
 	}
+	
+	// Prevent default navigation - we'll handle it ourselves
+	e.preventDefault();
+	
 	hideFolderView();
+	
+	// Navigate to clean grid or list URL without folder parameters
+	const mode = jQuery(this).hasClass('view-grid') ? 'grid' : 'list';
+	window.location.href = 'upload.php?mode=' + mode;
 });
 
 // When "Add Media File" button is clicked while a folder is selected, switch to All Media
@@ -119,86 +158,33 @@ jQuery(document).off('click.vmfo', '.page-title-action').on('click.vmfo', '.page
 });
 
 /**
- * Add folder toggle button to the view switcher (independent of browser).
- * This ensures the button appears on both grid and list views.
+ * Update folder toggle button state.
+ * The button is now added by PHP with the correct href,
+ * this function just ensures the active state is correct.
  */
-function addFolderToggleButtonToPage() {
+function updateFolderToggleButtonState() {
+	const $existingButton = jQuery('.vmf-folder-toggle-button');
+	if (!$existingButton.length) {
+		return;
+	}
+	
 	// Check if folder view should be active on load
-	// Priority: URL params > localStorage > default (false)
 	const savedPref = localStorage.getItem('vmfo_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);
 	
 	let shouldBeActive = urlParams.has('vmfo_folder') || urlParams.get('mode') === 'folder';
 	if (!shouldBeActive && savedPref !== null) {
-		// Use localStorage if set
 		shouldBeActive = savedPref === '1';
 	}
-	// If no URL params and no localStorage, default to hidden (shouldBeActive stays false)
 	
-	// If button already exists, just update its state
-	const $existingButton = jQuery('.vmf-folder-toggle-button');
-	if ($existingButton.length) {
-		if (shouldBeActive) {
-			$existingButton.addClass('is-active');
-		}
-		return;
-	}
-	
-	// Folder icon SVG - using a bolder folder-like icon
-	const folderIcon = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7.5l-2-2H4z"/></svg>`;
-	const folderHref = 'upload.php?mode=folder';
-	
-	// Find the view switcher - it's in the page header area on upload.php
-	const $viewSwitcher = jQuery('.view-switch');
-	
-	if ($viewSwitcher.length) {
-		const $button = jQuery(`
-			<a href="${folderHref}" class="vmf-folder-toggle-button${shouldBeActive ? ' is-active' : ''}" title="${__('Show Folders', 'virtual-media-folders')}">
-				<span class="screen-reader-text">${__('Show Folders', 'virtual-media-folders')}</span>
-				${folderIcon}
-			</a>
-		`);
-		
-		// Insert BEFORE the view-switch so it's always first: [Folder] [List] [Grid]
-		$viewSwitcher.before($button);
-		
-		// Folder button click - only works in grid mode, navigates to grid mode if in list
-		$button.on('click', (e) => {
-			// Allow normal link behavior for new-tab / modified clicks.
-			if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
-				return;
-			}
-
-			e.preventDefault();
-			
-			// Check if we're in list mode (URL has mode=list) OR if grid isn't rendered yet
-			const urlParams = new URLSearchParams(window.location.search);
-			const isListMode = urlParams.get('mode') === 'list';
-			const hasGridView = !!document.querySelector('.attachments-browser');
-			
-			if (isListMode || !hasGridView) {
-				// Navigate to grid mode with folder view enabled
-				localStorage.setItem('vmfo_folder_view', '1');
-				window.location.href = 'upload.php?mode=grid';
-				return;
-			}
-			
-			// We're in grid mode - toggle folder view on
-			if (currentBrowser) {
-				toggleFolderView(currentBrowser, true);
-			} else {
-				// Set preference, will be applied when browser renders
-				localStorage.setItem('vmfo_folder_view', '1');
-				folderViewActive = true;
-				$button.addClass('is-active');
-			}
-		});
+	if (shouldBeActive) {
+		$existingButton.addClass('is-active');
 	}
 }
 
-// Add button on DOM ready
+// Update button state on DOM ready
 jQuery(document).ready(function() {
-	addFolderToggleButtonToPage();
+	updateFolderToggleButtonState();
 });
 
 /**
@@ -545,35 +531,13 @@ function toggleFolderView(browser, show) {
 /**
  * Add folder toggle button to the view switcher.
  * Now just sets up the browser reference and applies saved preferences,
- * since the button is already added by addFolderToggleButtonToPage().
+ * since the button is already added by PHP in the admin footer.
  */
 function addFolderToggleButton(browser) {
 	// Store the browser reference for later use
 	currentBrowser = browser;
 	
-	// If button doesn't exist yet (fallback), add it to the media toolbar
-	if (!jQuery('.vmf-folder-toggle-button').length) {
-		// Folder icon SVG - bold folder icon
-		const folderIcon = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7.5l-2-2H4z"/></svg>`;
-		
-		const $toolbar = browser.$el.find('.media-toolbar-secondary');
-		if ($toolbar.length) {
-			const $button = jQuery(`
-				<button type="button" class="vmf-folder-toggle-button" title="${__('Show Folders', 'virtual-media-folders')}">
-					<span class="screen-reader-text">${__('Show Folders', 'virtual-media-folders')}</span>
-					${folderIcon}
-				</button>
-			`);
-			
-			$toolbar.prepend($button);
-			
-			$button.on('click', (e) => {
-				e.preventDefault();
-				toggleFolderView(browser, true);
-			});
-		}
-	}
-	
+	// Button is created by PHP - we just need to check if folder view should be active
 	// Check saved preference or URL param and apply
 	const savedPref = localStorage.getItem('vmfo_folder_view');
 	const urlParams = new URLSearchParams(window.location.search);

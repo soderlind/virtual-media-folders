@@ -5,6 +5,15 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.9] - 2025-12-31
+
+### Fixed
+- Grid/List view icons now correctly show all media instead of forcing folder mode
+- Folder icon now respects "Show All Media" setting (navigates to uncategorized when disabled)
+- Fixed URL encoding issue causing duplicate `vmfo_folder` parameter
+- Added proper cleanup of event listeners when hiding folder view to prevent memory leaks
+- Fixed race condition where JavaScript created duplicate folder button before PHP script
+
 ## [1.3.8] - 2025-12-31
 
 ### Changed
@@ -485,6 +494,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
+[1.3.9]: https://github.com/soderlind/virtual-media-folders/compare/1.3.8...1.3.9
 [1.3.8]: https://github.com/soderlind/virtual-media-folders/compare/1.3.7...1.3.8
 [1.3.7]: https://github.com/soderlind/virtual-media-folders/compare/1.3.6...1.3.7
 [1.3.6]: https://github.com/soderlind/virtual-media-folders/compare/1.3.5...1.3.6
