@@ -92,6 +92,7 @@ export function FolderFilter({ onFilterChange, value = '' }) {
 				value=""
 				options={[{ label: __('Loading…', 'virtual-media-folders'), value: '' }]}
 				disabled
+				__nextHasNoMarginBottom
 			/>
 		);
 	}
@@ -103,6 +104,7 @@ export function FolderFilter({ onFilterChange, value = '' }) {
 			options={folders}
 			onChange={(newValue) => onFilterChange(newValue)}
 			className="vmf-folder-filter"
+			__nextHasNoMarginBottom
 		/>
 	);
 }

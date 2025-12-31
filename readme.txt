@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, folders, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.3.8
+Stable tag: 1.3.9
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -106,6 +106,13 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.3.9 =
+* Fixed: Grid/List view icons now correctly show all media instead of forcing folder mode
+* Fixed: Folder icon now respects "Show All Media" setting
+* Fixed: URL encoding issue causing duplicate vmfo_folder parameter
+* Fixed: Memory leaks from event listeners when hiding folder view
+* Fixed: Race condition where duplicate folder button was created
 
 = 1.3.8 =
 * Changed: Hide (0) count on folders with subfolders to avoid confusion about empty folder branches

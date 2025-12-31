@@ -217,6 +217,10 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 				// mode=folder without specific folder means use default folder setting
 				setSelectedId(defaultFolder);
 				initialFolder = defaultFolder;
+			} else if (urlMode === 'grid' || urlMode === 'list') {
+				// mode=grid or mode=list means show all media, ignoring defaultFolder setting
+				initialFolder = null;
+				setSelectedId(null);
 			}
 			// If no URL params, selectedId keeps its initial value (defaultFolder)
 		}
