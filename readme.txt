@@ -1,6 +1,6 @@
 === Virtual Media Folders ===
 Contributors: PerS
-Tags: media, folders, organization, media library, virtual folders, drag and drop, accessibility, a11y, ai
+Tags: media, ai, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
 Stable tag: 1.3.9
