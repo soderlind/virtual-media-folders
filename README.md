@@ -22,6 +22,8 @@ Virtual Media Folders brings folder organization to your WordPress Media Library
 - **Bulk Actions** – Move multiple media items at once
 - **Keyboard Accessible** – Full keyboard navigation with screen reader support
 - **Internationalized** – Translation ready (Norwegian Bokmål included)
+- **AI Organizer** – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders. This is [add-on functionality](https://github.com/soderlind/vmfa-ai-organizer) requiring an API key from a supported AI service provider.
+
 
 ## Requirements
 
