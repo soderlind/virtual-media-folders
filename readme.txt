@@ -1,6 +1,6 @@
 === Virtual Media Folders ===
 Contributors: PerS
-Tags: media, folders, organization, media library, virtual folders
+Tags: media, folders, organization, media library, virtual folders, drag and drop, accessibility, a11y, ai
 Requires at least: 6.8
 Tested up to: 6.9
 Stable tag: 1.3.9
@@ -23,6 +23,7 @@ Virtual Media Folders brings virtual folder organization to your WordPress Media
 * **Bulk Actions** – Move multiple media items at once
 * **Keyboard Accessible** – Full keyboard navigation support
 * **Internationalized** – Ready for translation (Norwegian Bokmål included)
+* **AI Organizer** – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders. This is [add-on functionality](https://github.com/soderlind/vmfa-ai-organizer) requiring an API key from a supported AI service provider.
 
 https://www.youtube.com/watch?v=bA4lf7ynz24
 
