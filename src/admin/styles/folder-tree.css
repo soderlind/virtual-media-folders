@@ -327,6 +327,14 @@ body.vmf-internal-drag .uploader-window {
 	}
 }
 
+/* Sticky header wrapper - keeps folder actions visible when scrolling */
+.vmf-folder-header {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	background: #f6f7f7;
+}
+
 /* Folder Manager styles */
 .vmf-folder-manager {
 	padding: 8px 12px;

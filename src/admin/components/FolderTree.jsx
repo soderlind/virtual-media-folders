@@ -323,8 +323,9 @@ export default function FolderTree({ onFolderSelect }) {
 	), [handleKeyboardDrop, moveMode.isActive]);
 
 	// Header with folder management controls and move mode banner
+	// Wrapped in sticky container so header stays visible when scrolling folders
 	const renderHeader = useCallback(() => (
-		<>
+		<div className="vmf-folder-header">
 			{moveMode.isActive && (
 				<MoveModeBanner 
 					itemCount={moveMode.grabbedMedia?.length || 0}
@@ -338,7 +339,7 @@ export default function FolderTree({ onFolderSelect }) {
 				onDelete={handleDelete}
 			/>
 			<BulkFolderAction onComplete={handleRefresh} />
-		</>
+		</div>
 	), [flatFolders, selectedId, handleRefresh, handleDelete, moveMode]);
 
 	return (
