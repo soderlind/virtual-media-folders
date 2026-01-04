@@ -182,6 +182,10 @@
 	transition: background-color 0.1s;
 }
 
+.vmf-folder-toggle--placeholder+.vmf-folder-name {
+	padding-left: 24px;
+}
+
 .vmf-folder-toggle:hover {
 	background-color: rgba(0, 0, 0, 0.1);
 }

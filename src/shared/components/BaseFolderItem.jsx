@@ -141,7 +141,7 @@ export default function BaseFolderItem({
 			aria-current={isSelected ? 'true' : undefined}
 			title={folder.name}
 		>
-			{hasChildren && (
+			{hasChildren ? (
 				<span
 					className="vmf-folder-toggle"
 					onClick={handleToggleClick}
@@ -152,6 +152,11 @@ export default function BaseFolderItem({
 				>
 					<ChevronIcon expanded={expanded} />
 				</span>
+			) : (
+				<span
+					className="vmf-folder-toggle vmf-folder-toggle--placeholder"
+					aria-hidden="true"
+				/>
 			)}
 			<span className="vmf-folder-name">{folder.name}</span>
 			{typeof folder.count === 'number' && !(hasChildren && folder.count === 0) && (
