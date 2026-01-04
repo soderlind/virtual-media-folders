@@ -83,7 +83,7 @@
 	justify-content: center;
 }
 
-.vmf-editor-folder-sidebar .vmf-folder-toggle--placeholder + .vmf-folder-name {
+.vmf-editor-folder-sidebar .vmf-folder-toggle--placeholder+.vmf-folder-name {
 	padding-left: 20px;
 }
 
