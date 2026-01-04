@@ -5,6 +5,11 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2] - 2026-01-05
+
+### Fixed
+- Removed unintended folder name padding in Gutenberg media modal for folders without children
+
 ## [1.4.1] - 2026-01-04
 
 ### Fixed
@@ -504,6 +509,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
+[1.4.2]: https://github.com/soderlind/virtual-media-folders/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/soderlind/virtual-media-folders/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/soderlind/virtual-media-folders/compare/1.3.9...1.4.0
 [1.3.9]: https://github.com/soderlind/virtual-media-folders/compare/1.3.8...1.3.9
