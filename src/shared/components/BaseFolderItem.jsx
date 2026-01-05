@@ -48,6 +48,7 @@ function ChevronIcon({ expanded }) {
  * @param {boolean}  props.enableAutoExpand Auto-expand when child is selected.
  * @param {boolean}  props.enableAria Enable full ARIA attributes.
  * @param {boolean}  props.isMoveModeActive Whether keyboard move mode is active (skips Enter/Space selection).
+ * @param {boolean}  props.forceExpand Force the folder to be expanded (e.g., when searching).
  */
 export default function BaseFolderItem({
 	folder,
@@ -60,6 +61,7 @@ export default function BaseFolderItem({
 	enableAutoExpand = false,
 	enableAria = false,
 	isMoveModeActive = false,
+	forceExpand = false,
 }) {
 	// Check if any child (recursively) is selected
 	const isChildSelected = (f) => {
@@ -69,15 +71,16 @@ export default function BaseFolderItem({
 		);
 	};
 	
-	// Auto-expand if a child is selected
+	// Auto-expand if a child is selected (separate from forceExpand)
 	const shouldAutoExpand = enableAutoExpand && isChildSelected(folder);
 	const [manualExpanded, setManualExpanded] = useState(shouldAutoExpand);
-	const expanded = manualExpanded || shouldAutoExpand;
+	// forceExpand is temporary (e.g., during search) and doesn't persist to manualExpanded
+	const expanded = forceExpand || manualExpanded || shouldAutoExpand;
 	
 	const hasChildren = folder.children && folder.children.length > 0;
 	const isSelected = selectedId === folder.id;
 	
-	// Keep expanded state in sync when child gets selected
+	// Keep expanded state in sync when child gets selected (but not for forceExpand)
 	useEffect(() => {
 		if (shouldAutoExpand && !manualExpanded) {
 			setManualExpanded(true);
@@ -202,6 +205,7 @@ export default function BaseFolderItem({
 							enableAutoExpand={enableAutoExpand}
 							enableAria={enableAria}
 							isMoveModeActive={isMoveModeActive}
+							forceExpand={forceExpand}
 						/>
 					))}
 				</ul>

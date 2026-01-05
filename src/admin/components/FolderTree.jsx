@@ -40,6 +40,7 @@ import { BaseFolderTree, LiveRegion } from '../../shared/components';
 import { DroppableFolder } from './DroppableFolder';
 import { SortableFolderItem } from './SortableFolderItem';
 import FolderManager from './FolderManager';
+import FolderSearch from './FolderSearch';
 import BulkFolderAction from './BulkFolderAction';
 import MoveModeBanner from './MoveModeBanner';
 
@@ -60,6 +61,9 @@ const defaultFolder = showAllMedia ? null : 'uncategorized';
 export default function FolderTree({ onFolderSelect }) {
 	// Track the current media type filter from WordPress dropdown
 	const [mediaType, setMediaType] = useState('');
+
+	// Search/filter state for folders
+	const [searchQuery, setSearchQuery] = useState('');
 
 	// Screen reader announcements for accessibility
 	const { announcement, announceReorder, announceFolderDeleted } = useAnnounce();
@@ -95,6 +99,38 @@ export default function FolderTree({ onFolderSelect }) {
 	useEffect(() => {
 		setFolders(fetchedFolders);
 	}, [fetchedFolders]);
+
+	/**
+	 * Filter folders recursively based on search query.
+	 * A folder matches if its name contains the query, or if any of its descendants match.
+	 */
+	const filterFolders = useCallback((folderList, query) => {
+		if (!query.trim()) {
+			return folderList;
+		}
+		const lowerQuery = query.toLowerCase();
+		
+		const filterRecursive = (folders) => {
+			return folders.reduce((acc, folder) => {
+				const nameMatches = folder.name.toLowerCase().includes(lowerQuery);
+				const filteredChildren = folder.children ? filterRecursive(folder.children) : [];
+				
+				// Include folder if name matches or if any children match
+				if (nameMatches || filteredChildren.length > 0) {
+					acc.push({
+						...folder,
+						children: filteredChildren,
+					});
+				}
+				return acc;
+			}, []);
+		};
+		
+		return filterRecursive(folderList);
+	}, []);
+
+	// Apply search filter to folders
+	const filteredFolders = filterFolders(folders, searchQuery);
 
 	// Listen for changes to the WordPress media type filter dropdown
 	useEffect(() => {
@@ -267,7 +303,7 @@ export default function FolderTree({ onFolderSelect }) {
 	}, [folders, flatFolders, fetchFolders, announceReorder]);
 
 	// Get root folder IDs for sortable context
-	const rootFolderIds = folders.map((f) => f.id);
+	const rootFolderIds = filteredFolders.map((f) => f.id);
 
 	// Handle keyboard drop when in move mode
 	const handleKeyboardDrop = useCallback((folderId) => {
@@ -337,10 +373,16 @@ export default function FolderTree({ onFolderSelect }) {
 				selectedId={selectedId}
 				onRefresh={handleRefresh}
 				onDelete={handleDelete}
+				renderExtra={() => (
+					<FolderSearch
+						searchQuery={searchQuery}
+						onSearchChange={setSearchQuery}
+					/>
+				)}
 			/>
 			<BulkFolderAction onComplete={handleRefresh} />
 		</div>
-	), [flatFolders, selectedId, handleRefresh, handleDelete, moveMode]);
+	), [flatFolders, selectedId, handleRefresh, handleDelete, moveMode, searchQuery]);
 
 	return (
 		<DndContext
@@ -353,7 +395,7 @@ export default function FolderTree({ onFolderSelect }) {
 			
 			<SortableContext items={rootFolderIds} strategy={verticalListSortingStrategy}>
 				<BaseFolderTree
-					folders={folders}
+					folders={filteredFolders}
 					selectedId={selectedId}
 					onSelect={handleSelect}
 					uncategorizedCount={uncategorizedCount}
@@ -367,6 +409,7 @@ export default function FolderTree({ onFolderSelect }) {
 					enableAutoExpand={true}
 					enableAria={true}
 					isMoveModeActive={moveMode.isActive}
+					forceExpand={!!searchQuery.trim()}
 					loadingText={__('Loading folders…', 'virtual-media-folders')}
 				/>
 			</SortableContext>

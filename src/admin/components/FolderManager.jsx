@@ -18,8 +18,9 @@ import { plus, pencil, trash } from '@wordpress/icons';
  * @param {number}   props.selectedId   Currently selected folder ID.
  * @param {Function} props.onRefresh    Called after folder changes.
  * @param {Function} props.onDelete     Called after folder deletion (receives new folder to select).
+ * @param {Function} props.renderExtra  Optional render prop for additional buttons.
  */
-export default function FolderManager({ folders = [], selectedId, onRefresh, onDelete }) {
+export default function FolderManager({ folders = [], selectedId, onRefresh, onDelete, renderExtra }) {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const [isRenameOpen, setIsRenameOpen] = useState(false);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -266,6 +267,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 					size="small"
 					showTooltip={false}
 				/>
+				{renderExtra && renderExtra()}
 			</div>
 
 			{/* Create Modal */}
