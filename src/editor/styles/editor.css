@@ -109,6 +109,97 @@
 	padding: 0;
 }
 
+/* Folder sidebar header with search */
+.vmf-folder-sidebar-header {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 8px;
+	margin: 0 -8px 8px;
+	background: #e9ecef;
+	border-bottom: 1px solid #dcdcde;
+	position: relative;
+}
+
+/* Search button */
+.vmf-editor-search-button {
+	padding: 4px !important;
+	min-width: 24px !important;
+	height: 24px !important;
+}
+
+.vmf-editor-search-button svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* Search field container - overlays header */
+.vmf-editor-search {
+	position: absolute;
+	top: 4px;
+	left: 8px;
+	right: 8px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	background: #f6f7f7;
+	z-index: 10;
+}
+
+.vmf-editor-search__input-wrapper {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	position: relative;
+}
+
+.vmf-editor-search__input {
+	flex: 1;
+	padding: 4px 24px 4px 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 2px;
+	font-size: 12px;
+	height: 24px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.vmf-editor-search__input:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+.vmf-editor-search__input::placeholder {
+	color: #757575;
+}
+
+.vmf-editor-search__clear {
+	position: absolute;
+	right: 2px;
+	top: 50%;
+	transform: translateY(-50%);
+	padding: 2px !important;
+	min-width: 18px !important;
+	height: 18px !important;
+}
+
+.vmf-editor-search__clear svg {
+	width: 14px;
+	height: 14px;
+}
+
+.vmf-editor-search__close {
+	padding: 4px !important;
+	min-width: 24px !important;
+	height: 24px !important;
+}
+
+.vmf-editor-search__close svg {
+	width: 16px;
+	height: 16px;
+}
+
 /* Attachments scroll independently, sidebar stays fixed */
 .vmf-has-folder-sidebar .attachments {
 	left: 0 !important;

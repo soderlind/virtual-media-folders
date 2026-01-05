@@ -385,6 +385,86 @@ body.vmf-internal-drag .uploader-window {
 	height: 18px;
 }
 
+/* Folder Manager Row - contains manager buttons and search */
+.vmf-folder-manager-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+/* Folder Search styles */
+.vmf-folder-search {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	background: #fff;
+	padding: 0 8px;
+	z-index: 102;
+}
+
+.vmf-folder-search-button {
+	margin-left: auto;
+}
+
+.vmf-folder-search__input-wrapper {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	position: relative;
+}
+
+.vmf-folder-search__input {
+	flex: 1;
+	padding: 4px 28px 4px 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 2px;
+	font-size: 13px;
+	height: 28px;
+	box-sizing: border-box;
+}
+
+.vmf-folder-search__input:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+.vmf-folder-search__input::placeholder {
+	color: #757575;
+}
+
+.vmf-folder-search__clear {
+	position: absolute;
+	right: 2px;
+	top: 50%;
+	transform: translateY(-50%);
+	padding: 2px !important;
+	min-width: 20px !important;
+	height: 20px !important;
+}
+
+.vmf-folder-search__clear svg {
+	width: 16px;
+	height: 16px;
+}
+
+.vmf-folder-search__close {
+	padding: 4px !important;
+	min-width: 28px !important;
+	height: 28px !important;
+}
+
+.vmf-folder-search__close svg {
+	width: 18px;
+	height: 18px;
+}
+
 /* Folder Modal styles - ensure it's above everything */
 .vmf-folder-modal,
 .components-modal__screen-overlay {

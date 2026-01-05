@@ -5,6 +5,7 @@
 	"src/admin/components/BulkFolderAction.jsx": "build/admin.js",
 	"src/admin/components/DroppableFolder.jsx": "build/admin.js",
 	"src/admin/components/FolderManager.jsx": "build/admin.js",
+	"src/admin/components/FolderSearch.jsx": "build/admin.js",
 	"src/admin/components/FolderTree.jsx": "build/admin.js",
 	"src/admin/components/MoveModeBanner.jsx": "build/admin.js",
 	"src/admin/components/MoveToFolderMenu.jsx": "build/admin.js",
@@ -18,6 +19,7 @@
 	"src/shared/hooks/useMoveMode.js": "build/admin.js",
 	"src/editor/index.js": "build/editor.js",
 	"src/editor/components/FolderFilter.jsx": "build/editor.js",
+	"src/editor/components/FolderSearch.jsx": "build/editor.js",
 	"src/editor/components/FolderSidebar.jsx": "build/editor.js",
 	"src/editor/components/MediaUploadFilter.jsx": "build/editor.js"
 }
