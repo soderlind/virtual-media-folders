@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.4.2
+Stable tag: 1.5.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -107,6 +107,13 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.5.0 =
+* Added: Folder search/filter functionality in sidebar header for both Media Library and Gutenberg modal
+* Added: Search icon appears when there are more than 10 top-level folders
+* Added: Search automatically expands parent folders to show matching subfolders
+* Added: Norwegian translations for search UI strings
+* Changed: Gutenberg modal sidebar header now has contrasting background
 
 = 1.4.2 =
 * Fixed: Removed unintended folder name padding in Gutenberg media modal for folders without children

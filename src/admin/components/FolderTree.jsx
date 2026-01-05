@@ -358,6 +358,9 @@ export default function FolderTree({ onFolderSelect }) {
 		</DroppableFolder>
 	), [handleKeyboardDrop, moveMode.isActive]);
 
+	// Only show search when there are more than 10 top-level folders
+	const showSearch = folders.length > 10;
+
 	// Header with folder management controls and move mode banner
 	// Wrapped in sticky container so header stays visible when scrolling folders
 	const renderHeader = useCallback(() => (
@@ -373,16 +376,16 @@ export default function FolderTree({ onFolderSelect }) {
 				selectedId={selectedId}
 				onRefresh={handleRefresh}
 				onDelete={handleDelete}
-				renderExtra={() => (
+				renderExtra={showSearch ? () => (
 					<FolderSearch
 						searchQuery={searchQuery}
 						onSearchChange={setSearchQuery}
 					/>
-				)}
+				) : undefined}
 			/>
 			<BulkFolderAction onComplete={handleRefresh} />
 		</div>
-	), [flatFolders, selectedId, handleRefresh, handleDelete, moveMode, searchQuery]);
+	), [flatFolders, selectedId, handleRefresh, handleDelete, moveMode, searchQuery, showSearch]);
 
 	return (
 		<DndContext
