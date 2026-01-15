@@ -347,6 +347,7 @@ function setupStickySidebar(browser) {
 		
 		const adminBarHeight = 32;
 		let ticking = false;
+		let recalculateTimeout = null;
 		
 		// Get the offset to align sidebar with attachments-wrapper top
 		function getContentOffset() {
@@ -356,6 +357,17 @@ function setupStickySidebar(browser) {
 		
 		// Cache initial offset
 		let initialOffset = getContentOffset();
+		
+		// Debounced recalculate to prevent multiple rapid calls
+		function scheduleRecalculate(delay = 50) {
+			if (recalculateTimeout) {
+				clearTimeout(recalculateTimeout);
+			}
+			recalculateTimeout = setTimeout(() => {
+				recalculateTimeout = null;
+				recalculateOffset();
+			}, delay);
+		}
 		
 		// Calculate offset after content is loaded
 		function recalculateOffset() {
@@ -376,13 +388,43 @@ function setupStickySidebar(browser) {
 		const uploaderInline = browser.$el.find('.uploader-inline')[0];
 		if (uploaderInline) {
 			const observer = new MutationObserver(() => {
-				setTimeout(recalculateOffset, 50);
+				scheduleRecalculate(50);
 			});
 			observer.observe(uploaderInline, { 
 				attributes: true, 
 				attributeFilter: ['style', 'class'] 
 			});
 			sidebar._vmfoUploaderObserver = observer;
+		}
+		
+		// Watch for contextual help panel toggle and tab changes
+		const helpWrap = document.getElementById('contextual-help-wrap');
+		const helpToggle = document.getElementById('contextual-help-link');
+		const helpClickHandler = () => scheduleRecalculate(10);
+		const helpTabHandlers = [];
+		
+		if (helpWrap) {
+			const helpObserver = new MutationObserver(() => {
+				scheduleRecalculate(50);
+			});
+			// Watch for class changes on the help wrap itself (open/close state)
+			helpObserver.observe(helpWrap, { 
+				attributes: true, 
+				attributeFilter: ['class']
+			});
+			sidebar._vmfHelpObserver = helpObserver;
+			
+			// Listen for clicks on help tabs for immediate response
+			const helpTabs = helpWrap.querySelectorAll('.contextual-help-tabs a');
+			helpTabs.forEach(tab => {
+				tab.addEventListener('click', helpClickHandler);
+				helpTabHandlers.push(tab);
+			});
+		}
+		
+		// Listen for Help toggle button click for immediate response
+		if (helpToggle) {
+			helpToggle.addEventListener('click', helpClickHandler);
 		}
 		
 		function updateSidebarPosition() {
@@ -437,12 +479,29 @@ function setupStickySidebar(browser) {
 		sidebar._recalculateOffset = recalculateOffset;
 		
 		sidebar._cleanupSticky = () => {
+			// Clear any pending timeout
+			if (recalculateTimeout) {
+				clearTimeout(recalculateTimeout);
+				recalculateTimeout = null;
+			}
 			window.removeEventListener('scroll', onScroll);
 			window.removeEventListener('resize', onResize);
 			if (sidebar._vmfoUploaderObserver) {
 				sidebar._vmfoUploaderObserver.disconnect();
 				delete sidebar._vmfoUploaderObserver;
 			}
+			if (sidebar._vmfHelpObserver) {
+				sidebar._vmfHelpObserver.disconnect();
+				delete sidebar._vmfHelpObserver;
+			}
+			// Clean up help toggle listener
+			if (helpToggle) {
+				helpToggle.removeEventListener('click', helpClickHandler);
+			}
+			// Clean up help tab listeners
+			helpTabHandlers.forEach(tab => {
+				tab.removeEventListener('click', helpClickHandler);
+			});
 		};
 	};
 	
