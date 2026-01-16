@@ -5,10 +5,19 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.3] - 2026-01-16
+## [1.6.0] - 2026-01-16
 
-### Fixed
-- Updated Norwegian translations for Rules Engine integration strings
+### Added
+- **Add-on Tab System**: Settings page now supports tabs for add-on plugins
+  - Add-ons can register their settings as tabs within "Folder Settings"
+  - New `vmfo_settings_tabs` filter for add-on registration
+  - New `vmfo_settings_enqueue_scripts` action for conditional script loading
+  - `SUPPORTS_ADDON_TABS` constant for add-on compatibility detection
+- Added `docs/addon-integration.md` with comprehensive add-on development guide
+
+### Changed
+- Settings page refactored to use tab-based navigation
+- `PAGE_SLUG` constant is now public for add-on access
 
 ## [1.5.2] - 2026-01-16
 

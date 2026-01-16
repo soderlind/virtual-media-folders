@@ -18,6 +18,12 @@ namespace VirtualMediaFolders;
 final class Settings {
 
 	/**
+	 * Whether the plugin supports add-on tabs.
+	 * Add-ons can check this constant to determine if they can register tabs.
+	 */
+	public const SUPPORTS_ADDON_TABS = true;
+
+	/**
 	 * Option group name.
 	 */
 	private const OPTION_GROUP = 'vmfo_settings';
@@ -30,7 +36,7 @@ final class Settings {
 	/**
 	 * Settings page slug.
 	 */
-	private const PAGE_SLUG = 'vmfo-settings';
+	public const PAGE_SLUG = 'vmfo-settings';
 
 	/**
 	 * Default settings.
@@ -86,6 +92,25 @@ final class Settings {
 			return;
 		}
 
+		$active_tab    = self::get_active_tab();
+		$active_subtab = self::get_active_subtab();
+
+		/**
+		 * Fires when enqueuing scripts for the settings page.
+		 * Add-ons should use this to conditionally enqueue their assets.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param string $active_tab    The currently active tab slug.
+		 * @param string $active_subtab The currently active subtab slug.
+		 */
+		do_action( 'vmfo_settings_enqueue_scripts', $active_tab, $active_subtab );
+
+		// Only enqueue parent scripts on the general tab.
+		if ( 'general' !== $active_tab ) {
+			return;
+		}
+
 		$asset_file = VMFO_PATH . 'build/settings.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -100,6 +125,26 @@ final class Settings {
 			$asset[ 'version' ],
 			true
 		);
+	}
+
+	/**
+	 * Get the currently active tab.
+	 *
+	 * @return string The active tab slug, defaults to 'general'.
+	 */
+	private static function get_active_tab(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return isset( $_GET[ 'tab' ] ) ? sanitize_key( $_GET[ 'tab' ] ) : 'general';
+	}
+
+	/**
+	 * Get the currently active subtab.
+	 *
+	 * @return string The active subtab slug, defaults to empty string.
+	 */
+	private static function get_active_subtab(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return isset( $_GET[ 'subtab' ] ) ? sanitize_key( $_GET[ 'subtab' ] ) : '';
 	}
 
 	/**
@@ -378,18 +423,77 @@ final class Settings {
 			);
 		}
 
+		$active_tab    = self::get_active_tab();
+		$active_subtab = self::get_active_subtab();
+
+		// Build tabs array: General first, then add-on tabs.
+		$tabs = array(
+			'general' => array(
+				'title'    => __( 'General', 'virtual-media-folders' ),
+				'callback' => array( self::class, 'render_general_tab' ),
+			),
+		);
+
+		/**
+		 * Filter to register add-on tabs.
+		 *
+		 * Add-ons can use this filter to add their own tabs to the settings page.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param array $tabs Array of tabs: [ 'slug' => [ 'title' => '', 'callback' => callable ] ].
+		 */
+		$addon_tabs = apply_filters( 'vmfo_settings_tabs', array() );
+		$tabs       = array_merge( $tabs, $addon_tabs );
+
+		// Validate active tab exists, fall back to general.
+		if ( ! isset( $tabs[ $active_tab ] ) ) {
+			$active_tab = 'general';
+		}
+
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<?php settings_errors( 'vmfo_messages' ); ?>
-			<form action="options.php" method="post">
+
+			<?php if ( count( $tabs ) > 1 ) : ?>
+				<nav class="nav-tab-wrapper vmfo-nav-tabs">
+					<?php foreach ( $tabs as $slug => $tab ) : ?>
+						<a href="<?php echo esc_url( admin_url( 'upload.php?page=' . self::PAGE_SLUG . '&tab=' . $slug ) ); ?>"
+							class="nav-tab <?php echo $active_tab === $slug ? 'nav-tab-active' : ''; ?>">
+							<?php echo esc_html( $tab[ 'title' ] ); ?>
+						</a>
+					<?php endforeach; ?>
+				</nav>
+			<?php endif; ?>
+
+			<div class="vmfo-tab-content">
 				<?php
-				settings_fields( self::OPTION_GROUP );
-				do_settings_sections( self::PAGE_SLUG );
-				submit_button( __( 'Save Settings', 'virtual-media-folders' ) );
+				if ( isset( $tabs[ $active_tab ][ 'callback' ] ) && is_callable( $tabs[ $active_tab ][ 'callback' ] ) ) {
+					call_user_func( $tabs[ $active_tab ][ 'callback' ], $active_tab, $active_subtab );
+				}
 				?>
-			</form>
+			</div>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Render the general settings tab.
+	 *
+	 * @param string $active_tab    The active tab slug.
+	 * @param string $active_subtab The active subtab slug.
+	 * @return void
+	 */
+	public static function render_general_tab( string $active_tab, string $active_subtab ): void {
+		?>
+		<form action="options.php" method="post">
+			<?php
+			settings_fields( self::OPTION_GROUP );
+			do_settings_sections( self::PAGE_SLUG );
+			submit_button( __( 'Save Settings', 'virtual-media-folders' ) );
+			?>
+		</form>
 		<?php
 	}
 
@@ -466,7 +570,7 @@ final class Settings {
 	public static function render_folder_select_field( array $args ): void {
 		// Check if VMFA Rules Engine add-on is active.
 		if ( self::is_rules_engine_active() ) {
-			$rules_engine_url = admin_url( 'upload.php?page=vmfa-rules-engine' );
+			$rules_engine_url = admin_url( 'upload.php?page=' . self::PAGE_SLUG . '&tab=rules-engine' );
 			printf(
 				'<p class="description">%s <a href="%s">%s</a></p>',
 				esc_html__( 'Default folder assignment is managed by the Rules Engine.', 'virtual-media-folders' ),
