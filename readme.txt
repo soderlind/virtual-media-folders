@@ -113,6 +113,16 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 == Changelog ==
 
+= 1.6.0 =
+* Added: Add-on Tab System - Settings page now supports tabs for add-on plugins
+* Added: Add-ons can register their settings as tabs within "Folder Settings"
+* Added: New `vmfo_settings_tabs` filter for add-on registration
+* Added: New `vmfo_settings_enqueue_scripts` action for conditional script loading
+* Added: `SUPPORTS_ADDON_TABS` constant for add-on compatibility detection
+* Added: `docs/addon-integration.md` with comprehensive add-on development guide
+* Changed: Settings page refactored to use tab-based navigation
+* Changed: `PAGE_SLUG` constant is now public for add-on access
+
 = 1.5.3 =
 * Fixed: Updated Norwegian translations for Rules Engine integration strings
 
