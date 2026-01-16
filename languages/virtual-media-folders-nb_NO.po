@@ -341,7 +341,7 @@ msgstr "Konfigurer hvordan Virtuelle mediemapper foreslår mapper for nylig oppl
 msgid "Set default behavior for folder organization."
 msgstr "Angi standardoppførsel for mappeorganisering."
 
-#: src/Settings.php:479
+#: src/Settings.php:493
 msgid "None"
 msgstr "Ingen"
 
@@ -607,8 +607,8 @@ msgstr "Vis mapper"
 msgid "Failed to move media."
 msgstr "Kunne ikke flytte media."
 
-#: src/admin/media-library.js:863
-#: src/admin/media-library.js:878
+#: src/admin/media-library.js:922
+#: src/admin/media-library.js:937
 msgid "Media item"
 msgstr "Medieelement"
 
@@ -743,10 +743,10 @@ msgstr "Tøm søk"
 msgid "Close search"
 msgstr "Lukk søk"
 
-#: src/Settings.php:467
+#: src/Settings.php:472
 msgid "Default folder assignment is managed by the Rules Engine."
 msgstr "Standard mappevalg styres av regelmotoren."
 
-#: src/Settings.php:469
+#: src/Settings.php:474
 msgid "Configure Rules Engine →"
 msgstr "Konfigurer regelmotor →"
