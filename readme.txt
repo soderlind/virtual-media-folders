@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.5.2
+Stable tag: 1.6.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
