@@ -24,7 +24,7 @@ Virtual Media Folders brings virtual folder organization to your WordPress Media
 * **Keyboard Accessible** – Full keyboard navigation support
 * **Internationalized** – Ready for translation (Norwegian Bokmål included)
 
-= Free Add-ons =
+= Free add-ons =
 
 * [**AI Organizer**](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders. This is add-on functionality requiring an API key from a supported AI service provider, or a local LLM.
 * [**Rules Engine**](https://github.com/soderlind/vmfa-rules-engine) – Rule-based automatic folder assignment for media uploads, based on metadata, file type, or other criteria. 
