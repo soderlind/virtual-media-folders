@@ -2,6 +2,43 @@
 
 This comprehensive guide covers everything you need to know to build add-on plugins for Virtual Media Folders.
 
+## Philosophy & Architecture
+
+Virtual Media Folders uses a **virtual folder** approach that's fundamentally different from traditional file-based organization:
+
+### Key Principles
+
+1. **Files Never Move** – Media files stay exactly where WordPress uploaded them. The physical file location and URL never change when you "move" media between folders.
+
+2. **Folders Are Taxonomy Terms** – Folders are implemented as terms in a custom hierarchical taxonomy (`vmfo_folder`). This leverages WordPress's mature term system for relationships, hierarchy, and querying.
+
+3. **One Folder Per Item** – Each media attachment belongs to zero or one folder at a time (single-term assignment), mimicking traditional file system behavior.
+
+4. **Non-Destructive** – Deleting a folder only removes the organizational structure. The media files themselves remain in the library.
+
+### Why This Approach?
+
+- **URL Stability** – Embedded images and links never break when reorganizing
+- **Performance** – No file I/O operations when moving media
+- **Reversibility** – Easy to undo or reorganize without consequences
+- **WordPress Native** – Uses standard taxonomy APIs that themes and plugins understand
+
+### Technical Implementation
+
+```
+Media Attachment (post_type: attachment)
+    └── vmfo_folder (taxonomy term relationship)
+            └── Term: "Photos" (term_id: 5, parent: 0)
+                    └── Term: "Events" (term_id: 12, parent: 5)
+```
+
+When you "move" a file to a folder, the plugin simply calls:
+```php
+wp_set_object_terms( $attachment_id, $folder_term_id, 'vmfo_folder' );
+```
+
+This philosophy should guide your add-on development: work with taxonomy terms, not file operations.
+
 ## Overview
 
 Virtual Media Folders is designed to be extensible. Add-ons can:
