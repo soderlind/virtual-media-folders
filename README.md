@@ -80,6 +80,7 @@ When inserting media from a block:
 
 - [Accessibility](docs/a11y.md) – Keyboard navigation and screen reader support
 - [Development](docs/development.md) – Setup, API reference, hooks, and contributing
+- [Add-on Development](docs/addon-development.md) – Guide to building add-on plugins
 
 ## License
 
