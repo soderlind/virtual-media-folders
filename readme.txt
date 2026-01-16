@@ -119,7 +119,7 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 * Added: New `vmfo_settings_tabs` filter for add-on registration
 * Added: New `vmfo_settings_enqueue_scripts` action for conditional script loading
 * Added: `SUPPORTS_ADDON_TABS` constant for add-on compatibility detection
-* Added: `docs/addon-integration.md` with comprehensive add-on development guide
+* Added: [`docs/addon-integration.md`](https://github.com/soderlind/virtual-media-folders/blob/main/docs/addon-integration.md) with comprehensive add-on development guide
 * Changed: Settings page refactored to use tab-based navigation
 * Changed: `PAGE_SLUG` constant is now public for add-on access
 
