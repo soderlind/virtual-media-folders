@@ -547,6 +547,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
 
+[1.5.3]: https://github.com/soderlind/virtual-media-folders/compare/1.5.2...1.5.3
 [1.5.2]: https://github.com/soderlind/virtual-media-folders/compare/1.5.1...1.5.2
 [1.5.1]: https://github.com/soderlind/virtual-media-folders/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/soderlind/virtual-media-folders/compare/1.4.2...1.5.0

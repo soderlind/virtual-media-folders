@@ -113,6 +113,9 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 == Changelog ==
 
+= 1.5.3 =
+* Fixed: Updated Norwegian translations for Rules Engine integration strings
+
 = 1.5.2 =
 * Changed: Default Folder setting now links to Rules Engine settings when VMFA Rules Engine add-on is active
 
