@@ -458,10 +458,24 @@ final class Settings {
 	/**
 	 * Render a folder select field.
 	 *
+	 * If the VMFA Rules Engine add-on is active, show a link to its settings instead.
+	 *
 	 * @param array $args Field arguments.
 	 * @return void
 	 */
 	public static function render_folder_select_field( array $args ): void {
+		// Check if VMFA Rules Engine add-on is active.
+		if ( self::is_rules_engine_active() ) {
+			$rules_engine_url = admin_url( 'upload.php?page=vmfa-rules-engine' );
+			printf(
+				'<p class="description">%s <a href="%s">%s</a></p>',
+				esc_html__( 'Default folder assignment is managed by the Rules Engine.', 'virtual-media-folders' ),
+				esc_url( $rules_engine_url ),
+				esc_html__( 'Configure Rules Engine →', 'virtual-media-folders' )
+			);
+			return;
+		}
+
 		$options = self::get_options();
 		$value   = $options[ $args[ 'id' ] ] ?? self::DEFAULTS[ $args[ 'id' ] ] ?? 0;
 		$name    = self::OPTION_NAME . '[' . $args[ 'id' ] . ']';
@@ -494,5 +508,18 @@ final class Settings {
 		if ( ! empty( $args[ 'description' ] ) ) {
 			echo '<p class="description">' . esc_html( $args[ 'description' ] ) . '</p>';
 		}
+	}
+
+	/**
+	 * Check if the VMFA Rules Engine add-on is active.
+	 *
+	 * @return bool True if the Rules Engine plugin is active.
+	 */
+	private static function is_rules_engine_active(): bool {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		return is_plugin_active( 'vmfa-rules-engine/vmfa-rules-engine.php' );
 	}
 }
