@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -113,6 +113,10 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.6.1 =
+* Changed: Add-on tabs are now sorted alphabetically by title in the settings page
+* Documentation: Added comprehensive [Add-on Development Guide](https://github.com/soderlind/virtual-media-folders/blob/main/docs/addon-development.md) with philosophy, architecture, and implementation details
 
 = 1.6.0 =
 * Added: Add-on Tab System - Settings page now supports tabs for add-on plugins

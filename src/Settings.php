@@ -444,7 +444,13 @@ final class Settings {
 		 * @param array $tabs Array of tabs: [ 'slug' => [ 'title' => '', 'callback' => callable ] ].
 		 */
 		$addon_tabs = apply_filters( 'vmfo_settings_tabs', array() );
-		$tabs       = array_merge( $tabs, $addon_tabs );
+
+		// Sort add-on tabs alphabetically by title.
+		uasort( $addon_tabs, function ( $a, $b ) {
+			return strcasecmp( $a[ 'title' ] ?? '', $b[ 'title' ] ?? '' );
+		} );
+
+		$tabs = array_merge( $tabs, $addon_tabs );
 
 		// Validate active tab exists, fall back to general.
 		if ( ! isset( $tabs[ $active_tab ] ) ) {
