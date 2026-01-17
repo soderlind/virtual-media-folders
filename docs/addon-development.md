@@ -147,6 +147,8 @@ add_filter( 'vmfo_settings_tabs', function( array $tabs ): array {
 });
 ```
 
+> **Note:** Tabs are automatically sorted alphabetically by title. The "General" tab always appears first, followed by add-on tabs in alphabetical order.
+
 ### Rendering Tab Content
 
 ```php
