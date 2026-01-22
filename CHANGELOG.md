@@ -5,6 +5,15 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3] - 2026-01-22
+
+### Fixed
+- Folder counts now update automatically when media is deleted (single or bulk delete)
+
+### Documentation
+- Add-on bootstrap example now includes `Requires Plugins: virtual-media-folders` header (WordPress 6.5+)
+- Updated best practices to recommend declaring plugin dependency
+
 ## [1.6.2] - 2026-01-22
 
 ### Fixed
@@ -570,7 +579,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Requires PHP 7.4+
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
-[1.6.2]: https://github.com/soderlind/virtual-media-folders/compare/1.6.1...1.6.2[1.6.1]: https://github.com/soderlind/virtual-media-folders/compare/1.6.0...1.6.1
+[1.6.3]: https://github.com/soderlind/virtual-media-folders/compare/1.6.2...1.6.3
+[1.6.2]: https://github.com/soderlind/virtual-media-folders/compare/1.6.1...1.6.2
+[1.6.1]: https://github.com/soderlind/virtual-media-folders/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/soderlind/virtual-media-folders/compare/1.5.3...1.6.0
 [1.5.3]: https://github.com/soderlind/virtual-media-folders/compare/1.5.2...1.5.3
 [1.5.2]: https://github.com/soderlind/virtual-media-folders/compare/1.5.1...1.5.2
