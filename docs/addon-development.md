@@ -94,6 +94,7 @@ my-vmfa-addon/
  * Version: 1.0.0
  * Requires at least: 6.8
  * Requires PHP: 8.3
+ * Requires Plugins: virtual-media-folders
  * Author: Your Name
  * License: GPL-2.0-or-later
  * Text Domain: my-vmfa-addon
@@ -105,7 +106,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Check for parent plugin.
+// Fallback check for WordPress < 6.5 (which doesn't support Requires Plugins header).
 add_action( 'plugins_loaded', function() {
     if ( ! defined( 'VMFO_VERSION' ) ) {
         add_action( 'admin_notices', function() {
@@ -252,6 +253,8 @@ update_term_meta( $term_id, 'vmfo_order', 5 );
 
 The parent plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 
+#### Folder Endpoints
+
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/folders` | List all folders |
@@ -262,7 +265,15 @@ The parent plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 | POST | `/folders/{id}/media` | Add media to folder |
 | DELETE | `/folders/{id}/media` | Remove media from folder |
 | POST | `/folders/reorder` | Reorder folders |
-| GET | `/folders/counts` | Get folder counts |
+| GET | `/folders/counts` | Get folder counts (supports `media_type` filter) |
+
+#### Suggestion Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/suggestions/{media_id}` | Get folder suggestions for a media item |
+| POST | `/suggestions/{media_id}/apply` | Apply a suggested folder (requires `folder_id`) |
+| POST | `/suggestions/{media_id}/dismiss` | Dismiss suggestions for a media item |
 
 ### Creating Custom Endpoints
 
@@ -332,20 +343,21 @@ add_filter( 'vmfo_settings_tabs', function( $tabs ) {
 #### Media Events
 
 ```php
-// Fired after media is moved to a folder.
-add_action( 'vmfo_media_moved', function( $attachment_id, $folder_id ) {
-    // Handle the move.
-}, 10, 2);
+// Fired after media is assigned to a folder.
+add_action( 'vmfo_folder_assigned', function( $attachment_id, $folder_id, $result ) {
+    // Handle the folder assignment.
+    // $result contains the return value from wp_set_object_terms.
+}, 10, 3);
+```
 
-// Fired when a folder is created.
-add_action( 'vmfo_folder_created', function( $term_id, $term ) {
-    // Handle folder creation.
-}, 10, 2);
+#### Query Filters
 
-// Fired when a folder is deleted.
-add_action( 'vmfo_folder_deleted', function( $term_id ) {
-    // Handle folder deletion.
-});
+```php
+// Include child folder media when querying a parent folder.
+add_filter( 'vmfo_include_child_folders', function( $include, $folder_id ) {
+    // Return true to include media from child folders.
+    return $include;
+}, 10, 2);
 ```
 
 ### Hooking into Media Upload
@@ -528,13 +540,14 @@ describe('MyComponent', () => {
 
 ## Best Practices
 
-1. **Check parent plugin** – Always verify VMFO is active before initializing
-2. **Use priorities** – Hook into upload filters with priority 20+ to run after VMFO
-3. **Namespace everything** – Use unique prefixes for options, meta keys, and hooks
-4. **Support fallbacks** – Work with or without the tab system
-5. **Follow WordPress standards** – Use WordPress Coding Standards and components
-6. **Test thoroughly** – Include both PHP and JavaScript tests
-7. **Internationalize** – Make all strings translatable
+1. **Declare dependency** – Use the `Requires Plugins: virtual-media-folders` header (WordPress 6.5+)
+2. **Check parent plugin** – Also verify `VMFO_VERSION` is defined for older WordPress versions
+3. **Use priorities** – Hook into upload filters with priority 20+ to run after VMFO
+4. **Namespace everything** – Use unique prefixes for options, meta keys, and hooks
+5. **Support fallbacks** – Work with or without the tab system
+6. **Follow WordPress standards** – Use WordPress Coding Standards and components
+7. **Test thoroughly** – Include both PHP and JavaScript tests
+8. **Internationalize** – Make all strings translatable
 
 ## Resources
 
