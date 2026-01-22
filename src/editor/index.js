@@ -13,13 +13,14 @@ import './styles/editor.css';
 /**
  * Setup sticky sidebar behavior for Gutenberg media modal.
  * Makes the sidebar stay fixed when scrolling through attachments.
+ * Returns a cleanup function to remove event listeners.
  */
 function setupStickySidebar(browser, sidebarContainer) {
 	const $attachmentsWrapper = browser.$el.find('.attachments-wrapper').first();
 	const $attachments = browser.$el.find('.attachments').first();
 	
 	if (!$attachmentsWrapper.length || !$attachments.length) {
-		return;
+		return () => {}; // Return no-op cleanup
 	}
 	
 	const attachmentsWrapper = $attachmentsWrapper[0];
@@ -59,16 +60,27 @@ function setupStickySidebar(browser, sidebarContainer) {
 		}
 	}
 	
-	// Listen to scroll on attachments-wrapper
-	attachmentsWrapper.addEventListener('scroll', () => {
+	// Named handlers for proper cleanup
+	function onScroll() {
 		requestAnimationFrame(updateSidebarPosition);
-	}, { passive: true });
+	}
+	
+	// Listen to scroll on attachments-wrapper
+	attachmentsWrapper.addEventListener('scroll', onScroll, { passive: true });
 	
 	// Also update on resize
 	window.addEventListener('resize', updateSidebarPosition, { passive: true });
 	
 	// Initial check
 	setTimeout(updateSidebarPosition, 100);
+	
+	// Store cleanup function on sidebar container for later use
+	sidebarContainer._cleanupSticky = () => {
+		attachmentsWrapper.removeEventListener('scroll', onScroll);
+		window.removeEventListener('resize', updateSidebarPosition);
+	};
+	
+	return sidebarContainer._cleanupSticky;
 }
 
 /**

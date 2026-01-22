@@ -146,13 +146,17 @@ jQuery(document).off('click.vmfo', '.view-switch a').on('click.vmfo', '.view-swi
 	window.location.href = 'upload.php?mode=' + mode;
 });
 
-// When "Add Media File" button is clicked while a folder is selected, switch to All Media
+// When "Add Media File" button is clicked, ensure uploader is visible
 jQuery(document).off('click.vmfo', '.page-title-action').on('click.vmfo', '.page-title-action', function() {
-	// Check if a folder is currently selected (not All Media)
-	if (jQuery('.attachments-browser').hasClass('vmf-folder-filtered')) {
-		// Select All Media via the global function
-		if (typeof window.vmfSelectFolder === 'function') {
-			window.vmfSelectFolder(null);
+	// The uploader is hidden when vmf-folder-filtered class is present
+	// Temporarily remove the filter to show the uploader
+	const $browser = jQuery('.attachments-browser');
+	if ($browser.hasClass('vmf-folder-filtered')) {
+		$browser.removeClass('vmf-folder-filtered');
+		// Recalculate sidebar position after uploader becomes visible
+		const sidebar = document.querySelector('.vmf-folder-tree-sidebar');
+		if (sidebar && sidebar._recalculateOffset) {
+			setTimeout(() => sidebar._recalculateOffset(), 50);
 		}
 	}
 });
@@ -292,6 +296,7 @@ function refreshMediaLibrary() {
 }
 
 window.vmfMoveToFolder = moveMediaToFolder;
+window.vmfRefreshMediaLibrary = refreshMediaLibrary;
 
 /**
  * Show a temporary notice.
@@ -791,6 +796,47 @@ function injectFolderTree(browser) {
 
 	// Add the toggle button
 	addFolderToggleButton(browser);
+
+	// Listen for upload completions to refresh folder counts
+	setupUploadListener(browser);
+}
+
+/**
+ * Setup listener for upload completions to refresh folder counts.
+ * This ensures folder counts update after any file upload, including
+ * those redirected by add-ons like vmfa-rules-engine.
+ */
+function setupUploadListener(browser) {
+	// Avoid duplicate listeners
+	if (browser._vmfUploadListenerSetup) {
+		return;
+	}
+	browser._vmfUploadListenerSetup = true;
+
+	// Listen for new attachments added to the collection (uploads)
+	if (browser.collection) {
+		browser.collection.on('add', debounceRefresh);
+	}
+
+	// Also listen for uploader success events if available
+	if (browser.uploader && browser.uploader.uploader) {
+		const uploader = browser.uploader.uploader;
+		uploader.bind('FileUploaded', debounceRefresh);
+	}
+}
+
+// Debounce the refresh to avoid multiple rapid calls during batch uploads
+let uploadRefreshTimeout = null;
+function debounceRefresh() {
+	if (uploadRefreshTimeout) {
+		clearTimeout(uploadRefreshTimeout);
+	}
+	uploadRefreshTimeout = setTimeout(() => {
+		if (window.vmfRefreshFolders) {
+			window.vmfRefreshFolders();
+		}
+		uploadRefreshTimeout = null;
+	}, 500); // Wait 500ms after last upload before refreshing
 }
 
 /**
