@@ -94,6 +94,7 @@ my-vmfa-addon/
  * Version: 1.0.0
  * Requires at least: 6.8
  * Requires PHP: 8.3
+ * Requires Plugins: virtual-media-folders
  * Author: Your Name
  * License: GPL-2.0-or-later
  * Text Domain: my-vmfa-addon
@@ -105,7 +106,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Check for parent plugin.
+// Fallback check for WordPress < 6.5 (which doesn't support Requires Plugins header).
 add_action( 'plugins_loaded', function() {
     if ( ! defined( 'VMFO_VERSION' ) ) {
         add_action( 'admin_notices', function() {
@@ -539,13 +540,14 @@ describe('MyComponent', () => {
 
 ## Best Practices
 
-1. **Check parent plugin** – Always verify VMFO is active before initializing
-2. **Use priorities** – Hook into upload filters with priority 20+ to run after VMFO
-3. **Namespace everything** – Use unique prefixes for options, meta keys, and hooks
-4. **Support fallbacks** – Work with or without the tab system
-5. **Follow WordPress standards** – Use WordPress Coding Standards and components
-6. **Test thoroughly** – Include both PHP and JavaScript tests
-7. **Internationalize** – Make all strings translatable
+1. **Declare dependency** – Use the `Requires Plugins: virtual-media-folders` header (WordPress 6.5+)
+2. **Check parent plugin** – Also verify `VMFO_VERSION` is defined for older WordPress versions
+3. **Use priorities** – Hook into upload filters with priority 20+ to run after VMFO
+4. **Namespace everything** – Use unique prefixes for options, meta keys, and hooks
+5. **Support fallbacks** – Work with or without the tab system
+6. **Follow WordPress standards** – Use WordPress Coding Standards and components
+7. **Test thoroughly** – Include both PHP and JavaScript tests
+8. **Internationalize** – Make all strings translatable
 
 ## Resources
 
