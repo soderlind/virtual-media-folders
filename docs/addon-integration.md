@@ -8,8 +8,11 @@ Virtual Media Folders provides a tab-based settings page architecture that allow
 
 ## Prerequisites
 
-- Virtual Media Folders version 1.1.0 or later
-- PHP 8.1 or later
+- Virtual Media Folders version 1.6.0 or later
+- PHP 8.3 or later
+- WordPress 6.8 or later
+
+For comprehensive add-on development guidance, see the [Add-on Development Guide](addon-development.md).
 
 ## Detecting Tab Support
 
@@ -353,12 +356,14 @@ class SettingsIntegration {
 | `vmfo_default_settings` | `array $defaults` | Modify default settings |
 | `vmfo_settings` | `array $options` | Filter all settings |
 | `vmfo_setting_{$key}` | `mixed $value, string $key, array $options` | Filter a specific setting |
+| `vmfo_include_child_folders` | `bool $include, int $folder_id` | Include child folder media in queries |
 
 ### Actions
 
 | Hook | Parameters | Description |
 |------|------------|-------------|
 | `vmfo_settings_enqueue_scripts` | `string $active_tab, string $active_subtab` | Enqueue tab-specific scripts |
+| `vmfo_folder_assigned` | `int $attachment_id, int $folder_id, array $result` | Fired after media is assigned to a folder |
 
 ## Constants
 

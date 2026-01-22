@@ -252,6 +252,8 @@ update_term_meta( $term_id, 'vmfo_order', 5 );
 
 The parent plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 
+#### Folder Endpoints
+
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/folders` | List all folders |
@@ -262,7 +264,15 @@ The parent plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 | POST | `/folders/{id}/media` | Add media to folder |
 | DELETE | `/folders/{id}/media` | Remove media from folder |
 | POST | `/folders/reorder` | Reorder folders |
-| GET | `/folders/counts` | Get folder counts |
+| GET | `/folders/counts` | Get folder counts (supports `media_type` filter) |
+
+#### Suggestion Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/suggestions/{media_id}` | Get folder suggestions for a media item |
+| POST | `/suggestions/{media_id}/apply` | Apply a suggested folder (requires `folder_id`) |
+| POST | `/suggestions/{media_id}/dismiss` | Dismiss suggestions for a media item |
 
 ### Creating Custom Endpoints
 
@@ -332,20 +342,21 @@ add_filter( 'vmfo_settings_tabs', function( $tabs ) {
 #### Media Events
 
 ```php
-// Fired after media is moved to a folder.
-add_action( 'vmfo_media_moved', function( $attachment_id, $folder_id ) {
-    // Handle the move.
-}, 10, 2);
+// Fired after media is assigned to a folder.
+add_action( 'vmfo_folder_assigned', function( $attachment_id, $folder_id, $result ) {
+    // Handle the folder assignment.
+    // $result contains the return value from wp_set_object_terms.
+}, 10, 3);
+```
 
-// Fired when a folder is created.
-add_action( 'vmfo_folder_created', function( $term_id, $term ) {
-    // Handle folder creation.
-}, 10, 2);
+#### Query Filters
 
-// Fired when a folder is deleted.
-add_action( 'vmfo_folder_deleted', function( $term_id ) {
-    // Handle folder deletion.
-});
+```php
+// Include child folder media when querying a parent folder.
+add_filter( 'vmfo_include_child_folders', function( $include, $folder_id ) {
+    // Return true to include media from child folders.
+    return $include;
+}, 10, 2);
 ```
 
 ### Hooking into Media Upload
