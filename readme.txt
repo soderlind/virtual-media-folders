@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -113,6 +113,15 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.6.2 =
+* Fixed: "Add Media File" button now respects "Show All Media" setting
+* Fixed: Block editor folder sidebar now defaults to Uncategorized when "Show All Media" is disabled
+* Fixed: Prevented duplicate folder selection callbacks and state updates after component unmount
+* Fixed: Added proper cleanup for sticky sidebar event listeners to prevent memory leaks
+* Changed: Folder cache now prefers PHP-preloaded data over localStorage
+* Changed: Exposed `vmfRefreshMediaLibrary` globally for add-on use
+* Documentation: Updated development docs with accurate REST API endpoints and hooks
 
 = 1.6.1 =
 * Changed: Add-on tabs are now sorted alphabetically by title in the settings page

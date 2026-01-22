@@ -23,6 +23,9 @@ export default function FolderSidebar({ onFolderSelect }) {
 	// Get settings from localized data - read inside component to ensure data is available
 	const { showAllMedia = true, showUncategorized = true } = window.vmfEditor || {};
 	
+	// Determine default folder: if showAllMedia is disabled, default to 'uncategorized'
+	const defaultFolder = showAllMedia ? null : 'uncategorized';
+	
 	// Search state
 	const [searchQuery, setSearchQuery] = useState('');
 	
@@ -34,7 +37,8 @@ export default function FolderSidebar({ onFolderSelect }) {
 		handleSelect,
 	} = useFolderData({ 
 		trackUrl: false, 
-		onFolderSelect 
+		onFolderSelect,
+		defaultFolder,
 	});
 
 	/**

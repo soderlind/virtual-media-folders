@@ -8,11 +8,22 @@ const CACHE_KEY = 'vmfo_folders_cache';
 
 /**
  * Get cached folders from localStorage or preloaded vmfData.
+ * Preloaded data from PHP is preferred as it's always fresh from the current page load.
  *
  * @return {Array|null} Cached folder array or null if not available.
  */
 export function getCachedFolders() {
-	// Try localStorage first
+	// Prefer preloaded data from PHP - it's always fresh for this page load
+	if (window.vmfData?.folders) {
+		return window.vmfData.folders;
+	}
+
+	// Editor context - preloaded data is always fresh
+	if (window.vmfEditor?.folders) {
+		return window.vmfEditor.folders;
+	}
+
+	// Fall back to localStorage cache
 	try {
 		const cached = localStorage.getItem(CACHE_KEY);
 		if (cached) {
@@ -20,16 +31,6 @@ export function getCachedFolders() {
 		}
 	} catch (e) {
 		// localStorage not available or parse error
-	}
-
-	// Fall back to preloaded data from PHP
-	if (window.vmfData?.folders) {
-		return window.vmfData.folders;
-	}
-
-	// Editor context
-	if (window.vmfEditor?.folders) {
-		return window.vmfEditor.folders;
 	}
 
 	return null;

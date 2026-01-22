@@ -103,7 +103,10 @@ The plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 | POST | `/folders/{id}/media` | Add media to folder |
 | DELETE | `/folders/{id}/media` | Remove media from folder |
 | POST | `/folders/reorder` | Reorder folders |
-| GET | `/folders/counts` | Get folder counts (with optional media type filter) |
+| GET | `/folders/counts` | Get folder counts (with optional `media_type` filter) |
+| GET | `/suggestions/{media_id}` | Get folder suggestions for media |
+| POST | `/suggestions/{media_id}/apply` | Apply a folder suggestion |
+| POST | `/suggestions/{media_id}/dismiss` | Dismiss suggestions for media |
 
 ### Authentication
 
@@ -139,9 +142,8 @@ curl "https://example.com/wp-json/vmfo/v1/folders" \
 
 | Hook | Description |
 |------|-------------|
-| `vmfo_folder_created` | Fired when a folder is created |
-| `vmfo_folder_deleted` | Fired when a folder is deleted |
-| `vmfo_media_moved` | Fired when media is moved to a folder |
+| `vmfo_folder_assigned` | Fired when media is assigned to a folder (params: `$media_id`, `$folder_id`, `$result`) |
+| `vmfo_settings_enqueue_scripts` | Fired when settings page scripts are enqueued (params: `$active_tab`, `$active_subtab`) |
 
 ### Settings Filters
 
@@ -195,9 +197,8 @@ add_filter( 'vmfo_setting_show_all_media', function( $value, $key, $options ) {
 
 | Filter | Description |
 |--------|-------------|
-| `vmfo_suggestion_matchers` | Customize suggestion matching logic |
-| `vmfo_folder_capabilities` | Modify capability requirements |
-| `vmfo_include_child_folders` | Include child folders in queries |
+| `vmfo_settings_tabs` | Register add-on tabs on the settings page |
+| `vmfo_include_child_folders` | Include child folders when filtering by a folder (default: `false`) |
 
 ## Preconfiguring Folders
 

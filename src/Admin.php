@@ -215,6 +215,17 @@ class Admin {
 		// Assign media to folder (replaces existing assignments).
 		$result = wp_set_object_terms( $media_id, [ $folder_id ], Taxonomy::TAXONOMY );
 
+		/**
+		 * Fires after a media item has been assigned to a folder.
+		 *
+		 * @since 1.5.0
+		 *
+		 * @param int   $media_id  The attachment ID.
+		 * @param int   $folder_id The folder term ID.
+		 * @param array $result    The result from wp_set_object_terms.
+		 */
+		do_action( 'vmfo_folder_assigned', $media_id, $folder_id, $result );
+
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [ 'message' => $result->get_error_message() ], 500 );
 		}

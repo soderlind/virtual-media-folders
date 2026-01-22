@@ -5,6 +5,22 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2026-01-22
+
+### Fixed
+- "Add Media File" button now respects "Show All Media" setting (stays filtered when disabled)
+- Block editor folder sidebar now defaults to Uncategorized when "Show All Media" is disabled
+- Prevented duplicate folder selection callbacks and state updates after component unmount
+- Added proper cleanup for sticky sidebar event listeners to prevent memory leaks
+
+### Changed
+- Folder cache now prefers PHP-preloaded data over localStorage for fresher data
+- Exposed `vmfRefreshMediaLibrary` globally for add-on use
+
+### Documentation
+- Updated development docs with accurate REST API endpoints (added suggestion endpoints)
+- Fixed hooks documentation to reflect actual implemented hooks
+
 ## [1.6.1] - 2026-01-16
 
 ### Changed
@@ -554,8 +570,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Requires PHP 7.4+
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
-
-[1.6.1]: https://github.com/soderlind/virtual-media-folders/compare/1.6.0...1.6.1
+[1.6.2]: https://github.com/soderlind/virtual-media-folders/compare/1.6.1...1.6.2[1.6.1]: https://github.com/soderlind/virtual-media-folders/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/soderlind/virtual-media-folders/compare/1.5.3...1.6.0
 [1.5.3]: https://github.com/soderlind/virtual-media-folders/compare/1.5.2...1.5.3
 [1.5.2]: https://github.com/soderlind/virtual-media-folders/compare/1.5.1...1.5.2

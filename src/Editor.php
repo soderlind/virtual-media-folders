@@ -120,8 +120,8 @@ final class Editor {
 			'folders'           => $folder_list,
 			'restBase'          => 'vmfo-folders',
 			'nonce'             => wp_create_nonce( 'wp_rest' ),
-			'showAllMedia'      => (bool) Settings::get( 'show_all_media', true ),
-			'showUncategorized' => (bool) Settings::get( 'show_uncategorized', true ),
+			'showAllMedia'      => (bool) Settings::get( 'show_all_media' ),
+			'showUncategorized' => (bool) Settings::get( 'show_uncategorized' ),
 		];
 	}
 

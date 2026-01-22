@@ -95,6 +95,24 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 	const [loading, setLoading] = useState(!hasInitialData);
 	const [uncategorizedCount, setUncategorizedCount] = useState(0);
 	const lastFetchedFolders = useRef(hasInitialData ? initialFolders : null);
+	
+	// Use ref for callback to avoid re-running effects when callback changes
+	const onFolderSelectRef = useRef(onFolderSelect);
+	useEffect(() => {
+		onFolderSelectRef.current = onFolderSelect;
+	}, [onFolderSelect]);
+	
+	// Track if initial selection has been applied to prevent duplicate calls
+	const initialSelectionApplied = useRef(false);
+	
+	// Track if component is mounted to prevent state updates after unmount
+	const isMounted = useRef(true);
+	useEffect(() => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, []);
 
 	/**
 	 * Sort folders by vmfo_order (if present) then by name.
@@ -140,6 +158,10 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 			}
 
 			const totalResponse = await apiFetch({ path: mediaPath, parse: false });
+			
+			// Check if still mounted before updating state
+			if (!isMounted.current) return;
+			
 			const totalCount = parseInt(totalResponse.headers.get('X-WP-Total'), 10) || 0;
 
 			let categorizedCount = 0;
@@ -166,6 +188,9 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 				path: '/vmfo/v1/folders',
 			});
 
+			// Check if still mounted before updating state
+			if (!isMounted.current) return;
+
 			// Check if structure changed (deep equality on essential props)
 			const structureChanged = forceRefresh || !foldersEqual(lastFetchedFolders.current, freshFolders);
 
@@ -182,6 +207,10 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 					const filteredCounts = await apiFetch({
 						path: `/vmfo/v1/folders/counts?media_type=${encodeURIComponent(typeFilter)}`,
 					});
+					
+					// Check if still mounted before updating state
+					if (!isMounted.current) return;
+					
 					finalFolders = freshFolders.map((f) => ({
 						...f,
 						count: filteredCounts[f.id] ?? f.count,
@@ -197,11 +226,19 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 		} catch (error) {
 			console.error('Error fetching folders:', error);
 		} finally {
-			setLoading(false);
+			if (isMounted.current) {
+				setLoading(false);
+			}
 		}
 	}, [mediaType, applyFolderData, fetchUncategorizedCount]);
 
 	useEffect(() => {
+		// Prevent duplicate initial selection calls
+		if (initialSelectionApplied.current) {
+			return;
+		}
+		initialSelectionApplied.current = true;
+		
 		// Get initial folder from URL (admin only)
 		let initialFolder = defaultFolder;
 		
@@ -230,9 +267,9 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 		// Apply the initial folder filter if it's not "All Media" (null)
 		// This ensures the media library is filtered on page load
 		if (initialFolder !== null) {
-			onFolderSelect?.(initialFolder);
+			onFolderSelectRef.current?.(initialFolder);
 		}
-	}, [fetchFolders, trackUrl, defaultFolder, onFolderSelect]);
+	}, [fetchFolders, trackUrl, defaultFolder]);
 
 	// Re-fetch when media type changes
 	useEffect(() => {
@@ -248,8 +285,8 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 	 */
 	const handleSelect = useCallback((folderId) => {
 		setSelectedId(folderId);
-		onFolderSelect?.(folderId);
-	}, [onFolderSelect]);
+		onFolderSelectRef.current?.(folderId);
+	}, []);
 
 	return {
 		folders,
