@@ -797,25 +797,26 @@ function injectFolderTree(browser) {
 	// Add the toggle button
 	addFolderToggleButton(browser);
 
-	// Listen for upload completions to refresh folder counts
-	setupUploadListener(browser);
+	// Listen for media changes (uploads, deletions) to refresh folder counts
+	setupMediaChangeListener(browser);
 }
 
 /**
- * Setup listener for upload completions to refresh folder counts.
- * This ensures folder counts update after any file upload, including
- * those redirected by add-ons like vmfa-rules-engine.
+ * Setup listener for media changes to refresh folder counts.
+ * This ensures folder counts update after any file upload or deletion,
+ * including uploads redirected by add-ons like vmfa-rules-engine.
  */
-function setupUploadListener(browser) {
+function setupMediaChangeListener(browser) {
 	// Avoid duplicate listeners
-	if (browser._vmfUploadListenerSetup) {
+	if (browser._vmfMediaChangeListenerSetup) {
 		return;
 	}
-	browser._vmfUploadListenerSetup = true;
+	browser._vmfMediaChangeListenerSetup = true;
 
-	// Listen for new attachments added to the collection (uploads)
+	// Listen for attachments added (uploads) or removed (deletions) from the collection
 	if (browser.collection) {
 		browser.collection.on('add', debounceRefresh);
+		browser.collection.on('remove', debounceRefresh);
 	}
 
 	// Also listen for uploader success events if available
@@ -825,18 +826,18 @@ function setupUploadListener(browser) {
 	}
 }
 
-// Debounce the refresh to avoid multiple rapid calls during batch uploads
-let uploadRefreshTimeout = null;
+// Debounce the refresh to avoid multiple rapid calls during batch operations
+let mediaChangeRefreshTimeout = null;
 function debounceRefresh() {
-	if (uploadRefreshTimeout) {
-		clearTimeout(uploadRefreshTimeout);
+	if (mediaChangeRefreshTimeout) {
+		clearTimeout(mediaChangeRefreshTimeout);
 	}
-	uploadRefreshTimeout = setTimeout(() => {
+	mediaChangeRefreshTimeout = setTimeout(() => {
 		if (window.vmfRefreshFolders) {
 			window.vmfRefreshFolders();
 		}
-		uploadRefreshTimeout = null;
-	}, 500); // Wait 500ms after last upload before refreshing
+		mediaChangeRefreshTimeout = null;
+	}, 500); // Wait 500ms after last change before refreshing
 }
 
 /**
