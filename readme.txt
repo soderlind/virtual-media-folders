@@ -84,7 +84,12 @@ When inserting media from a block (Image, Gallery, etc.):
 2. Search for "Virtual Media Folders"
 3. Click "Install Now" and then "Activate"
 
+==  Screenshots ==
 
+1. Folder sidebar in Media Library
+2. Settings page
+3. Bulk move action
+4. Gutenberg media modal integration
 
 == Frequently Asked Questions ==
 
