@@ -5,6 +5,12 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.7] - 2026-01-23
+
+### Changed
+- Updated @wordpress/scripts to 31.3.0
+- Updated vitest to 4.0.18
+
 ## [1.6.6] - 2026-01-23
 
 ### Added
@@ -605,13 +611,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Requires PHP 7.4+
 - Uses React 18 for UI components
 - Leverages WordPress REST API for all operations
-[1.6.5]: https://github.com/soderlind/virtual-media-folders/compare/1.6.4...1.6.5
-[1.6.4]: https://github.com/soderlind/virtual-media-folders/compare/1.6.3...1.6.4
-[1.6.3]: https://github.com/soderlind/virtual-media-folders/compare/1.6.2...1.6.3
-[1.6.2]: https://github.com/soderlind/virtual-media-folders/compare/1.6.1...1.6.2
-[1.6.1]: https://github.com/soderlind/virtual-media-folders/compare/1.6.0...1.6.1
-[1.6.0]: https://github.com/soderlind/virtual-media-folders/compare/1.5.3...1.6.0
-[1.5.3]: https://github.com/soderlind/virtual-media-folders/compare/1.5.2...1.5.3
+[1.6.7]: https://github.com/soderlind/virtual-media-folders/compare/1.6.6...1.6.7
 [1.6.6]: https://github.com/soderlind/virtual-media-folders/compare/1.6.5...1.6.6
 [1.6.5]: https://github.com/soderlind/virtual-media-folders/compare/1.6.4...1.6.5
 [1.6.4]: https://github.com/soderlind/virtual-media-folders/compare/1.6.3...1.6.4

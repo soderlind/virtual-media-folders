@@ -1,6 +1,6 @@
 {
 	"name": "virtual-media-folders",
-	"version": "1.6.6",
+	"version": "1.6.7",
 	"description": "Virtual folder organization and smart management for the WordPress Media Library.",
 	"scripts": {
 		"build": "wp-scripts build",
@@ -18,11 +18,11 @@
 		"@testing-library/react": "^14.0.0",
 		"@testing-library/user-event": "^14.6.1",
 		"@vitejs/plugin-react": "^5.1.2",
-		"@wordpress/scripts": "^31.2.0",
+		"@wordpress/scripts": "^31.3.0",
 		"jsdom": "^24.0.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"vitest": "^4.0.16"
+		"vitest": "^4.0.18"
 	},
 	"dependencies": {
 		"@dnd-kit/core": "^6.3.1",
