@@ -197,8 +197,9 @@ export default function FolderTree({ onFolderSelect }) {
 		if (deletedFolderName) {
 			announceFolderDeleted(deletedFolderName);
 		}
-		// Move focus to Uncategorized if it has items, otherwise All Media
-		const targetFolder = uncategorizedCount > 0 ? 'uncategorized' : null;
+		// Move focus to Uncategorized if showAllMedia is disabled, or if uncategorized has items
+		// Otherwise fall back to All Media (null)
+		const targetFolder = !showAllMedia || uncategorizedCount > 0 ? 'uncategorized' : null;
 		setSelectedId(targetFolder);
 		onFolderSelect?.(targetFolder);
 	}, [uncategorizedCount, setSelectedId, onFolderSelect, announceFolderDeleted]);
