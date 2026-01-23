@@ -29,6 +29,8 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	const [renameFolderName, setRenameFolderName] = useState('');
 	const [renameFolderParent, setRenameFolderParent] = useState(0);
 	const [isProcessing, setIsProcessing] = useState(false);
+	const [isCheckingDelete, setIsCheckingDelete] = useState(false);
+	const [deleteBlockedMessage, setDeleteBlockedMessage] = useState('');
 	const [error, setError] = useState('');
 
 	// Get current folder for rename/delete operations
@@ -208,6 +210,35 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 	}
 
 	/**
+	 * Open delete modal and check if deletion is allowed.
+	 */
+	async function openDeleteModal() {
+		if (!selectedId || typeof selectedId !== 'number') {
+			return;
+		}
+
+		setError('');
+		setDeleteBlockedMessage('');
+		setIsCheckingDelete(true);
+		setIsDeleteOpen(true);
+
+		try {
+			const response = await apiFetch({
+				path: `/vmfo/v1/folders/${selectedId}/can-delete`,
+			});
+
+			if (!response.can_delete && response.message) {
+				setDeleteBlockedMessage(response.message);
+			}
+		} catch (err) {
+			// If check fails, allow deletion to proceed (fail open)
+			console.error('Failed to check folder deletability:', err);
+		} finally {
+			setIsCheckingDelete(false);
+		}
+	}
+
+	/**
 	 * Show a temporary notice.
 	 */
 	function showNotice(message, type = 'success') {
@@ -258,8 +289,7 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 					aria-label={__('Delete Folder', 'virtual-media-folders')}
 					onClick={(e) => {
 						e.stopPropagation();
-						setError('');
-						setIsDeleteOpen(true);
+						openDeleteModal();
 					}}
 					disabled={!canModifyFolder}
 					className="vmf-folder-manager-button"
@@ -363,34 +393,59 @@ export default function FolderManager({ folders = [], selectedId, onRefresh, onD
 					onRequestClose={() => setIsDeleteOpen(false)}
 					className="vmf-folder-modal"
 				>
-					<p>
-						{sprintf(
-							/* translators: %s: folder name */
-							__('Are you sure you want to delete the folder "%s"?', 'virtual-media-folders'),
-							currentFolder?.name || ''
-						)}
-					</p>
-					<p className="vmf-folder-modal-warning">
-						{__('Media items in this folder will not be deleted, only the folder organization.', 'virtual-media-folders')}
-					</p>
-					{error && <p className="vmf-folder-modal-error">{error}</p>}
-					<div className="vmf-folder-modal-actions">
-						<Button
-							variant="secondary"
-							onClick={() => setIsDeleteOpen(false)}
-							disabled={isProcessing}
-						>
-							{__('Cancel', 'virtual-media-folders')}
-						</Button>
-						<Button
-							variant="primary"
-							isDestructive
-							onClick={handleDelete}
-							disabled={isProcessing}
-						>
-							{isProcessing ? __('Deleting…', 'virtual-media-folders') : __('Delete', 'virtual-media-folders')}
-						</Button>
-					</div>
+					{isCheckingDelete ? (
+						<p>{__('Checking…', 'virtual-media-folders')}</p>
+					) : deleteBlockedMessage ? (
+						<>
+							<p className="vmf-folder-modal-error">{deleteBlockedMessage}</p>
+							<div className="vmf-folder-modal-actions">
+								<Button
+									variant="secondary"
+									onClick={() => setIsDeleteOpen(false)}
+								>
+									{__('Close', 'virtual-media-folders')}
+								</Button>
+								<Button
+									variant="primary"
+									isDestructive
+									disabled
+								>
+									{__('Delete', 'virtual-media-folders')}
+								</Button>
+							</div>
+						</>
+					) : (
+						<>
+							<p>
+								{sprintf(
+									/* translators: %s: folder name */
+									__('Are you sure you want to delete the folder "%s"?', 'virtual-media-folders'),
+									currentFolder?.name || ''
+								)}
+							</p>
+							<p className="vmf-folder-modal-warning">
+								{__('Media items in this folder will not be deleted, only the folder organization.', 'virtual-media-folders')}
+							</p>
+							{error && <p className="vmf-folder-modal-error">{error}</p>}
+							<div className="vmf-folder-modal-actions">
+								<Button
+									variant="secondary"
+									onClick={() => setIsDeleteOpen(false)}
+									disabled={isProcessing}
+								>
+									{__('Cancel', 'virtual-media-folders')}
+								</Button>
+								<Button
+									variant="primary"
+									isDestructive
+									onClick={handleDelete}
+									disabled={isProcessing}
+								>
+									{isProcessing ? __('Deleting…', 'virtual-media-folders') : __('Delete', 'virtual-media-folders')}
+								</Button>
+							</div>
+						</>
+					)}
 				</Modal>
 			)}
 		</div>

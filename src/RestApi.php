@@ -142,6 +142,27 @@ final class RestApi extends WP_REST_Controller {
 			]
 		);
 
+		// Folder deletability check endpoint.
+		register_rest_route(
+			$this->namespace,
+			'/folders/(?P<id>[\d]+)/can-delete',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'can_delete_folder' ],
+					'permission_callback' => [ $this, 'delete_folder_permissions_check' ],
+					'args'                => [
+						'id' => [
+							'required'          => true,
+							'type'              => 'integer',
+							'sanitize_callback' => 'absint',
+							'description'       => __( 'The folder ID.', 'virtual-media-folders' ),
+						],
+					],
+				],
+			]
+		);
+
 		// Folder media assignment endpoint.
 		register_rest_route(
 			$this->namespace,
@@ -520,6 +541,58 @@ final class RestApi extends WP_REST_Controller {
 	}
 
 	/**
+	 * Check if a folder can be deleted.
+	 *
+	 * Returns whether deletion is allowed and any blocking message.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function can_delete_folder( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$folder_id = $request->get_param( 'id' );
+		$term      = $this->get_folder_or_error( $folder_id );
+
+		if ( is_wp_error( $term ) ) {
+			return $term;
+		}
+
+		/**
+		 * Filter whether a folder can be deleted.
+		 *
+		 * @see vmfo_can_delete_folder filter in delete_folder method.
+		 */
+		$can_delete = apply_filters( 'vmfo_can_delete_folder', true, $folder_id, $term );
+
+		if ( is_wp_error( $can_delete ) ) {
+			return new WP_REST_Response(
+				[
+					'can_delete' => false,
+					'message'    => $can_delete->get_error_message(),
+				],
+				200
+			);
+		}
+
+		if ( false === $can_delete ) {
+			return new WP_REST_Response(
+				[
+					'can_delete' => false,
+					'message'    => __( 'This folder cannot be deleted.', 'virtual-media-folders' ),
+				],
+				200
+			);
+		}
+
+		return new WP_REST_Response(
+			[
+				'can_delete' => true,
+				'message'    => null,
+			],
+			200
+		);
+	}
+
+	/**
 	 * Delete a folder.
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -531,6 +604,37 @@ final class RestApi extends WP_REST_Controller {
 
 		if ( is_wp_error( $term ) ) {
 			return $term;
+		}
+
+		/**
+		 * Filter whether a folder can be deleted.
+		 *
+		 * Return a WP_Error to prevent deletion with a custom message.
+		 * Return true to allow deletion.
+		 *
+		 * @since 1.6.5
+		 *
+		 * @param bool|WP_Error $can_delete Whether the folder can be deleted. Default true.
+		 * @param int           $folder_id  The folder term ID.
+		 * @param object        $term       The folder term object.
+		 */
+		$can_delete = apply_filters( 'vmfo_can_delete_folder', true, $folder_id, $term );
+
+		if ( is_wp_error( $can_delete ) ) {
+			// Ensure error has proper status code.
+			$data = $can_delete->get_error_data();
+			if ( ! isset( $data['status'] ) ) {
+				$can_delete->add_data( [ 'status' => 400 ] );
+			}
+			return $can_delete;
+		}
+
+		if ( false === $can_delete ) {
+			return new WP_Error(
+				'rest_folder_delete_blocked',
+				__( 'This folder cannot be deleted.', 'virtual-media-folders' ),
+				[ 'status' => 400 ]
+			);
 		}
 
 		$result = wp_delete_term( $folder_id, Taxonomy::TAXONOMY );

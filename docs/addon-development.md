@@ -262,6 +262,7 @@ The parent plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 | GET | `/folders/{id}` | Get a folder |
 | PUT | `/folders/{id}` | Update a folder |
 | DELETE | `/folders/{id}` | Delete a folder |
+| GET | `/folders/{id}/can-delete` | Check if a folder can be deleted |
 | POST | `/folders/{id}/media` | Add media to folder |
 | DELETE | `/folders/{id}/media` | Remove media from folder |
 | POST | `/folders/reorder` | Reorder folders |
@@ -347,6 +348,26 @@ add_filter( 'vmfo_settings_tabs', function( $tabs ) {
 add_action( 'vmfo_folder_assigned', function( $attachment_id, $folder_id, $result ) {
     // Handle the folder assignment.
     // $result contains the return value from wp_set_object_terms.
+}, 10, 3);
+```
+
+#### Folder Deletion
+
+```php
+// Prevent folder deletion (e.g., if folder has rules).
+add_filter( 'vmfo_can_delete_folder', function( $can_delete, $folder_id, $term ) {
+    // Check if folder has associated rules.
+    $has_rules = get_term_meta( $folder_id, 'my_addon_has_rules', true );
+    
+    if ( $has_rules ) {
+        return new WP_Error(
+            'folder_has_rules',
+            __( 'Cannot delete folder: it has active rules. Remove the rules first.', 'my-addon' ),
+            [ 'status' => 400 ]
+        );
+    }
+    
+    return $can_delete;
 }, 10, 3);
 ```
 
@@ -486,6 +507,31 @@ wp i18n make-pot . languages/my-vmfa-addon.pot --domain=my-vmfa-addon
 # Generate JSON for JavaScript.
 wp i18n make-json languages/ --no-purge
 ```
+
+### JavaScript Translation Mapping (i18n-map.json)
+
+When using `@wordpress/scripts` to bundle JavaScript, source files are combined into build output files. WordPress needs to know which build file contains translations from which source files. Create an `i18n-map.json` file to map source files to their build outputs:
+
+```json
+{
+    "src/js/index.js": "build/index.js",
+    "src/js/components/MyComponent.jsx": "build/index.js",
+    "src/js/components/AnotherComponent.jsx": "build/index.js",
+    "src/js/admin.js": "build/admin.js"
+}
+```
+
+Then use the map when generating JSON translation files:
+
+```bash
+wp i18n make-json languages/ --no-purge --use-map=i18n-map.json
+```
+
+**Key points:**
+- Only include files that contain translatable strings (`__()`, `_x()`, `_n()`, `sprintf()`)
+- Map each source file to its corresponding bundled output file
+- Use `--no-purge` to keep existing JSON files when regenerating
+- The map ensures translations load correctly from the bundled scripts
 
 ## Testing
 
