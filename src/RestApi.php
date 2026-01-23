@@ -623,7 +623,7 @@ final class RestApi extends WP_REST_Controller {
 		if ( is_wp_error( $can_delete ) ) {
 			// Ensure error has proper status code.
 			$data = $can_delete->get_error_data();
-			if ( ! isset( $data['status'] ) ) {
+			if ( ! isset( $data[ 'status' ] ) ) {
 				$can_delete->add_data( [ 'status' => 400 ] );
 			}
 			return $can_delete;
