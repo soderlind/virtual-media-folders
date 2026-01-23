@@ -92,12 +92,12 @@ msgid "Press Enter or Space to select a folder."
 msgstr "Trykk Enter eller mellomrom for å velge en mappe."
 
 #: src/Admin.php:176
-#: src/Admin.php:243
+#: src/Admin.php:254
 msgid "Invalid security token."
 msgstr "Ugyldig sikkerhetstoken."
 
 #: src/Admin.php:181
-#: src/Admin.php:248
+#: src/Admin.php:259
 msgid "Permission denied."
 msgstr "Ingen tilgang."
 
@@ -114,35 +114,35 @@ msgid "Media removed from all folders."
 msgstr "Media fjernet fra alle mapper."
 
 #: src/Admin.php:212
-#: src/Admin.php:285
-#: src/RestApi.php:966
+#: src/Admin.php:296
+#: src/RestApi.php:1118
 msgid "Folder not found."
 msgstr "Mappe ikke funnet."
 
 #. translators: %s: folder name
-#: src/Admin.php:225
+#: src/Admin.php:236
 #, php-format
 msgid "Media moved to \"%s\"."
 msgstr "Media flyttet til «%s»."
 
-#: src/Admin.php:274
+#: src/Admin.php:285
 msgid "No valid media IDs provided."
 msgstr "Ingen gyldige medie-IDer oppgitt."
 
-#: src/Admin.php:279
+#: src/Admin.php:290
 #: src/admin/components/BulkFolderAction.jsx:301
-#: src/admin/components/FolderTree.jsx:317
+#: src/admin/components/FolderTree.jsx:318
 #: src/editor/components/FolderFilter.jsx:68
 #: src/shared/components/BaseFolderTree.jsx:86
 msgid "Uncategorized"
 msgstr "Ukategorisert"
 
-#: src/Admin.php:311
+#: src/Admin.php:322
 msgid "Failed to move any items."
 msgstr "Kunne ikke flytte noen elementer."
 
 #. translators: 1: number of items, 2: folder name
-#: src/Admin.php:316
+#: src/Admin.php:327
 #, php-format
 msgid "%1$d item moved to \"%2$s\"."
 msgid_plural "%1$d items moved to \"%2$s\"."
@@ -163,7 +163,8 @@ msgstr "Overordnet mappe-ID."
 #: src/RestApi.php:109
 #: src/RestApi.php:132
 #: src/RestApi.php:159
-#: src/RestApi.php:178
+#: src/RestApi.php:180
+#: src/RestApi.php:199
 msgid "The folder ID."
 msgstr "Mappe-ID."
 
@@ -171,177 +172,177 @@ msgstr "Mappe-ID."
 msgid "Whether to bypass trash and force deletion."
 msgstr "Om papirkurven skal hoppes over og sletting tvinges."
 
-#: src/RestApi.php:165
-#: src/RestApi.php:184
+#: src/RestApi.php:186
 #: src/RestApi.php:205
-#: src/RestApi.php:274
-#: src/RestApi.php:300
+#: src/RestApi.php:226
+#: src/RestApi.php:295
+#: src/RestApi.php:321
 msgid "The media attachment ID."
 msgstr "Medivedleggs-ID."
 
-#: src/RestApi.php:225
+#: src/RestApi.php:246
 msgid "Filter counts by media type (image, audio, video, application)."
 msgstr "Filtrer antall etter medietype (bilde, lyd, video, applikasjon)."
 
-#: src/RestApi.php:245
+#: src/RestApi.php:266
 msgid "Array of folder IDs in desired order."
 msgstr "Array med mappe-IDer i ønsket rekkefølge."
 
-#: src/RestApi.php:254
+#: src/RestApi.php:275
 msgid "Parent folder ID (0 for root level)."
 msgstr "Overordnet mappe-ID (0 for rotnivå)."
 
-#: src/RestApi.php:280
+#: src/RestApi.php:301
 msgid "The folder ID to apply."
 msgstr "Mappe-ID som skal brukes."
 
-#: src/RestApi.php:315
+#: src/RestApi.php:336
 msgid "You do not have permission to view folders."
 msgstr "Du har ikke tillatelse til å se mapper."
 
-#: src/RestApi.php:325
+#: src/RestApi.php:346
 msgid "You do not have permission to create folders."
 msgstr "Du har ikke tillatelse til å opprette mapper."
 
-#: src/RestApi.php:335
+#: src/RestApi.php:356
 msgid "You do not have permission to update folders."
 msgstr "Du har ikke tillatelse til å oppdatere mapper."
 
-#: src/RestApi.php:345
+#: src/RestApi.php:366
 msgid "You do not have permission to delete folders."
 msgstr "Du har ikke tillatelse til å slette mapper."
 
-#: src/RestApi.php:466
+#: src/RestApi.php:504
 msgid "A folder cannot be its own parent."
 msgstr "En mappe kan ikke være sin egen overordnet."
 
-#: src/RestApi.php:511
-#: src/admin/components/FolderManager.jsx:192
+#: src/RestApi.php:663
+#: src/admin/components/FolderManager.jsx:194
 msgid "Failed to delete folder."
 msgstr "Kunne ikke slette mappen."
 
-#: src/RestApi.php:538
+#: src/RestApi.php:690
 msgid "Order must be an array of folder IDs."
 msgstr "Rekkefølgen må være en array med mappe-IDer."
 
-#: src/RestApi.php:563
+#: src/RestApi.php:715
 msgid "Folders reordered successfully."
 msgstr "Mapper omorganisert."
 
-#: src/RestApi.php:589
+#: src/RestApi.php:741
 msgid "Folder suggestion applied."
 msgstr "Mappeforslag brukt."
 
-#: src/RestApi.php:624
+#: src/RestApi.php:776
 msgid "Media removed from folder."
 msgstr "Media fjernet fra mappen."
 
-#: src/RestApi.php:805
-#: src/RestApi.php:986
+#: src/RestApi.php:957
+#: src/RestApi.php:1138
 msgid "Media not found."
 msgstr "Media ikke funnet."
 
-#: src/RestApi.php:925
+#: src/RestApi.php:1077
 msgid "Suggestions dismissed."
 msgstr "Forslag avvist."
 
-#: src/RestApi.php:1011
+#: src/RestApi.php:1163
 msgid "Media added to folder."
 msgstr "Media lagt til i mappen."
 
-#: src/RestApi.php:1065
+#: src/RestApi.php:1217
 msgid "Unique identifier for the folder."
 msgstr "Unik identifikator for mappen."
 
-#: src/RestApi.php:1071
+#: src/RestApi.php:1223
 msgid "The name of the folder."
 msgstr "Navnet på mappen."
 
-#: src/RestApi.php:1077
+#: src/RestApi.php:1229
 msgid "The slug of the folder."
 msgstr "Kortnavnet til mappen."
 
-#: src/RestApi.php:1082
+#: src/RestApi.php:1234
 msgid "The description of the folder."
 msgstr "Beskrivelsen av mappen."
 
-#: src/RestApi.php:1087
+#: src/RestApi.php:1239
 msgid "The parent folder ID."
 msgstr "Overordnet mappe-ID."
 
-#: src/RestApi.php:1093
+#: src/RestApi.php:1245
 msgid "Number of media items in this folder."
 msgstr "Antall mediefiler i denne mappen."
 
-#: src/RestApi.php:1110
+#: src/RestApi.php:1262
 msgid "Whether to hide folders with no media."
 msgstr "Om mapper uten media skal skjules."
 
-#: src/RestApi.php:1115
+#: src/RestApi.php:1267
 msgid "Filter by parent folder ID."
 msgstr "Filtrer etter overordnet mappe-ID."
 
-#: src/Settings.php:70
+#: src/Settings.php:76
 msgid "Virtual Media Folders Settings"
 msgstr "Innstillinger for virtuelle mediemapper"
 
-#: src/Settings.php:71
+#: src/Settings.php:77
 msgid "Folder Settings"
 msgstr "Mappeinnstillinger"
 
-#: src/Settings.php:183
+#: src/Settings.php:228
 msgid "Default Behavior"
 msgstr "Standardoppførsel"
 
-#: src/Settings.php:190
+#: src/Settings.php:235
 msgid "Default Folder"
 msgstr "Standardmappe"
 
-#: src/Settings.php:196
+#: src/Settings.php:241
 msgid "Automatically assign new uploads to this folder (0 = none)."
 msgstr "Tildel automatisk nye opplastinger til denne mappen (0 = ingen)."
 
-#: src/Settings.php:202
+#: src/Settings.php:247
 msgid "Show All Media"
 msgstr "Vis alle medier"
 
-#: src/Settings.php:208
+#: src/Settings.php:253
 msgid "Show the \"All Media\" option in the sidebar."
 msgstr "Vis «Alle medier»-alternativet i sidepanelet."
 
-#: src/Settings.php:214
+#: src/Settings.php:259
 msgid "Show Uncategorized"
 msgstr "Vis ukategorisert"
 
-#: src/Settings.php:220
+#: src/Settings.php:265
 msgid "Show the \"Uncategorized\" virtual folder in the sidebar."
 msgstr "Vis den virtuelle mappen «Ukategorisert» i sidepanelet."
 
-#: src/Settings.php:226
+#: src/Settings.php:271
 msgid "Jump to Folder After Move"
 msgstr "Hopp til mappe etter flytting"
 
-#: src/Settings.php:232
+#: src/Settings.php:277
 msgid "Automatically switch to the target folder after moving files."
 msgstr "Bytt automatisk til målmappen etter at filer er flyttet."
 
-#: src/Settings.php:376
+#: src/Settings.php:421
 msgid "Settings saved."
 msgstr "Innstillinger lagret."
 
-#: src/Settings.php:389
+#: src/Settings.php:500
 msgid "Save Settings"
 msgstr "Lagre innstillinger"
 
-#: src/Settings.php:402
+#: src/Settings.php:512
 msgid "Configure how Virtual Media Folders suggests folders for newly uploaded files."
 msgstr "Konfigurer hvordan Virtuelle mediemapper foreslår mapper for nylig opplastede filer."
 
-#: src/Settings.php:411
+#: src/Settings.php:521
 msgid "Set default behavior for folder organization."
 msgstr "Angi standardoppførsel for mappeorganisering."
 
-#: src/Settings.php:493
+#: src/Settings.php:603
 msgid "None"
 msgstr "Ingen"
 
@@ -365,8 +366,8 @@ msgid "All Folders"
 msgstr "Alle mapper"
 
 #: src/Taxonomy.php:171
-#: src/admin/components/FolderManager.jsx:289
-#: src/admin/components/FolderManager.jsx:332
+#: src/admin/components/FolderManager.jsx:319
+#: src/admin/components/FolderManager.jsx:362
 msgid "Parent Folder"
 msgstr "Overordnet mappe"
 
@@ -375,7 +376,7 @@ msgid "Parent Folder:"
 msgstr "Overordnet mappe:"
 
 #: src/Taxonomy.php:173
-#: src/admin/components/FolderManager.jsx:319
+#: src/admin/components/FolderManager.jsx:349
 msgid "Edit Folder"
 msgstr "Rediger mappe"
 
@@ -436,113 +437,114 @@ msgstr "%d valgt"
 msgid "Drop here to move media to this folder"
 msgstr "Slipp her for å flytte media til denne mappen"
 
-#: src/admin/components/FolderManager.jsx:75
-#: src/admin/components/FolderManager.jsx:87
+#: src/admin/components/FolderManager.jsx:77
+#: src/admin/components/FolderManager.jsx:89
 msgid "None (top level)"
 msgstr "Ingen (toppnivå)"
 
-#: src/admin/components/FolderManager.jsx:97
-#: src/admin/components/FolderManager.jsx:131
+#: src/admin/components/FolderManager.jsx:99
+#: src/admin/components/FolderManager.jsx:133
 msgid "Please enter a folder name."
 msgstr "Vennligst skriv inn et mappenavn."
 
-#: src/admin/components/FolderManager.jsx:117
+#: src/admin/components/FolderManager.jsx:119
 msgid "Folder created."
 msgstr "Mappe opprettet."
 
-#: src/admin/components/FolderManager.jsx:120
+#: src/admin/components/FolderManager.jsx:122
 msgid "Failed to create folder."
 msgstr "Kunne ikke opprette mappen."
 
-#: src/admin/components/FolderManager.jsx:155
+#: src/admin/components/FolderManager.jsx:157
 msgid "Folder updated."
 msgstr "Mappe oppdatert."
 
-#: src/admin/components/FolderManager.jsx:158
+#: src/admin/components/FolderManager.jsx:160
 msgid "Failed to update folder."
 msgstr "Kunne ikke oppdatere mappen."
 
-#: src/admin/components/FolderManager.jsx:185
+#: src/admin/components/FolderManager.jsx:187
 msgid "Folder deleted."
 msgstr "Mappe slettet."
 
-#: src/admin/components/FolderManager.jsx:231
-#: src/admin/components/FolderManager.jsx:276
+#: src/admin/components/FolderManager.jsx:262
+#: src/admin/components/FolderManager.jsx:306
 msgid "Create Folder"
 msgstr "Opprett mappe"
 
-#: src/admin/components/FolderManager.jsx:246
+#: src/admin/components/FolderManager.jsx:277
 msgid "Rename Folder"
 msgstr "Gi nytt navn"
 
-#: src/admin/components/FolderManager.jsx:258
-#: src/admin/components/FolderManager.jsx:362
+#: src/admin/components/FolderManager.jsx:289
+#: src/admin/components/FolderManager.jsx:392
 msgid "Delete Folder"
 msgstr "Slett mappe"
 
-#: src/admin/components/FolderManager.jsx:281
-#: src/admin/components/FolderManager.jsx:324
+#: src/admin/components/FolderManager.jsx:311
+#: src/admin/components/FolderManager.jsx:354
 msgid "Folder Name"
 msgstr "Mappenavn"
 
-#: src/admin/components/FolderManager.jsx:284
-#: src/admin/components/FolderManager.jsx:327
+#: src/admin/components/FolderManager.jsx:314
+#: src/admin/components/FolderManager.jsx:357
 msgid "Enter folder name"
 msgstr "Skriv inn mappenavn"
 
-#: src/admin/components/FolderManager.jsx:303
-#: src/admin/components/FolderManager.jsx:346
-#: src/admin/components/FolderManager.jsx:383
+#: src/admin/components/FolderManager.jsx:333
+#: src/admin/components/FolderManager.jsx:376
+#: src/admin/components/FolderManager.jsx:436
 #: src/admin/components/MoveModeBanner.jsx:46
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/admin/components/FolderManager.jsx:310
+#: src/admin/components/FolderManager.jsx:340
 msgid "Creating…"
 msgstr "Oppretter…"
 
-#: src/admin/components/FolderManager.jsx:310
+#: src/admin/components/FolderManager.jsx:340
 msgid "Create"
 msgstr "Opprett"
 
-#: src/admin/components/FolderManager.jsx:353
+#: src/admin/components/FolderManager.jsx:383
 msgid "Saving…"
 msgstr "Lagrer…"
 
-#: src/admin/components/FolderManager.jsx:353
+#: src/admin/components/FolderManager.jsx:383
 msgid "Save"
 msgstr "Lagre"
 
 #. translators: %s: folder name
-#: src/admin/components/FolderManager.jsx:369
+#: src/admin/components/FolderManager.jsx:422
 #, js-format
 msgid "Are you sure you want to delete the folder \"%s\"?"
 msgstr "Er du sikker på at du vil slette mappen «%s»?"
 
-#: src/admin/components/FolderManager.jsx:374
+#: src/admin/components/FolderManager.jsx:427
 msgid "Media items in this folder will not be deleted, only the folder organization."
 msgstr "Mediefiler i denne mappen vil ikke bli slettet, bare mappeorganiseringen."
 
-#: src/admin/components/FolderManager.jsx:391
+#: src/admin/components/FolderManager.jsx:444
 msgid "Deleting…"
 msgstr "Sletter…"
 
-#: src/admin/components/FolderManager.jsx:391
+#: src/admin/components/FolderManager.jsx:413
+#: src/admin/components/FolderManager.jsx:444
 msgid "Delete"
 msgstr "Slett"
 
-#: src/admin/components/FolderTree.jsx:313
+#: src/admin/components/FolderTree.jsx:314
 #: src/shared/hooks/useMoveMode.js:89
 #: src/shared/hooks/useMoveMode.js:95
 msgid "folder"
 msgstr "mappe"
 
-#: src/admin/components/FolderTree.jsx:315
+#: src/admin/components/FolderTree.jsx:316
 #: src/shared/components/BaseFolderTree.jsx:74
 msgid "All Media"
 msgstr "Alle medier"
 
-#: src/admin/components/FolderTree.jsx:416
+#: src/admin/components/FolderTree.jsx:417
 msgid "Loading folders…"
 msgstr "Laster mapper…"
 
@@ -597,18 +599,18 @@ msgstr "Foreslåtte mapper: %s"
 msgid "Dismiss"
 msgstr "Avvis"
 
-#: src/Admin.php:473
-#: src/Admin.php:474
+#: src/Admin.php:484
+#: src/Admin.php:485
 msgid "Show Folders"
 msgstr "Vis mapper"
 
-#: src/admin/media-library.js:238
 #: src/admin/media-library.js:242
+#: src/admin/media-library.js:246
 msgid "Failed to move media."
 msgstr "Kunne ikke flytte media."
 
-#: src/admin/media-library.js:922
-#: src/admin/media-library.js:937
+#: src/admin/media-library.js:971
+#: src/admin/media-library.js:986
 msgid "Media item"
 msgstr "Medieelement"
 
@@ -743,10 +745,54 @@ msgstr "Tøm søk"
 msgid "Close search"
 msgstr "Lukk søk"
 
-#: src/Settings.php:472
+#: src/Settings.php:582
 msgid "Default folder assignment is managed by the Rules Engine."
 msgstr "Standard mappevalg styres av regelmotoren."
 
-#: src/Settings.php:474
+#: src/Settings.php:584
 msgid "Configure Rules Engine →"
 msgstr "Konfigurer regelmotor →"
+
+#: src/RestApi.php:456
+#: src/RestApi.php:522
+msgid "A folder with this name already exists."
+msgstr "En mappe med dette navnet finnes allerede."
+
+#: src/RestApi.php:457
+#: src/RestApi.php:523
+msgid "Folder name cannot be empty."
+msgstr "Mappenavn kan ikke være tomt."
+
+#: src/RestApi.php:458
+#: src/RestApi.php:524
+#: src/RestApi.php:647
+msgid "Invalid folder."
+msgstr "Ugyldig mappe."
+
+#: src/RestApi.php:459
+#: src/RestApi.php:525
+#: src/RestApi.php:648
+msgid "Invalid folder taxonomy."
+msgstr "Ugyldig mappetaksonomi."
+
+#: src/RestApi.php:460
+#: src/RestApi.php:526
+msgid "Parent folder does not exist."
+msgstr "Overordnet mappe finnes ikke."
+
+#: src/RestApi.php:580
+#: src/RestApi.php:635
+msgid "This folder cannot be deleted."
+msgstr "Denne mappen kan ikke slettes."
+
+#: src/Settings.php:432
+msgid "General"
+msgstr "Generelt"
+
+#: src/admin/components/FolderManager.jsx:397
+msgid "Checking…"
+msgstr "Sjekker…"
+
+#: src/admin/components/FolderManager.jsx:406
+msgid "Close"
+msgstr "Lukk"

@@ -325,13 +325,15 @@ function alignSidebarWithGrid(browser) {
  * Aligns sidebar with the attachments grid and makes it sticky on scroll.
  */
 function setupStickySidebar(browser) {
-	// Wait for sidebar to be rendered by React
+	// Wait for sidebar AND inner tree to be rendered by React
 	const waitForSidebar = () => {
 		const sidebar = document.querySelector('.vmf-folder-tree-sidebar');
+		const folderTree = sidebar?.querySelector('.vmf-folder-tree');
 		const attachmentsWrapper = browser.$el.find('.attachments-wrapper')[0];
 		const attachments = browser.$el.find('.attachments')[0];
 		
-		if (!sidebar) {
+		// Wait for both sidebar container and inner React tree
+		if (!sidebar || !folderTree) {
 			setTimeout(waitForSidebar, 100);
 			return;
 		}

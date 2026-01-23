@@ -5,6 +5,21 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.6] - 2026-01-23
+
+### Added
+- New `vmfo_can_delete_folder` filter allows add-ons to prevent folder deletion
+- New `/folders/{id}/can-delete` REST endpoint for checking folder deletability
+- Delete modal now shows blocked message when folder cannot be deleted
+
+### Fixed
+- Sticky sidebar header now works correctly using flexbox layout
+
+### Documentation
+- Added `vmfo_can_delete_folder` hook documentation in addon-development.md
+- Added REST endpoint documentation for `/folders/{id}/can-delete`
+- Added JavaScript Translation Mapping (i18n-map.json) documentation
+
 ## [1.6.5] - 2026-01-23
 
 ### Fixed
@@ -597,6 +612,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.6.1]: https://github.com/soderlind/virtual-media-folders/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/soderlind/virtual-media-folders/compare/1.5.3...1.6.0
 [1.5.3]: https://github.com/soderlind/virtual-media-folders/compare/1.5.2...1.5.3
+[1.6.6]: https://github.com/soderlind/virtual-media-folders/compare/1.6.5...1.6.6
+[1.6.5]: https://github.com/soderlind/virtual-media-folders/compare/1.6.4...1.6.5
+[1.6.4]: https://github.com/soderlind/virtual-media-folders/compare/1.6.3...1.6.4
+[1.6.3]: https://github.com/soderlind/virtual-media-folders/compare/1.6.2...1.6.3
+[1.6.2]: https://github.com/soderlind/virtual-media-folders/compare/1.6.1...1.6.2
+[1.6.1]: https://github.com/soderlind/virtual-media-folders/compare/1.6.0...1.6.1
+[1.6.0]: https://github.com/soderlind/virtual-media-folders/compare/1.5.2...1.6.0
 [1.5.2]: https://github.com/soderlind/virtual-media-folders/compare/1.5.1...1.5.2
 [1.5.1]: https://github.com/soderlind/virtual-media-folders/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/soderlind/virtual-media-folders/compare/1.4.2...1.5.0
