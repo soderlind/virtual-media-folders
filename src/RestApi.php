@@ -428,7 +428,24 @@ final class RestApi extends WP_REST_Controller {
 		);
 
 		if ( is_wp_error( $result ) ) {
-			return $result;
+			$error_code = $result->get_error_code();
+
+			// Map WordPress term errors to user-friendly folder messages.
+			$error_messages = [
+				'term_exists'       => __( 'A folder with this name already exists.', 'virtual-media-folders' ),
+				'empty_term_name'   => __( 'Folder name cannot be empty.', 'virtual-media-folders' ),
+				'invalid_term'      => __( 'Invalid folder.', 'virtual-media-folders' ),
+				'invalid_taxonomy'  => __( 'Invalid folder taxonomy.', 'virtual-media-folders' ),
+				'parent_not_exists' => __( 'Parent folder does not exist.', 'virtual-media-folders' ),
+			];
+
+			$message = $error_messages[ $error_code ] ?? $result->get_error_message();
+
+			return new WP_Error(
+				$error_code,
+				$message,
+				[ 'status' => 400 ]
+			);
 		}
 
 		$term = get_term( $result[ 'term_id' ], Taxonomy::TAXONOMY );
@@ -477,7 +494,24 @@ final class RestApi extends WP_REST_Controller {
 		$result = wp_update_term( $folder_id, Taxonomy::TAXONOMY, $args );
 
 		if ( is_wp_error( $result ) ) {
-			return $result;
+			$error_code = $result->get_error_code();
+
+			// Map WordPress term errors to user-friendly folder messages.
+			$error_messages = [
+				'term_exists'       => __( 'A folder with this name already exists.', 'virtual-media-folders' ),
+				'empty_term_name'   => __( 'Folder name cannot be empty.', 'virtual-media-folders' ),
+				'invalid_term'      => __( 'Invalid folder.', 'virtual-media-folders' ),
+				'invalid_taxonomy'  => __( 'Invalid folder taxonomy.', 'virtual-media-folders' ),
+				'parent_not_exists' => __( 'Parent folder does not exist.', 'virtual-media-folders' ),
+			];
+
+			$message = $error_messages[ $error_code ] ?? $result->get_error_message();
+
+			return new WP_Error(
+				$error_code,
+				$message,
+				[ 'status' => 400 ]
+			);
 		}
 
 		$term = get_term( $result[ 'term_id' ], Taxonomy::TAXONOMY );
@@ -502,7 +536,21 @@ final class RestApi extends WP_REST_Controller {
 		$result = wp_delete_term( $folder_id, Taxonomy::TAXONOMY );
 
 		if ( is_wp_error( $result ) ) {
-			return $result;
+			$error_code = $result->get_error_code();
+
+			// Map WordPress term errors to user-friendly folder messages.
+			$error_messages = [
+				'invalid_term'     => __( 'Invalid folder.', 'virtual-media-folders' ),
+				'invalid_taxonomy' => __( 'Invalid folder taxonomy.', 'virtual-media-folders' ),
+			];
+
+			$message = $error_messages[ $error_code ] ?? $result->get_error_message();
+
+			return new WP_Error(
+				$error_code,
+				$message,
+				[ 'status' => 400 ]
+			);
 		}
 
 		if ( ! $result ) {
