@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -113,6 +113,14 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.6.6 =
+* Added: New `vmfo_can_delete_folder` filter allows add-ons to prevent folder deletion
+* Added: New `/folders/{id}/can-delete` REST endpoint for checking folder deletability
+* Added: Delete modal now shows blocked message when folder cannot be deleted
+* Fixed: Sticky sidebar header now works correctly using flexbox layout
+* Documentation: Added `vmfo_can_delete_folder` hook and REST endpoint documentation
+* Documentation: Added JavaScript Translation Mapping (i18n-map.json) documentation
 
 = 1.6.5 =
 * Fixed: Deleting a folder now selects "Uncategorized" instead of "All Media" when "Show All Media" setting is disabled
