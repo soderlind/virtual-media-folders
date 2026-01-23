@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, virtual folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -113,6 +113,10 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.6.4 =
+* Fixed: REST API now returns proper 400 status code instead of 500 when creating duplicate folders
+* Fixed: Error messages now use "folder" terminology instead of "term" for better user experience
 
 = 1.6.3 =
 * Fixed: Folder counts now update automatically when media is deleted (single or bulk delete)
