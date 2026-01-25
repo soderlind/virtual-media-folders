@@ -27,6 +27,7 @@ Virtual Media Folders brings virtual folder organization to your WordPress Media
 = Free add-ons =
 
 * [**AI Organizer**](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders. This is add-on functionality requiring an API key from a supported AI service provider, or a local LLM.
+* [**Editoral Workflows**](https://github.com/soderlind/vmfa-editorial-workflow) – Role-based folder access, move restrictions, and Inbox workflow.
 * [**Rules Engine**](https://github.com/soderlind/vmfa-rules-engine) – Rule-based automatic folder assignment for media uploads, based on metadata, file type, or other criteria. 
 
 https://www.youtube.com/watch?v=bA4lf7ynz24
@@ -73,8 +74,9 @@ When inserting media from a block (Image, Gallery, etc.):
 * [Add-on Development](https://github.com/soderlind/virtual-media-folders/blob/main/docs/addon-development.md) – Guide to building add-on plugins
 
 = Add-ons =
-* [Virtual Media Folders AI Organizer](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders.
-* [Virtual Media Folders Rules Engine](https://github.com/soderlind/vmfa-rules-engine) – Rule-based automatic folder assignment for media uploads, based on metadata, file type, or other criteria.
+* [Virtual Media Folders - AI Organizer](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders.
+* [Virtual Media Folders - Editorial Workflows](https://github.com/soderlind/vmfa-editorial-workflow) – Role-based folder access, move restrictions, and Inbox workflow.
+* [Virtual Media Folders - Rules Engine](https://github.com/soderlind/vmfa-rules-engine) – Rule-based automatic folder assignment for media uploads, based on metadata, file type, or other criteria.
 
 == Installation ==
 
