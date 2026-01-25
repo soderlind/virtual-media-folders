@@ -104,9 +104,6 @@ The plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 | DELETE | `/folders/{id}/media` | Remove media from folder |
 | POST | `/folders/reorder` | Reorder folders |
 | GET | `/folders/counts` | Get folder counts (with optional `media_type` filter) |
-| GET | `/suggestions/{media_id}` | Get folder suggestions for media |
-| POST | `/suggestions/{media_id}/apply` | Apply a folder suggestion |
-| POST | `/suggestions/{media_id}/dismiss` | Dismiss suggestions for media |
 
 ### Authentication
 

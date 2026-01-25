@@ -395,14 +395,6 @@ The parent plugin provides REST API endpoints under `/wp-json/vmfo/v1`:
 | POST | `/folders/reorder` | Reorder folders |
 | GET | `/folders/counts` | Get folder counts (supports `media_type` filter) |
 
-#### Suggestion Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/suggestions/{media_id}` | Get folder suggestions for a media item |
-| POST | `/suggestions/{media_id}/apply` | Apply a suggested folder (requires `folder_id`) |
-| POST | `/suggestions/{media_id}/dismiss` | Dismiss suggestions for a media item |
-
 ### Creating Custom Endpoints
 
 ```php
