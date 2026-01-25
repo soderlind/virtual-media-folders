@@ -2,6 +2,25 @@
 
 This comprehensive guide covers everything you need to know to build add-on plugins for Virtual Media Folders.
 
+## Table of Contents
+
+- [Philosophy & Architecture](#philosophy--architecture)
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Plugin Structure](#plugin-structure)
+- [Bootstrap File](#bootstrap-file)
+- [Settings Tab Integration](#settings-tab-integration)
+- [Working with Folders](#working-with-folders)
+- [REST API](#rest-api)
+- [Hooks & Filters](#hooks--filters)
+- [React Development](#react-development)
+- [UI/UX Patterns](#uiux-patterns)
+- [Internationalization](#internationalization)
+- [Testing](#testing)
+- [Constants Reference](#constants-reference)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Philosophy & Architecture
 
 Virtual Media Folders uses a **virtual folder** approach that's fundamentally different from traditional file-based organization:
@@ -74,9 +93,15 @@ my-vmfa-addon/
 │   │   ├── Plugin.php        # Main plugin class
 │   │   ├── Admin.php         # Admin integration
 │   │   └── REST/             # REST API controllers
-│   └── js/                   # React components
-│       ├── index.js          # Entry point
-│       └── components/       # React components
+│   ├── js/                   # React components
+│   │   ├── index.js          # Entry point
+│   │   ├── settings/         # Settings page components
+│   │   │   ├── index.jsx
+│   │   │   ├── SettingsPanel.jsx
+│   │   │   └── StatsCard.jsx
+│   │   └── components/       # Shared React components
+│   └── css/                  # Stylesheets
+│       └── settings.css
 ├── languages/                # Translation files
 ├── my-vmfa-addon.php         # Plugin bootstrap
 ├── package.json
@@ -125,6 +150,8 @@ add_action( 'plugins_loaded', function() {
 
 ## Settings Tab Integration
 
+Virtual Media Folders provides a tab-based settings page architecture that allows add-on plugins to register their own settings tabs within the parent plugin's "Folder Settings" page.
+
 ### Detecting Tab Support
 
 Check if the parent plugin supports the tab system:
@@ -138,6 +165,8 @@ private function supports_parent_tabs(): bool {
 
 ### Registering a Tab
 
+Use the `vmfo_settings_tabs` filter to register your add-on's tab:
+
 ```php
 add_filter( 'vmfo_settings_tabs', function( array $tabs ): array {
     $tabs['my-addon'] = [
@@ -150,7 +179,16 @@ add_filter( 'vmfo_settings_tabs', function( array $tabs ): array {
 
 > **Note:** Tabs are automatically sorted alphabetically by title. The "General" tab always appears first, followed by add-on tabs in alphabetical order.
 
+#### Tab Array Structure
+
+| Key | Type | Required | Description |
+|-----|------|----------|-------------|
+| `title` | string | Yes | The tab label displayed in the navigation |
+| `callback` | callable | Yes | Function to render the tab content. Receives `$active_tab` and `$active_subtab` as parameters. |
+
 ### Rendering Tab Content
+
+The callback function receives two parameters:
 
 ```php
 public function render_tab_content( string $active_tab, string $active_subtab ): void {
@@ -159,6 +197,55 @@ public function render_tab_content( string $active_tab, string $active_subtab ):
     <?php
 }
 ```
+
+### Sub-tabs
+
+If your add-on needs multiple sections, you can implement sub-tabs within your tab content:
+
+```php
+public function render_tab_content( string $active_tab, string $active_subtab ): void {
+    // Default to first subtab.
+    if ( empty( $active_subtab ) ) {
+        $active_subtab = 'settings';
+    }
+
+    $base_url = admin_url( 'upload.php?page=' . \VirtualMediaFolders\Settings::PAGE_SLUG . '&tab=' . $active_tab );
+    ?>
+    <nav class="nav-tab-wrapper my-addon-subtabs" style="margin-top: 1em;">
+        <a href="<?php echo esc_url( $base_url . '&subtab=settings' ); ?>" 
+           class="nav-tab <?php echo 'settings' === $active_subtab ? 'nav-tab-active' : ''; ?>">
+            <?php esc_html_e( 'Settings', 'my-addon' ); ?>
+        </a>
+        <a href="<?php echo esc_url( $base_url . '&subtab=advanced' ); ?>" 
+           class="nav-tab <?php echo 'advanced' === $active_subtab ? 'nav-tab-active' : ''; ?>">
+            <?php esc_html_e( 'Advanced', 'my-addon' ); ?>
+        </a>
+    </nav>
+    
+    <div class="my-addon-subtab-content">
+        <?php
+        if ( 'settings' === $active_subtab ) {
+            $this->render_settings_subtab();
+        } elseif ( 'advanced' === $active_subtab ) {
+            $this->render_advanced_subtab();
+        }
+        ?>
+    </div>
+    <?php
+}
+```
+
+### URL Structure
+
+The settings page uses the following URL pattern:
+
+```
+/wp-admin/upload.php?page=vmfo-settings&tab={tab-slug}&subtab={subtab-slug}
+```
+
+- `page`: Always `vmfo-settings`
+- `tab`: Your add-on's tab slug (e.g., `my-addon`)
+- `subtab`: Optional sub-tab within your tab (e.g., `settings`, `advanced`)
 
 ### Enqueuing Scripts
 
@@ -170,7 +257,12 @@ add_action( 'vmfo_settings_enqueue_scripts', function( string $active_tab, strin
         return;
     }
 
-    $asset = require MY_ADDON_PATH . 'build/index.asset.php';
+    $asset_file = MY_ADDON_PATH . 'build/index.asset.php';
+    if ( ! file_exists( $asset_file ) ) {
+        return;
+    }
+
+    $asset = require $asset_file;
 
     wp_enqueue_script(
         'my-addon-admin',
@@ -178,6 +270,13 @@ add_action( 'vmfo_settings_enqueue_scripts', function( string $active_tab, strin
         $asset['dependencies'],
         $asset['version'],
         true
+    );
+
+    wp_enqueue_style(
+        'my-addon-admin',
+        MY_ADDON_URL . 'build/index.css',
+        [ 'wp-components' ],
+        $asset['version']
     );
 
     wp_localize_script( 'my-addon-admin', 'myAddonData', [
@@ -200,7 +299,35 @@ public function init_admin(): void {
     } else {
         // Fallback to standalone menu.
         add_action( 'admin_menu', [ $this, 'add_standalone_menu' ] );
+        add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_standalone_scripts' ] );
     }
+}
+
+public function add_standalone_menu(): void {
+    add_submenu_page(
+        'upload.php',
+        __( 'My Add-on Settings', 'my-addon' ),
+        __( 'My Add-on', 'my-addon' ),
+        'manage_options',
+        'my-addon-settings',
+        [ $this, 'render_standalone_page' ]
+    );
+}
+
+public function render_standalone_page(): void {
+    ?>
+    <div class="wrap">
+        <h1><?php esc_html_e( 'My Add-on', 'my-addon' ); ?></h1>
+        <div id="my-addon-app"></div>
+    </div>
+    <?php
+}
+
+public function enqueue_standalone_scripts( string $hook_suffix ): void {
+    if ( 'media_page_my-addon-settings' !== $hook_suffix ) {
+        return;
+    }
+    // Enqueue your assets here.
 }
 ```
 
@@ -295,6 +422,52 @@ add_action( 'rest_api_init', function() {
         ],
     ]);
 });
+```
+
+### Stats Endpoint Pattern
+
+Provide a `/stats` endpoint for statistics cards:
+
+```php
+register_rest_route(
+    'my-addon/v1',
+    '/stats',
+    [
+        'methods'             => WP_REST_Server::READABLE,
+        'callback'            => [ $this, 'get_stats' ],
+        'permission_callback' => [ $this, 'check_admin_permission' ],
+    ]
+);
+
+public function get_stats( WP_REST_Request $request ): WP_REST_Response {
+    return rest_ensure_response( [
+        'totalMedia'  => wp_count_posts( 'attachment' )->inherit,
+        'processed'   => $this->get_processed_count(),
+        'pending'     => $this->get_pending_count(),
+        'activeRules' => $this->get_active_rules_count(),
+    ] );
+}
+```
+
+### Settings Endpoint Pattern
+
+```php
+register_rest_route(
+    'my-addon/v1',
+    '/settings',
+    [
+        [
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => [ $this, 'get_settings' ],
+            'permission_callback' => [ $this, 'check_admin_permission' ],
+        ],
+        [
+            'methods'             => WP_REST_Server::CREATABLE,
+            'callback'            => [ $this, 'update_settings' ],
+            'permission_callback' => [ $this, 'check_admin_permission' ],
+        ],
+    ]
+);
 ```
 
 ## Hooks & Filters
@@ -407,6 +580,26 @@ add_filter( 'wp_generate_attachment_metadata', function( $metadata, $attachment_
 }, 20, 3); // Priority 20 to run after VMFO
 ```
 
+### Hooks Reference Table
+
+#### Filters
+
+| Hook | Parameters | Description |
+|------|------------|-------------|
+| `vmfo_settings_tabs` | `array $tabs` | Register add-on tabs |
+| `vmfo_default_settings` | `array $defaults` | Modify default settings |
+| `vmfo_settings` | `array $options` | Filter all settings |
+| `vmfo_setting_{$key}` | `mixed $value, string $key, array $options` | Filter a specific setting |
+| `vmfo_include_child_folders` | `bool $include, int $folder_id` | Include child folder media in queries |
+| `vmfo_can_delete_folder` | `bool|WP_Error $can_delete, int $folder_id, WP_Term $term` | Control folder deletion |
+
+#### Actions
+
+| Hook | Parameters | Description |
+|------|------------|-------------|
+| `vmfo_settings_enqueue_scripts` | `string $active_tab, string $active_subtab` | Enqueue tab-specific scripts |
+| `vmfo_folder_assigned` | `int $attachment_id, int $folder_id, array $result` | Fired after media is assigned to a folder |
+
 ## React Development
 
 ### Build Setup
@@ -417,7 +610,9 @@ Use `@wordpress/scripts` for consistency with WordPress:
 {
   "scripts": {
     "build": "wp-scripts build",
-    "start": "wp-scripts start"
+    "start": "wp-scripts start",
+    "lint:js": "wp-scripts lint-js",
+    "lint:css": "wp-scripts lint-style"
   },
   "devDependencies": {
     "@wordpress/scripts": "^30.0.0"
@@ -427,13 +622,21 @@ Use `@wordpress/scripts` for consistency with WordPress:
 
 ### webpack.config.js
 
+For multiple entry points:
+
 ```javascript
 const defaultConfig = require('@wordpress/scripts/config/webpack.config');
+const path = require('path');
 
 module.exports = {
     ...defaultConfig,
     entry: {
-        index: './src/js/index.js',
+        settings: path.resolve( __dirname, 'src/js/settings/index.jsx' ),
+        // Add other entry points as needed
+    },
+    output: {
+        ...defaultConfig.output,
+        path: path.resolve( __dirname, 'build' ),
     },
 };
 ```
@@ -477,6 +680,338 @@ document.addEventListener('DOMContentLoaded', () => {
         createRoot(container).render(<MyAddonApp />);
     }
 });
+```
+
+### Main Settings Panel Pattern
+
+```jsx
+import { useState, useEffect, useCallback } from '@wordpress/element';
+import { Button, Spinner, Notice } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
+export default function SettingsPanel() {
+    const [ isLoading, setIsLoading ] = useState( true );
+    const [ isSaving, setIsSaving ] = useState( false );
+    const [ notice, setNotice ] = useState( null );
+    const [ settings, setSettings ] = useState( {} );
+    const [ stats, setStats ] = useState( {} );
+
+    useEffect( () => {
+        fetchSettings();
+        fetchStats();
+    }, [] );
+
+    const fetchSettings = useCallback( async () => {
+        setIsLoading( true );
+        try {
+            const response = await apiFetch( { path: '/my-addon/v1/settings' } );
+            setSettings( response );
+        } catch ( error ) {
+            setNotice( { status: 'error', message: error.message } );
+        } finally {
+            setIsLoading( false );
+        }
+    }, [] );
+
+    const saveSettings = useCallback( async () => {
+        setIsSaving( true );
+        setNotice( null );
+        try {
+            await apiFetch( {
+                path: '/my-addon/v1/settings',
+                method: 'POST',
+                data: settings,
+            } );
+            setNotice( { status: 'success', message: __( 'Settings saved.', 'my-addon' ) } );
+        } catch ( error ) {
+            setNotice( { status: 'error', message: error.message } );
+        } finally {
+            setIsSaving( false );
+        }
+    }, [ settings ] );
+
+    if ( isLoading ) {
+        return (
+            <div className="my-addon-loading">
+                <Spinner />
+                <p>{ __( 'Loading…', 'my-addon' ) }</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="my-addon-settings-panel">
+            { notice && (
+                <Notice
+                    status={ notice.status }
+                    isDismissible
+                    onRemove={ () => setNotice( null ) }
+                >
+                    { notice.message }
+                </Notice>
+            ) }
+
+            {/* Your settings cards here */}
+
+            <div className="my-addon-actions">
+                <Button
+                    variant="primary"
+                    onClick={ saveSettings }
+                    isBusy={ isSaving }
+                    disabled={ isSaving }
+                >
+                    { isSaving ? __( 'Saving…', 'my-addon' ) : __( 'Save Changes', 'my-addon' ) }
+                </Button>
+            </div>
+        </div>
+    );
+}
+```
+
+## UI/UX Patterns
+
+VMF add-ons should provide a consistent, modern user experience that integrates seamlessly with the WordPress admin.
+
+### Color Palette
+
+Use WordPress admin colors for consistency:
+
+| Purpose | Color | Usage |
+|---------|-------|-------|
+| Primary text | `#1d2327` | Headings, important text |
+| Secondary text | `#646970` | Descriptions, help text |
+| Muted text | `#a7aaad` | Disabled, placeholders |
+| Border | `#c3c4c7` | Card borders |
+| Light border | `#f0f0f1` | Internal dividers |
+| Background | `#f6f7f7` | Expandable headers, hover states |
+| Primary action | `#2271b1` | Links, icons, primary buttons |
+| Success | `#00a32a` | Success states, approved |
+| Warning | `#dba617` | Warnings, pending |
+| Error | `#d63638` | Errors, needs attention |
+
+### Statistics Card
+
+Display key metrics at the top of your settings page using a 4-column grid:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   1002        │    1002       │     0         │     217        │
+│  Total Media  │   In Folders  │  Unassigned   │    Folders     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**CSS:**
+
+```css
+.my-addon-stats-card {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 24px 20px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.my-addon-stat-item {
+    padding: 0 16px;
+    border-right: 1px solid #f0f0f1;
+}
+
+.my-addon-stat-item:last-child {
+    border-right: none;
+}
+
+.my-addon-stat-value {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #1d2327;
+}
+
+.my-addon-stat-label {
+    font-size: 13px;
+    color: #646970;
+    margin-top: 4px;
+}
+
+@media (max-width: 782px) {
+    .my-addon-stats-card {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .my-addon-stat-item {
+        border-right: none;
+    }
+}
+```
+
+### Card Container
+
+Use card containers for grouping related settings:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Section Title                                      [Toggle]    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Description text explaining this section.                      │
+│                                                                 │
+│  [Content area - forms, lists, etc.]                           │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**CSS:**
+
+```css
+.my-addon-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.my-addon-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.my-addon-card-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.my-addon-card-body {
+    padding: 20px;
+}
+
+.my-addon-card-description {
+    margin: 0 0 20px;
+    color: #646970;
+}
+```
+
+### Expandable Lists
+
+For complex data like permissions or rules:
+
+```css
+.my-addon-expandable-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 16px;
+    background: #f6f7f7;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 13px;
+    transition: background-color 0.15s;
+}
+
+.my-addon-expandable-header:hover {
+    background: #f0f0f1;
+}
+
+.my-addon-toggle-icon {
+    margin-right: 8px;
+    color: #50575e;
+}
+
+.my-addon-item-name {
+    flex: 1;
+    font-weight: 500;
+    color: #1d2327;
+}
+
+.my-addon-item-count {
+    font-size: 12px;
+    color: #646970;
+}
+```
+
+### Action Buttons
+
+Primary actions should use WordPress button patterns:
+
+```jsx
+import { Button } from '@wordpress/components';
+
+<div className="my-addon-actions">
+    <Button
+        variant="primary"
+        onClick={ handleSave }
+        isBusy={ isSaving }
+        disabled={ isSaving }
+    >
+        { isSaving ? __( 'Saving…', 'my-addon' ) : __( 'Save Changes', 'my-addon' ) }
+    </Button>
+</div>
+```
+
+**CSS:**
+
+```css
+.my-addon-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #dcdcde;
+}
+```
+
+### Grid Layouts
+
+Use CSS Grid for multi-column form layouts:
+
+```css
+.my-addon-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Responsive auto-fill grid */
+.my-addon-auto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 782px) {
+    .my-addon-field-grid {
+        grid-template-columns: 1fr;
+    }
+}
+```
+
+### Accessibility
+
+1. **Use semantic HTML** - Use appropriate heading levels, lists, and buttons
+2. **Keyboard navigation** - Ensure all interactive elements are focusable
+3. **ARIA attributes** - Add `aria-expanded` for expandable sections
+4. **Color contrast** - Maintain WCAG AA compliance (4.5:1 for text)
+5. **Focus indicators** - Use WordPress default focus styles
+
+```jsx
+<button
+    type="button"
+    className="my-addon-expandable-header"
+    onClick={ () => toggleSection( id ) }
+    aria-expanded={ isExpanded }
+>
+    {/* content */}
+</button>
 ```
 
 ## Internationalization
@@ -595,10 +1130,24 @@ describe('MyComponent', () => {
 7. **Test thoroughly** – Include both PHP and JavaScript tests
 8. **Internationalize** – Make all strings translatable
 
+### UI/UX Checklist
+
+Before releasing your add-on, verify:
+
+- [ ] Stats card displays relevant metrics
+- [ ] Cards use consistent styling and spacing
+- [ ] Loading states show spinner
+- [ ] Success/error notices display properly
+- [ ] Save button shows busy state while saving
+- [ ] UI is responsive on mobile (< 782px)
+- [ ] All text is translatable with `__()` or `_e()`
+- [ ] REST endpoints return proper error responses
+- [ ] Assets are properly enqueued only on your tab
+- [ ] No console errors or warnings
+
 ## Resources
 
 - [Parent Plugin Source](https://github.com/soderlind/virtual-media-folders)
-- [Settings Tab Integration](addon-integration.md) – Detailed tab system documentation
 - [Development Guide](development.md) – Parent plugin development setup
 - [REST API Documentation](development.md#rest-api) – API endpoints
 - [AI Organizer Source](https://github.com/soderlind/vmfa-ai-organizer) – Reference implementation
