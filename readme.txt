@@ -1,6 +1,6 @@
 === Virtual Media Folders ===
 Contributors: PerS
-Tags: media, ai, organization, media library, virtual folders
+Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 6.9
 Stable tag: 1.6.7
