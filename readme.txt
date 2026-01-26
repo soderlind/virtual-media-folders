@@ -8,7 +8,7 @@ Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Virtual folder organization and smart management for the WordPress Media Library.
+Virtual folder organization and smart management for the WordPress Media Library, without moving files on disk.
 
 == Description ==
 
