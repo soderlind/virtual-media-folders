@@ -185,6 +185,9 @@ class Taxonomy {
 			'show_ui'               => $show_ui,
 			// Don't add a column to the media list table (we use our own sidebar).
 			'show_admin_column'     => false,
+			// Disable the default taxonomy metabox on attachment edit screen.
+			// The plugin provides its own folder management UI in the media library.
+			'meta_box_cb'           => false,
 			// Enable REST API for React-based UI components.
 			'show_in_rest'          => true,
 			'rest_base'             => 'vmfo-folders',
