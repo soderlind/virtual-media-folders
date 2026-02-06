@@ -315,6 +315,105 @@ $color-error: #d63638;
 // Dashboard Page Components
 // ============================================================================
 
+.vmfo-dashboard-card {
+	margin-bottom: 20px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	.components-card__header {
+		h3 {
+			margin: 0;
+			font-size: 14px;
+			font-weight: 600;
+		}
+	}
+}
+
+.vmfo-status-loading {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 20px 0;
+
+	p {
+		margin: 0;
+		color: $color-text-secondary;
+	}
+}
+
+.vmfo-status-content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.vmfo-status-alert {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	padding: 12px 16px;
+	border-radius: 4px;
+	background: $color-background;
+
+	&--warning {
+		background: rgba($color-warning, 0.1);
+	}
+
+	&--success {
+		background: rgba($color-success, 0.1);
+	}
+}
+
+.vmfo-status-count {
+	font-size: 18px;
+	font-weight: 600;
+	color: $color-text-primary;
+}
+
+.vmfo-status-label {
+	font-size: 14px;
+	color: $color-text-secondary;
+}
+
+.vmfo-summary-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 20px;
+}
+
+.vmfo-summary-item {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+}
+
+.vmfo-summary-value {
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.2;
+	color: $color-text-primary;
+
+	&--warning {
+		color: $color-warning;
+	}
+
+	&--success {
+		color: $color-success;
+	}
+
+	&--error {
+		color: $color-error;
+	}
+}
+
+.vmfo-summary-label {
+	margin-top: 4px;
+	font-size: 13px;
+	color: $color-text-secondary;
+}
+
 .vmfo-dashboard-status {
 	display: flex;
 	gap: 20px;
@@ -411,6 +510,10 @@ $color-error: #d63638;
 
 	.vmfo-stats-card__item {
 		border-right: none;
+	}
+
+	.vmfo-summary-grid {
+		grid-template-columns: repeat(2, 1fr);
 	}
 
 	.vmfo-subtab-nav {
