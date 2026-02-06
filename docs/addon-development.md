@@ -198,42 +198,73 @@ public function render_tab_content( string $active_tab, string $active_subtab ):
 }
 ```
 
-### Sub-tabs
+### Sub-tabs (Standard Structure)
 
-If your add-on needs multiple sections, you can implement sub-tabs within your tab content:
+All add-ons **must** implement the following 5 sub-tabs in this exact order:
+
+| Sub-tab | Purpose | Content Guidelines |
+|---------|---------|-------------------|
+| **Overview** | Landing page | KPI cards, description, primary action button |
+| **Dashboard** | Status & monitoring | KPI cards, last run status, recent activity |
+| **Configure** | Settings only | Form fields, checkboxes, dropdowns. **No action buttons** |
+| **Actions** | Operations only | Run/Scan/Reset buttons. **No settings** |
+| **Logs** | Activity history | Read-only table with date, action, result columns |
+
+**Important Rules:**
+- Do NOT put action buttons (Run Scan, Reset) inside Configure — Configure is settings-only
+- Do NOT put settings (checkboxes, dropdowns) inside Actions — Actions is operations-only
+- If a section is not applicable, show it disabled or display an empty state (don't hide it)
+
+### Using the Add-on Shell Component
+
+The parent plugin provides a shared `AddonShell` React component that enforces consistent UI:
+
+```jsx
+import { AddonShell, StatsCard } from '@vmfo/shared';
+// Or if not using webpack externals:
+// const { AddonShell, StatsCard } = window.vmfo.shared;
+
+function MyAddonPanel() {
+    const stats = [
+        { label: 'Total Media', value: 1060 },
+        { label: 'Processed', value: 1037 },
+        { label: 'Pending', value: 23 },
+        { label: 'Errors', value: 0 },
+    ];
+
+    return (
+        <AddonShell
+            addonKey="my-addon"
+            addonLabel="My Add-on"
+            enabled={true}
+            stats={stats}
+            overviewContent={<OverviewPage stats={stats} />}
+            dashboardContent={<DashboardPage />}
+            configureContent={<ConfigurePage />}
+            actionsContent={<ActionsPage />}
+            logsContent={<LogsPage />}
+        />
+    );
+}
+```
+
+#### PHP Setup for Add-on Shell
+
+Your PHP should render a simple container and let React handle the sub-tabs:
 
 ```php
 public function render_tab_content( string $active_tab, string $active_subtab ): void {
-    // Default to first subtab.
-    if ( empty( $active_subtab ) ) {
-        $active_subtab = 'settings';
-    }
-
-    $base_url = admin_url( 'upload.php?page=' . \VirtualMediaFolders\Settings::PAGE_SLUG . '&tab=' . $active_tab );
     ?>
-    <nav class="nav-tab-wrapper my-addon-subtabs" style="margin-top: 1em;">
-        <a href="<?php echo esc_url( $base_url . '&subtab=settings' ); ?>" 
-           class="nav-tab <?php echo 'settings' === $active_subtab ? 'nav-tab-active' : ''; ?>">
-            <?php esc_html_e( 'Settings', 'my-addon' ); ?>
-        </a>
-        <a href="<?php echo esc_url( $base_url . '&subtab=advanced' ); ?>" 
-           class="nav-tab <?php echo 'advanced' === $active_subtab ? 'nav-tab-active' : ''; ?>">
-            <?php esc_html_e( 'Advanced', 'my-addon' ); ?>
-        </a>
-    </nav>
-    
-    <div class="my-addon-subtab-content">
-        <?php
-        if ( 'settings' === $active_subtab ) {
-            $this->render_settings_subtab();
-        } elseif ( 'advanced' === $active_subtab ) {
-            $this->render_advanced_subtab();
-        }
-        ?>
-    </div>
+    <div id="my-addon-app"></div>
     <?php
 }
 ```
+
+The `AddonShell` component automatically:
+- Reads `subtab` from the URL query string
+- Updates the URL when tabs are clicked (browser history support)
+- Renders the appropriate content based on active sub-tab
+- Handles disabled tabs and empty states
 
 ### URL Structure
 
@@ -245,11 +276,11 @@ The settings page uses the following URL pattern:
 
 - `page`: Always `vmfo-settings`
 - `tab`: Your add-on's tab slug (e.g., `my-addon`)
-- `subtab`: Optional sub-tab within your tab (e.g., `settings`, `advanced`)
+- `subtab`: One of: `overview`, `dashboard`, `configure`, `actions`, `logs`
 
 ### Enqueuing Scripts
 
-Only enqueue when your tab is active:
+Only enqueue when your tab is active. Add `vmfo-shared` as a dependency to use the shared components:
 
 ```php
 add_action( 'vmfo_settings_enqueue_scripts', function( string $active_tab, string $active_subtab ): void {
@@ -264,10 +295,13 @@ add_action( 'vmfo_settings_enqueue_scripts', function( string $active_tab, strin
 
     $asset = require $asset_file;
 
+    // Add vmfo-shared to dependencies to use AddonShell components.
+    $dependencies = array_merge( $asset['dependencies'], [ 'vmfo-shared' ] );
+
     wp_enqueue_script(
         'my-addon-admin',
         MY_ADDON_URL . 'build/index.js',
-        $asset['dependencies'],
+        $dependencies,
         $asset['version'],
         true
     );
@@ -275,7 +309,7 @@ add_action( 'vmfo_settings_enqueue_scripts', function( string $active_tab, strin
     wp_enqueue_style(
         'my-addon-admin',
         MY_ADDON_URL . 'build/index.css',
-        [ 'wp-components' ],
+        [ 'wp-components', 'vmfo-shared' ],
         $asset['version']
     );
 
@@ -285,6 +319,35 @@ add_action( 'vmfo_settings_enqueue_scripts', function( string $active_tab, strin
         'folders' => $this->get_folders(),
     ]);
 }, 10, 2);
+```
+
+#### Webpack Configuration for Shared Components
+
+To import shared components cleanly, configure webpack externals:
+
+```javascript
+// webpack.config.js
+const defaultConfig = require('@wordpress/scripts/config/webpack.config');
+
+module.exports = {
+    ...defaultConfig,
+    externals: {
+        ...defaultConfig.externals,
+        '@vmfo/shared': 'vmfo.shared',
+    },
+};
+```
+
+Then import in your JavaScript:
+
+```jsx
+import { AddonShell, StatsCard, SubTabNav } from '@vmfo/shared';
+```
+
+If you're not using webpack externals, access via the global:
+
+```jsx
+const { AddonShell, StatsCard } = window.vmfo.shared;
 ```
 
 ### Backwards Compatibility
@@ -765,6 +828,146 @@ export default function SettingsPanel() {
 
 VMF add-ons should provide a consistent, modern user experience that integrates seamlessly with the WordPress admin.
 
+### Add-on Shell Layout
+
+All add-ons must use the shared `AddonShell` component for a uniform UI:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Virtual Media Folders Settings                                 │
+├─────────┬─────────────────┬──────────────┬─────────────┬───────┤
+│ General │  AI Organizer   │ Edit. Workfl │ Media Clean │  ...  │  ← Top-level tabs
+└─────────┴─────────────────┴──────────────┴─────────────┴───────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  AI Organizer                              Status: Enabled ●    │  ← Add-on header
+├───────────┬───────────┬───────────┬───────────┬─────────────────┤
+│ Overview  │ Dashboard │ Configure │  Actions  │      Logs       │  ← Sub-tabs (fixed order)
+└───────────┴───────────┴───────────┴───────────┴─────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   1060        │    1037       │     23        │      0         │  ← KPI cards (4 columns)
+│  Total Media  │   Assigned    │  Unassigned   │    Errors      │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  [Content area - varies by sub-tab]                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Sub-tab Content Guidelines
+
+#### Overview Page
+- KPI cards row at top
+- Description card explaining the add-on
+- Two buttons: Primary action (e.g., "Run Scan") + "Configure Settings"
+
+```jsx
+function OverviewPage({ stats, onRunScan }) {
+    return (
+        <>
+            <StatsCard stats={stats} />
+            <div className="vmfo-overview-card">
+                <h3 className="vmfo-overview-card__title">AI Organizer</h3>
+                <p className="vmfo-overview-card__description">
+                    Automatically organizes your media library by analyzing and 
+                    assigning media files into virtual folders based on content 
+                    and metadata.
+                </p>
+                <div className="vmfo-overview-card__actions">
+                    <Button variant="primary" onClick={onRunScan}>
+                        Run Scan
+                    </Button>
+                    <Button variant="secondary" onClick={() => { /* navigate to configure */ }}>
+                        Configure Settings
+                    </Button>
+                </div>
+            </div>
+        </>
+    );
+}
+```
+
+#### Dashboard Page
+- KPI cards row at top
+- Status row: Last Run timestamp + Current Status
+- Recent activity or results summary
+
+#### Configure Page
+- Form sections with settings fields
+- **No action buttons** — only configuration
+- Save button at bottom
+
+#### Actions Page
+- Action cards with buttons: Run Scan, Re-scan Existing, Reset Results
+- Destructive actions show warning text
+- **No settings** — only operations
+
+```jsx
+function ActionsPage({ onRunScan, onReset }) {
+    return (
+        <>
+            <div className="vmfo-actions-card">
+                <h3 className="vmfo-actions-card__title">Run Scan</h3>
+                <p className="vmfo-actions-card__description">
+                    Analyze unassigned media and suggest folder assignments.
+                </p>
+                <Button variant="primary" onClick={onRunScan}>
+                    Start Scan
+                </Button>
+            </div>
+            
+            <div className="vmfo-actions-card vmfo-actions-card--danger">
+                <h3 className="vmfo-actions-card__title">Reset Results</h3>
+                <p className="vmfo-actions-card__description">
+                    Clear all scan results and start fresh.
+                </p>
+                <Button variant="secondary" isDestructive onClick={onReset}>
+                    Reset All
+                </Button>
+                <p className="vmfo-actions-card__warning">
+                    Warning: This action cannot be undone.
+                </p>
+            </div>
+        </>
+    );
+}
+```
+
+#### Logs Page
+- Read-only table with columns: Date, Action, Result
+- Pagination for large datasets
+- Filter/search optional
+
+```jsx
+function LogsPage({ logs }) {
+    return (
+        <table className="vmfo-logs-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Action</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {logs.map(log => (
+                    <tr key={log.id}>
+                        <td>{log.date}</td>
+                        <td>{log.action}</td>
+                        <td>
+                            <span className={`vmfo-logs-status vmfo-logs-status--${log.status}`}>
+                                {log.result}
+                            </span>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+}
+```
+
 ### Color Palette
 
 Use WordPress admin colors for consistency:
@@ -795,7 +998,22 @@ Display key metrics at the top of your settings page using a 4-column grid:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**CSS:**
+Use the shared `StatsCard` component instead of custom CSS:
+
+```jsx
+import { StatsCard } from '@vmfo/shared';
+
+const stats = [
+    { label: 'Total Media', value: 1002 },
+    { label: 'In Folders', value: 1002 },
+    { label: 'Unassigned', value: 0 },
+    { label: 'Folders', value: 217 },
+];
+
+<StatsCard stats={stats} />
+```
+
+**CSS (for reference — use shared styles instead):**
 
 ```css
 .my-addon-stats-card {
@@ -1126,15 +1344,44 @@ describe('MyComponent', () => {
 
 Before releasing your add-on, verify:
 
-- [ ] Stats card displays relevant metrics
-- [ ] Cards use consistent styling and spacing
+**Add-on Shell:**
+- [ ] Uses `AddonShell` component from parent plugin
+- [ ] All 5 sub-tabs implemented (Overview, Dashboard, Configure, Actions, Logs)
+- [ ] Sub-tabs that are not applicable show disabled or empty state (don't hide them)
+
+**Overview Page:**
+- [ ] KPI cards display 4 relevant metrics
+- [ ] Description block explains the add-on
+- [ ] Primary action button is prominent
+- [ ] "Configure Settings" secondary button present
+
+**Dashboard Page:**
+- [ ] KPI cards show current status
+- [ ] Last run timestamp displayed
+- [ ] Status indicator shows current state
+
+**Configure Page:**
+- [ ] Contains only settings (no action buttons)
+- [ ] Form fields have proper labels
+- [ ] Save button at bottom
+
+**Actions Page:**
+- [ ] Contains only actions (no settings)
+- [ ] Destructive actions show warning text
+- [ ] Actions have clear descriptions
+
+**Logs Page:**
+- [ ] Read-only table with Date, Action, Result columns
+- [ ] Pagination for large datasets (if applicable)
+
+**General:**
 - [ ] Loading states show spinner
 - [ ] Success/error notices display properly
-- [ ] Save button shows busy state while saving
 - [ ] UI is responsive on mobile (< 782px)
 - [ ] All text is translatable with `__()` or `_e()`
 - [ ] REST endpoints return proper error responses
 - [ ] Assets are properly enqueued only on your tab
+- [ ] `vmfo-shared` is listed as a script dependency
 - [ ] No console errors or warnings
 
 ## Resources
@@ -1144,3 +1391,6 @@ Before releasing your add-on, verify:
 - [REST API Documentation](development.md#rest-api) – API endpoints
 - [AI Organizer Source](https://github.com/soderlind/vmfa-ai-organizer) – Reference implementation
 - [Rules Engine Source](https://github.com/soderlind/vmfa-rules-engine) – Reference implementation
+- [Editorial Workflow Source](https://github.com/soderlind/vmfa-editorial-workflow) – Reference implementation
+- [Media Cleanup Source](https://github.com/soderlind/vmfa-media-cleanup) – Reference implementation
+- [Smart Folders Source](https://github.com/soderlind/vmfa-smart-folders) – Reference implementation

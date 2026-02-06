@@ -95,6 +95,11 @@ final class Settings {
 		$active_tab    = self::get_active_tab();
 		$active_subtab = self::get_active_subtab();
 
+		// Always enqueue shared bundle for add-ons (except on general tab which doesn't need it).
+		if ( 'general' !== $active_tab ) {
+			self::enqueue_shared_bundle();
+		}
+
 		/**
 		 * Fires when enqueuing scripts for the settings page.
 		 * Add-ons should use this to conditionally enqueue their assets.
@@ -124,6 +129,39 @@ final class Settings {
 			$asset[ 'dependencies' ],
 			$asset[ 'version' ],
 			true
+		);
+	}
+
+	/**
+	 * Enqueue the shared component bundle.
+	 *
+	 * This provides the AddonShell and related components for add-ons.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return void
+	 */
+	private static function enqueue_shared_bundle(): void {
+		$asset_file = VMFO_PATH . 'build/shared.asset.php';
+		if ( ! file_exists( $asset_file ) ) {
+			return;
+		}
+
+		$asset = require $asset_file;
+
+		wp_enqueue_script(
+			'vmfo-shared',
+			VMFO_URL . 'build/shared.js',
+			$asset[ 'dependencies' ],
+			$asset[ 'version' ],
+			true
+		);
+
+		wp_enqueue_style(
+			'vmfo-shared',
+			VMFO_URL . 'build/shared.css',
+			[ 'wp-components' ],
+			$asset[ 'version' ]
 		);
 	}
 

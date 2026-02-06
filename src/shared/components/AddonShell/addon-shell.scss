@@ -1,0 +1,452 @@
+/**
+ * Add-on Shell Styles.
+ *
+ * Consistent styling for the add-on shell UI components.
+ *
+ * @package VirtualMediaFolders
+ */
+
+// WordPress admin color variables.
+$color-text-primary: #1d2327;
+$color-text-secondary: #646970;
+$color-text-muted: #a7aaad;
+$color-border: #c3c4c7;
+$color-border-light: #f0f0f1;
+$color-background: #f6f7f7;
+$color-background-white: #fff;
+$color-primary: #2271b1;
+$color-success: #00a32a;
+$color-warning: #dba617;
+$color-error: #d63638;
+
+// ============================================================================
+// Add-on Shell Container
+// ============================================================================
+
+.vmfo-addon-shell {
+	margin-top: 20px;
+}
+
+.vmfo-addon-shell__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 0;
+	margin-bottom: 0;
+}
+
+.vmfo-addon-shell__title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: $color-text-primary;
+}
+
+.vmfo-addon-shell__content {
+	margin-top: 20px;
+}
+
+.vmfo-addon-shell__empty-state {
+	padding: 40px 20px;
+	text-align: center;
+	color: $color-text-secondary;
+	background: $color-background;
+	border-radius: 4px;
+
+	p {
+		margin: 0;
+	}
+}
+
+// ============================================================================
+// Status Indicator
+// ============================================================================
+
+.vmfo-status-indicator {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+}
+
+.vmfo-status-indicator__text {
+	color: $color-text-secondary;
+}
+
+.vmfo-status-indicator__value {
+	font-weight: 500;
+
+	&--enabled {
+		color: $color-success;
+	}
+
+	&--disabled {
+		color: $color-text-muted;
+	}
+}
+
+.vmfo-status-indicator__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+
+	&--enabled {
+		background-color: $color-success;
+	}
+
+	&--disabled {
+		background-color: $color-text-muted;
+	}
+}
+
+// ============================================================================
+// Sub-Tab Navigation
+// ============================================================================
+
+.vmfo-subtab-nav {
+	display: flex;
+	gap: 0;
+	padding: 0;
+	margin: 0;
+	border-bottom: 1px solid $color-border;
+}
+
+.vmfo-subtab-nav__tab {
+	position: relative;
+	padding: 12px 16px;
+	font-size: 13px;
+	font-weight: 500;
+	color: $color-text-secondary;
+	text-decoration: none;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	transition: color 0.15s, border-color 0.15s;
+
+	&:hover {
+		color: $color-primary;
+	}
+
+	&:focus {
+		outline: 2px solid $color-primary;
+		outline-offset: -2px;
+	}
+
+	&--active {
+		color: $color-text-primary;
+
+		&::after {
+			content: "";
+			position: absolute;
+			bottom: -1px;
+			left: 0;
+			right: 0;
+			height: 2px;
+			background-color: $color-primary;
+		}
+	}
+
+	&--disabled {
+		color: $color-text-muted;
+		cursor: not-allowed;
+		opacity: 0.6;
+
+		&:hover {
+			color: $color-text-muted;
+		}
+	}
+}
+
+// ============================================================================
+// Stats Card
+// ============================================================================
+
+.vmfo-stats-card {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	padding: 24px 20px;
+	margin-bottom: 20px;
+	text-align: center;
+	background: $color-background-white;
+	border: 1px solid $color-border;
+	border-radius: 4px;
+}
+
+.vmfo-stats-card__item {
+	padding: 0 16px;
+	border-right: 1px solid $color-border-light;
+
+	&:last-child {
+		border-right: none;
+	}
+}
+
+.vmfo-stats-card__value {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 38px;
+	font-size: 32px;
+	font-weight: 600;
+	line-height: 1.2;
+	color: $color-text-primary;
+
+	.components-spinner {
+		margin: 0;
+	}
+}
+
+.vmfo-stats-card__label {
+	margin-top: 4px;
+	font-size: 13px;
+	color: $color-text-secondary;
+}
+
+// ============================================================================
+// Overview Page Components
+// ============================================================================
+
+.vmfo-overview-card {
+	padding: 20px;
+	margin-top: 20px;
+	background: $color-background-white;
+	border: 1px solid $color-border;
+	border-radius: 4px;
+}
+
+.vmfo-overview-card__title {
+	margin: 0 0 8px;
+	font-size: 16px;
+	font-weight: 600;
+	color: $color-text-primary;
+}
+
+.vmfo-overview-card__description {
+	margin: 0 0 20px;
+	color: $color-text-secondary;
+	line-height: 1.5;
+}
+
+.vmfo-overview-card__actions {
+	display: flex;
+	gap: 12px;
+}
+
+// ============================================================================
+// Configure Page Components
+// ============================================================================
+
+.vmfo-configure-card {
+	padding: 20px;
+	margin-bottom: 20px;
+	background: $color-background-white;
+	border: 1px solid $color-border;
+	border-radius: 4px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.vmfo-configure-card__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 16px;
+	margin-bottom: 16px;
+	border-bottom: 1px solid $color-border-light;
+}
+
+.vmfo-configure-card__title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: $color-text-primary;
+}
+
+.vmfo-configure-card__body {
+	// Content styles.
+}
+
+.vmfo-configure-actions {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid $color-border-light;
+}
+
+// ============================================================================
+// Actions Page Components
+// ============================================================================
+
+.vmfo-actions-card {
+	padding: 20px;
+	margin-bottom: 20px;
+	background: $color-background-white;
+	border: 1px solid $color-border;
+	border-radius: 4px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	&--warning {
+		border-color: $color-warning;
+	}
+
+	&--danger {
+		border-color: $color-error;
+
+		.vmfo-actions-card__title {
+			color: $color-error;
+		}
+	}
+}
+
+.vmfo-actions-card__title {
+	margin: 0 0 8px;
+	font-size: 14px;
+	font-weight: 600;
+	color: $color-text-primary;
+}
+
+.vmfo-actions-card__description {
+	margin: 0 0 16px;
+	color: $color-text-secondary;
+	line-height: 1.5;
+}
+
+.vmfo-actions-card__warning {
+	margin: 16px 0 0;
+	padding: 12px 16px;
+	font-size: 13px;
+	color: $color-error;
+	background-color: rgba($color-error, 0.05);
+	border-radius: 4px;
+}
+
+// ============================================================================
+// Dashboard Page Components
+// ============================================================================
+
+.vmfo-dashboard-status {
+	display: flex;
+	gap: 20px;
+	margin-bottom: 20px;
+}
+
+.vmfo-dashboard-status__item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: $color-text-secondary;
+
+	strong {
+		color: $color-text-primary;
+	}
+}
+
+// ============================================================================
+// Logs Page Components
+// ============================================================================
+
+.vmfo-logs-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: $color-background-white;
+	border: 1px solid $color-border;
+	border-radius: 4px;
+
+	th,
+	td {
+		padding: 12px 16px;
+		text-align: left;
+		border-bottom: 1px solid $color-border-light;
+	}
+
+	th {
+		font-size: 12px;
+		font-weight: 600;
+		color: $color-text-secondary;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		background: $color-background;
+	}
+
+	td {
+		font-size: 13px;
+		color: $color-text-primary;
+	}
+
+	tr:last-child td {
+		border-bottom: none;
+	}
+
+	tr:hover td {
+		background-color: rgba($color-primary, 0.02);
+	}
+}
+
+.vmfo-logs-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 2px 8px;
+	font-size: 12px;
+	font-weight: 500;
+	border-radius: 3px;
+
+	&--success {
+		color: $color-success;
+		background-color: rgba($color-success, 0.1);
+	}
+
+	&--warning {
+		color: $color-warning;
+		background-color: rgba($color-warning, 0.1);
+	}
+
+	&--error {
+		color: $color-error;
+		background-color: rgba($color-error, 0.1);
+	}
+}
+
+// ============================================================================
+// Responsive Styles
+// ============================================================================
+
+@media (max-width: 782px) {
+	.vmfo-stats-card {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+	}
+
+	.vmfo-stats-card__item {
+		border-right: none;
+	}
+
+	.vmfo-subtab-nav {
+		flex-wrap: wrap;
+	}
+
+	.vmfo-subtab-nav__tab {
+		padding: 10px 12px;
+		font-size: 12px;
+	}
+
+	.vmfo-addon-shell__header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	.vmfo-overview-card__actions {
+		flex-direction: column;
+	}
+
+	.vmfo-dashboard-status {
+		flex-direction: column;
+		gap: 8px;
+	}
+}
