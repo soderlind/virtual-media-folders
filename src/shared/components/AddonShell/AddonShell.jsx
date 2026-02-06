@@ -11,7 +11,6 @@ import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 import { SubTabNav, SUB_TABS } from './SubTabNav';
-import { StatusIndicator } from './StatusIndicator';
 import { StatsCard } from './StatsCard';
 
 /**
@@ -117,12 +116,6 @@ export function AddonShell( {
 
 	return (
 		<div className={ `vmfo-addon-shell vmfo-addon-shell--${ addonKey } ${ className }`.trim() }>
-			{ /* Header row with addon label and status */ }
-			<div className="vmfo-addon-shell__header">
-				<h2 className="vmfo-addon-shell__title">{ addonLabel }</h2>
-				<StatusIndicator enabled={ enabled } />
-			</div>
-
 			{ /* Sub-tab navigation */ }
 			<SubTabNav
 				activeTab={ activeTab }

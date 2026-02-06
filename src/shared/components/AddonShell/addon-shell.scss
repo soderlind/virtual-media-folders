@@ -24,22 +24,7 @@ $color-error: #d63638;
 // ============================================================================
 
 .vmfo-addon-shell {
-	margin-top: 20px;
-}
-
-.vmfo-addon-shell__header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 12px 0;
-	margin-bottom: 0;
-}
-
-.vmfo-addon-shell__title {
-	margin: 0;
-	font-size: 14px;
-	font-weight: 600;
-	color: $color-text-primary;
+	margin-top: 0;
 }
 
 .vmfo-addon-shell__content {
@@ -100,28 +85,29 @@ $color-error: #d63638;
 }
 
 // ============================================================================
-// Sub-Tab Navigation
+// Sub-Tab Navigation (Submenu Style)
 // ============================================================================
 
 .vmfo-subtab-nav {
 	display: flex;
-	gap: 0;
-	padding: 0;
+	gap: 24px;
+	padding: 12px 0;
 	margin: 0;
 	border-bottom: 1px solid $color-border;
+	background: $color-background-white;
 }
 
 .vmfo-subtab-nav__tab {
 	position: relative;
-	padding: 12px 16px;
+	padding: 0;
 	font-size: 13px;
-	font-weight: 500;
+	font-weight: 400;
 	color: $color-text-secondary;
 	text-decoration: none;
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	transition: color 0.15s, border-color 0.15s;
+	transition: color 0.15s;
 
 	&:hover {
 		color: $color-primary;
@@ -129,16 +115,17 @@ $color-error: #d63638;
 
 	&:focus {
 		outline: 2px solid $color-primary;
-		outline-offset: -2px;
+		outline-offset: 2px;
 	}
 
 	&--active {
 		color: $color-text-primary;
+		font-weight: 600;
 
 		&::after {
 			content: "";
 			position: absolute;
-			bottom: -1px;
+			bottom: -13px;
 			left: 0;
 			right: 0;
 			height: 2px;
