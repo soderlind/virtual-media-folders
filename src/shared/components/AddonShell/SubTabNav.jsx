@@ -14,8 +14,8 @@ import { __ } from '@wordpress/i18n';
 export const SUB_TABS = [
 	{ id: 'overview', label: __( 'Overview', 'virtual-media-folders' ) },
 	{ id: 'dashboard', label: __( 'Dashboard', 'virtual-media-folders' ) },
-	{ id: 'configure', label: __( 'Configure', 'virtual-media-folders' ) },
 	{ id: 'actions', label: __( 'Actions', 'virtual-media-folders' ) },
+	{ id: 'configure', label: __( 'Configure', 'virtual-media-folders' ) },
 ];
 
 /**
