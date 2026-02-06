@@ -200,15 +200,14 @@ public function render_tab_content( string $active_tab, string $active_subtab ):
 
 ### Sub-tabs (Standard Structure)
 
-All add-ons **must** implement the following 5 sub-tabs in this exact order:
+All add-ons **must** implement the following 4 sub-tabs in this exact order:
 
 | Sub-tab | Purpose | Content Guidelines |
 |---------|---------|-------------------|
 | **Overview** | Landing page | KPI cards, description, primary action button |
 | **Dashboard** | Status & monitoring | KPI cards, last run status, recent activity |
-| **Configure** | Settings only | Form fields, checkboxes, dropdowns. **No action buttons** |
 | **Actions** | Operations only | Run/Scan/Reset buttons. **No settings** |
-| **Logs** | Activity history | Read-only table with date, action, result columns |
+| **Configure** | Settings only | Form fields, checkboxes, dropdowns. **No action buttons** |
 
 **Important Rules:**
 - Do NOT put action buttons (Run Scan, Reset) inside Configure — Configure is settings-only
@@ -240,9 +239,8 @@ function MyAddonPanel() {
             stats={stats}
             overviewContent={<OverviewPage stats={stats} />}
             dashboardContent={<DashboardPage />}
-            configureContent={<ConfigurePage />}
             actionsContent={<ActionsPage />}
-            logsContent={<LogsPage />}
+            configureContent={<ConfigurePage />}
         />
     );
 }
@@ -276,7 +274,7 @@ The settings page uses the following URL pattern:
 
 - `page`: Always `vmfo-settings`
 - `tab`: Your add-on's tab slug (e.g., `my-addon`)
-- `subtab`: One of: `overview`, `dashboard`, `configure`, `actions`, `logs`
+- `subtab`: One of: `overview`, `dashboard`, `actions`, `configure`
 
 ### Enqueuing Scripts
 
@@ -341,7 +339,7 @@ module.exports = {
 Then import in your JavaScript:
 
 ```jsx
-import { AddonShell, StatsCard, SubTabNav } from '@vmfo/shared';
+import { AddonShell, StatsCard } from '@vmfo/shared';
 ```
 
 If you're not using webpack externals, access via the global:
@@ -838,11 +836,7 @@ All add-ons must use the shared `AddonShell` component for a uniform UI:
 ├─────────┬─────────────────┬──────────────┬─────────────┬───────┤
 │ General │  AI Organizer   │ Edit. Workfl │ Media Clean │  ...  │  ← Top-level tabs
 └─────────┴─────────────────┴──────────────┴─────────────┴───────┘
-┌─────────────────────────────────────────────────────────────────┐
-│  AI Organizer                              Status: Enabled ●    │  ← Add-on header
-├───────────┬───────────┬───────────┬───────────┬─────────────────┤
-│ Overview  │ Dashboard │ Configure │  Actions  │      Logs       │  ← Sub-tabs (fixed order)
-└───────────┴───────────┴───────────┴───────────┴─────────────────┘
+   Overview   Dashboard   Actions   Configure                       ← Sub-tabs (inline submenu)
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
 │   1060        │    1037       │     23        │      0         │  ← KPI cards (4 columns)
@@ -854,6 +848,8 @@ All add-ons must use the shared `AddonShell` component for a uniform UI:
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+The sub-tabs appear as an inline submenu directly below the add-on tab, visually connected to it.
 
 ### Sub-tab Content Guidelines
 
@@ -930,40 +926,6 @@ function ActionsPage({ onRunScan, onReset }) {
                 </p>
             </div>
         </>
-    );
-}
-```
-
-#### Logs Page
-- Read-only table with columns: Date, Action, Result
-- Pagination for large datasets
-- Filter/search optional
-
-```jsx
-function LogsPage({ logs }) {
-    return (
-        <table className="vmfo-logs-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Action</th>
-                    <th>Result</th>
-                </tr>
-            </thead>
-            <tbody>
-                {logs.map(log => (
-                    <tr key={log.id}>
-                        <td>{log.date}</td>
-                        <td>{log.action}</td>
-                        <td>
-                            <span className={`vmfo-logs-status vmfo-logs-status--${log.status}`}>
-                                {log.result}
-                            </span>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
     );
 }
 ```
@@ -1346,7 +1308,7 @@ Before releasing your add-on, verify:
 
 **Add-on Shell:**
 - [ ] Uses `AddonShell` component from parent plugin
-- [ ] All 5 sub-tabs implemented (Overview, Dashboard, Configure, Actions, Logs)
+- [ ] All 4 sub-tabs implemented (Overview, Dashboard, Actions, Configure)
 - [ ] Sub-tabs that are not applicable show disabled or empty state (don't hide them)
 
 **Overview Page:**
@@ -1369,10 +1331,6 @@ Before releasing your add-on, verify:
 - [ ] Contains only actions (no settings)
 - [ ] Destructive actions show warning text
 - [ ] Actions have clear descriptions
-
-**Logs Page:**
-- [ ] Read-only table with Date, Action, Result columns
-- [ ] Pagination for large datasets (if applicable)
 
 **General:**
 - [ ] Loading states show spinner
