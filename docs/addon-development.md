@@ -833,18 +833,18 @@ All add-ons must use the shared `AddonShell` component for a uniform UI:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  Virtual Media Folders Settings                                 │
-├─────────┬─────────────────┬──────────────┬─────────────┬───────┤
-│ General │  AI Organizer   │ Edit. Workfl │ Media Clean │  ...  │  ← Top-level tabs
-└─────────┴─────────────────┴──────────────┴─────────────┴───────┘
-   Overview   Dashboard   Actions   Configure                       ← Sub-tabs (inline submenu)
+├─────────┬─────────────────┬──────────────┬─────────────┬────────┤
+│ General │  AI Organizer   │ Edit. Workfl │ Media Clean │  ...   │  ← Top-level tabs
+└─────────┴─────────────────┴──────────────┴─────────────┴────────┘
+   Overview   Dashboard   Actions   Configure                        ← Sub-tabs (inline submenu)
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   1060        │    1037       │     23        │      0         │  ← KPI cards (4 columns)
-│  Total Media  │   Assigned    │  Unassigned   │    Errors      │
+│   1060        │    1037       │     23        │      0          │  ← KPI cards (4 columns)
+│  Total Media  │   Assigned    │  Unassigned   │    Errors       │
 │                                                                 │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  [Content area - varies by sub-tab]                            │
+│  [Content area - varies by sub-tab]                             │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -954,8 +954,8 @@ Display key metrics at the top of your settings page using a 4-column grid:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   1002        │    1002       │     0         │     217        │
-│  Total Media  │   In Folders  │  Unassigned   │    Folders     │
+│   1002        │    1002       │     0         │     217         │
+│  Total Media  │   In Folders  │  Unassigned   │    Folders      │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -1034,7 +1034,7 @@ Use card containers for grouping related settings:
 │                                                                 │
 │  Description text explaining this section.                      │
 │                                                                 │
-│  [Content area - forms, lists, etc.]                           │
+│  [Content area - forms, lists, etc.]                            │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
