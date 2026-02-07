@@ -476,10 +476,17 @@ final class Settings {
 		 * Filter to register add-on tabs.
 		 *
 		 * Add-ons can use this filter to add their own tabs to the settings page.
+		 * Tabs can optionally include a 'subtabs' array for secondary navigation.
 		 *
 		 * @since 1.1.0
 		 *
-		 * @param array $tabs Array of tabs: [ 'slug' => [ 'title' => '', 'callback' => callable ] ].
+		 * @param array $tabs Array of tabs: [
+		 *     'slug' => [
+		 *         'title'    => string,
+		 *         'callback' => callable,
+		 *         'subtabs'  => [ 'subtab-slug' => 'Subtab Title', ... ] (optional)
+		 *     ]
+		 * ].
 		 */
 		$addon_tabs = apply_filters( 'vmfo_settings_tabs', array() );
 
@@ -495,7 +502,53 @@ final class Settings {
 			$active_tab = 'general';
 		}
 
+		// Get subtabs for active tab.
+		$subtabs = $tabs[ $active_tab ][ 'subtabs' ] ?? array();
+
+		// Validate active subtab exists, fall back to first subtab or empty.
+		if ( ! empty( $subtabs ) && ( empty( $active_subtab ) || ! isset( $subtabs[ $active_subtab ] ) ) ) {
+			$active_subtab = array_key_first( $subtabs );
+		}
+
+		$base_url = admin_url( 'upload.php?page=' . self::PAGE_SLUG );
+
 		?>
+		<style>
+			.vmfo-subtab-nav {
+				display: flex;
+				gap: 0;
+				margin: 0;
+				padding: 0;
+				background: #f0f0f1;
+				border-bottom: 1px solid #c3c4c7;
+			}
+
+			.vmfo-subtab-link {
+				display: inline-block;
+				padding: 8px 16px;
+				text-decoration: none;
+				color: #50575e;
+				font-size: 13px;
+				border-bottom: 2px solid transparent;
+				margin-bottom: -1px;
+				transition: color 0.1s ease-in-out, border-color 0.1s ease-in-out;
+			}
+
+			.vmfo-subtab-link:hover {
+				color: #135e96;
+			}
+
+			.vmfo-subtab-link.is-active {
+				color: #1d2327;
+				border-bottom-color: #3582c4;
+				background: #fff;
+			}
+
+			/* Add spacing when no subtab nav is present */
+			.vmfo-nav-tabs+.vmfo-tab-content {
+				margin-top: 20px;
+			}
+		</style>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<?php settings_errors( 'vmfo_messages' ); ?>
@@ -503,9 +556,20 @@ final class Settings {
 			<?php if ( count( $tabs ) > 1 ) : ?>
 				<nav class="nav-tab-wrapper vmfo-nav-tabs">
 					<?php foreach ( $tabs as $slug => $tab ) : ?>
-						<a href="<?php echo esc_url( admin_url( 'upload.php?page=' . self::PAGE_SLUG . '&tab=' . $slug ) ); ?>"
+						<a href="<?php echo esc_url( $base_url . '&tab=' . $slug ); ?>"
 							class="nav-tab <?php echo $active_tab === $slug ? 'nav-tab-active' : ''; ?>">
 							<?php echo esc_html( $tab[ 'title' ] ); ?>
+						</a>
+					<?php endforeach; ?>
+				</nav>
+			<?php endif; ?>
+
+			<?php if ( ! empty( $subtabs ) ) : ?>
+				<nav class="vmfo-subtab-nav">
+					<?php foreach ( $subtabs as $subtab_slug => $subtab_title ) : ?>
+						<a href="<?php echo esc_url( $base_url . '&tab=' . $active_tab . '&subtab=' . $subtab_slug ); ?>"
+							class="vmfo-subtab-link <?php echo $active_subtab === $subtab_slug ? 'is-active' : ''; ?>">
+							<?php echo esc_html( $subtab_title ); ?>
 						</a>
 					<?php endforeach; ?>
 				</nav>

@@ -47,10 +47,8 @@ function updateUrlSubtab( subtab ) {
  * @param {Array}       props.stats              Stats array for StatsCard: [{ label, value, isLoading }].
  * @param {Object}      props.disabledTabs       Object mapping tab IDs to disabled state.
  * @param {JSX.Element} props.overviewContent    Content for Overview tab.
- * @param {JSX.Element} props.dashboardContent   Content for Dashboard tab.
+ * @param {JSX.Element} props.dashboardContent   Content for Dashboard tab (includes actions).
  * @param {JSX.Element} props.configureContent   Content for Configure tab.
- * @param {JSX.Element} props.actionsContent     Content for Actions tab.
- * @param {JSX.Element} props.logsContent        Content for Logs tab.
  * @param {string}      props.className          Additional CSS class.
  * @return {JSX.Element} The add-on shell component.
  */
@@ -64,8 +62,6 @@ export function AddonShell( {
 	overviewContent,
 	dashboardContent,
 	configureContent,
-	actionsContent,
-	logsContent,
 	className = '',
 } ) {
 	const [ activeTab, setActiveTab ] = useState( getSubtabFromUrl );
@@ -105,10 +101,6 @@ export function AddonShell( {
 				return dashboardContent || <EmptyState tabId="dashboard" />;
 			case 'configure':
 				return configureContent || <EmptyState tabId="configure" />;
-			case 'actions':
-				return actionsContent || <EmptyState tabId="actions" />;
-			case 'logs':
-				return logsContent || <EmptyState tabId="logs" />;
 			default:
 				return overviewContent || <EmptyState tabId="overview" />;
 		}
@@ -148,8 +140,6 @@ function EmptyState( { tabId } ) {
 		overview: __( 'Overview content not configured.', 'virtual-media-folders' ),
 		dashboard: __( 'Dashboard content not configured.', 'virtual-media-folders' ),
 		configure: __( 'No settings available for this add-on.', 'virtual-media-folders' ),
-		actions: __( 'No actions available for this add-on.', 'virtual-media-folders' ),
-		logs: __( 'Logs feature coming soon.', 'virtual-media-folders' ),
 	};
 
 	return (
