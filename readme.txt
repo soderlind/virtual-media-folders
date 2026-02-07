@@ -123,6 +123,14 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 == Changelog ==
 
+= 1.7.0 =
+* Added: Subtab navigation system for add-on settings integration
+* Added: Parent plugin now renders subtab nav when add-ons register subtabs array
+* Added: CSS spacing fix for tabs without subtab navigation
+* Added: Enhanced addon-development.md documentation for subtab system
+* Changed: Add-on tabs can now include optional `subtabs` array for secondary navigation
+* Changed: Improved settings page architecture for better add-on UX
+
 = 1.6.8 =
 * Fixed: Removed Media Folders metabox from attachment edit screen (folders are managed via the media library sidebar)
 
