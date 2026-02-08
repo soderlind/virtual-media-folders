@@ -185,6 +185,7 @@ add_filter( 'vmfo_settings_tabs', function( array $tabs ): array {
 |-----|------|----------|-------------|
 | `title` | string | Yes | The tab label displayed in the navigation |
 | `callback` | callable | Yes | Function to render the tab content. Receives `$active_tab` and `$active_subtab` as parameters. |
+| `subtabs` | array | No | Optional secondary navigation: `[ 'slug' => 'Title', ... ]` |
 
 ### Rendering Tab Content
 
@@ -198,39 +199,67 @@ public function render_tab_content( string $active_tab, string $active_subtab ):
 }
 ```
 
-### Sub-tabs
+### Sub-tabs (Optional)
 
-If your add-on needs multiple sections, you can implement sub-tabs within your tab content:
+If your add-on has multiple sections, you can register subtabs for secondary navigation. The parent plugin renders the subtab bar automatically.
+
+```php
+add_filter( 'vmfo_settings_tabs', function( array $tabs ): array {
+    $tabs['my-addon'] = [
+        'title'    => __( 'My Add-on', 'my-vmfa-addon' ),
+        'callback' => [ $this, 'render_tab_content' ],
+        'subtabs'  => [
+            'scanner'  => __( 'Scanner', 'my-vmfa-addon' ),
+            'settings' => __( 'Settings', 'my-vmfa-addon' ),
+            'logs'     => __( 'Logs', 'my-vmfa-addon' ),
+        ],
+    ];
+    return $tabs;
+});
+```
+
+When subtabs are registered:
+- The parent plugin renders a secondary navigation bar below the main tabs
+- The first subtab is selected by default if none specified in URL
+- Your callback receives `$active_subtab` with the current selection
 
 ```php
 public function render_tab_content( string $active_tab, string $active_subtab ): void {
-    // Default to first subtab.
-    if ( empty( $active_subtab ) ) {
-        $active_subtab = 'settings';
+    // Render content based on active subtab.
+    switch ( $active_subtab ) {
+        case 'scanner':
+            $this->render_scanner_content();
+            break;
+        case 'settings':
+            $this->render_settings_content();
+            break;
+        case 'logs':
+            $this->render_logs_content();
+            break;
     }
+}
+```
 
-    $base_url = admin_url( 'upload.php?page=' . \VirtualMediaFolders\Settings::PAGE_SLUG . '&tab=' . $active_tab );
+### Simple Add-on (No Subtabs)
+
+For simpler add-ons, subtabs are optional. Just register a tab without the `subtabs` array:
+
+```php
+$tabs['my-addon'] = [
+    'title'    => __( 'My Add-on', 'my-vmfa-addon' ),
+    'callback' => [ $this, 'render_tab_content' ],
+];
+```
+
+### Rendering with React
+
+Render a container element and mount your React app:
+
+```php
+public function render_tab_content( string $active_tab, string $active_subtab ): void {
+    // Pass the active subtab to React via data attribute or localized script.
     ?>
-    <nav class="nav-tab-wrapper my-addon-subtabs" style="margin-top: 1em;">
-        <a href="<?php echo esc_url( $base_url . '&subtab=settings' ); ?>" 
-           class="nav-tab <?php echo 'settings' === $active_subtab ? 'nav-tab-active' : ''; ?>">
-            <?php esc_html_e( 'Settings', 'my-addon' ); ?>
-        </a>
-        <a href="<?php echo esc_url( $base_url . '&subtab=advanced' ); ?>" 
-           class="nav-tab <?php echo 'advanced' === $active_subtab ? 'nav-tab-active' : ''; ?>">
-            <?php esc_html_e( 'Advanced', 'my-addon' ); ?>
-        </a>
-    </nav>
-    
-    <div class="my-addon-subtab-content">
-        <?php
-        if ( 'settings' === $active_subtab ) {
-            $this->render_settings_subtab();
-        } elseif ( 'advanced' === $active_subtab ) {
-            $this->render_advanced_subtab();
-        }
-        ?>
-    </div>
+    <div id="my-addon-app" data-subtab="<?php echo esc_attr( $active_subtab ); ?>"></div>
     <?php
 }
 ```
@@ -245,7 +274,7 @@ The settings page uses the following URL pattern:
 
 - `page`: Always `vmfo-settings`
 - `tab`: Your add-on's tab slug (e.g., `my-addon`)
-- `subtab`: Optional sub-tab within your tab (e.g., `settings`, `advanced`)
+- `subtab`: Your subtab slug (if using subtabs)
 
 ### Enqueuing Scripts
 
@@ -280,9 +309,10 @@ add_action( 'vmfo_settings_enqueue_scripts', function( string $active_tab, strin
     );
 
     wp_localize_script( 'my-addon-admin', 'myAddonData', [
-        'restUrl' => rest_url( 'my-addon/v1/' ),
-        'nonce'   => wp_create_nonce( 'wp_rest' ),
-        'folders' => $this->get_folders(),
+        'restUrl'      => rest_url( 'my-addon/v1/' ),
+        'nonce'        => wp_create_nonce( 'wp_rest' ),
+        'activeSubtab' => $active_subtab,
+        'folders'      => $this->get_folders(),
     ]);
 }, 10, 2);
 ```
@@ -765,6 +795,72 @@ export default function SettingsPanel() {
 
 VMF add-ons should provide a consistent, modern user experience that integrates seamlessly with the WordPress admin.
 
+### Settings Page Layout
+
+Add-ons appear as tabs within the Virtual Media Folders settings page:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Virtual Media Folders Settings                                 │
+├─────────┬─────────────────┬──────────────┬─────────────┬────────┤
+│ General │  AI Organizer   │ Edit. Workfl │ Media Clean │  ...   │  ← Top-level tabs
+└─────────┴─────────────────┴──────────────┴─────────────┴────────┘
+   Scanner   Settings   AI Provider                                  ← Sub-tabs (optional)
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│  [Your add-on content]                                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+Sub-tabs (when registered) appear as a secondary navigation bar directly below the main tabs.
+
+### Flexible Structure
+
+Add-ons have complete control over their UI within their tab content area. You can:
+
+1. **Simple add-on**: Single settings form, no subtabs needed
+2. **Multi-section add-on**: Register subtabs that make sense for your features
+3. **Complex add-on**: Use React for interactive dashboards with statistics
+
+### Example Structures
+
+**Rules Engine** (simple): Single tab with rule list and settings
+```php
+$tabs['rules-engine'] = [
+    'title'    => __( 'Rules', 'vmfa-rules-engine' ),
+    'callback' => [ $this, 'render_rules_panel' ],
+];
+```
+
+**AI Organizer** (with subtabs): Scanner, Settings, and Provider sections
+```php
+$tabs['ai-organizer'] = [
+    'title'    => __( 'AI Organizer', 'vmfa-ai-organizer' ),
+    'callback' => [ $this, 'render_tab' ],
+    'subtabs'  => [
+        'scanner'  => __( 'Media Scanner', 'vmfa-ai-organizer' ),
+        'settings' => __( 'Settings', 'vmfa-ai-organizer' ),
+        'provider' => __( 'AI Provider', 'vmfa-ai-organizer' ),
+    ],
+];
+```
+
+**Media Cleanup** (many subtabs): Multiple cleanup category views
+```php
+$tabs['media-cleanup'] = [
+    'title'    => __( 'Media Cleanup', 'vmfa-media-cleanup' ),
+    'callback' => [ $this, 'render_tab' ],
+    'subtabs'  => [
+        'scan'       => __( 'Scan', 'vmfa-media-cleanup' ),
+        'unused'     => __( 'Unused', 'vmfa-media-cleanup' ),
+        'duplicates' => __( 'Duplicates', 'vmfa-media-cleanup' ),
+        'oversized'  => __( 'Oversized', 'vmfa-media-cleanup' ),
+        'settings'   => __( 'Settings', 'vmfa-media-cleanup' ),
+    ],
+];
+```
+
 ### Color Palette
 
 Use WordPress admin colors for consistency:
@@ -789,10 +885,37 @@ Display key metrics at the top of your settings page using a 4-column grid:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   1002        │    1002       │     0         │     217        │
-│  Total Media  │   In Folders  │  Unassigned   │    Folders     │
+│   1002        │    1002       │     0         │     217         │
+│  Total Media  │   In Folders  │  Unassigned   │    Folders      │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
+```
+
+**Example React component:**
+
+```jsx
+function StatsCard({ stats }) {
+    return (
+        <div className="my-addon-stats-card">
+            {stats.map((stat, index) => (
+                <div key={index} className="my-addon-stat-item">
+                    <div className="my-addon-stat-value">{stat.value}</div>
+                    <div className="my-addon-stat-label">{stat.label}</div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// Usage:
+const stats = [
+    { label: 'Total Media', value: 1002 },
+    { label: 'In Folders', value: 1002 },
+    { label: 'Unassigned', value: 0 },
+    { label: 'Folders', value: 217 },
+];
+
+<StatsCard stats={stats} />
 ```
 
 **CSS:**
@@ -854,7 +977,7 @@ Use card containers for grouping related settings:
 │                                                                 │
 │  Description text explaining this section.                      │
 │                                                                 │
-│  [Content area - forms, lists, etc.]                           │
+│  [Content area - forms, lists, etc.]                            │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -1126,16 +1249,25 @@ describe('MyComponent', () => {
 
 Before releasing your add-on, verify:
 
-- [ ] Stats card displays relevant metrics
-- [ ] Cards use consistent styling and spacing
+**Tab Integration:**
+- [ ] Tab registered via `vmfo_settings_tabs` filter
+- [ ] Tab title is descriptive and concise
+- [ ] Subtabs registered if add-on has multiple sections (optional)
+- [ ] Content renders correctly within the tab area
+
+**User Interface:**
 - [ ] Loading states show spinner
 - [ ] Success/error notices display properly
-- [ ] Save button shows busy state while saving
 - [ ] UI is responsive on mobile (< 782px)
+- [ ] Form fields have proper labels
+- [ ] Save/action buttons are clearly labeled
+
+**Code Quality:**
 - [ ] All text is translatable with `__()` or `_e()`
 - [ ] REST endpoints return proper error responses
 - [ ] Assets are properly enqueued only on your tab
 - [ ] No console errors or warnings
+- [ ] Fallback works if parent plugin not available
 
 ## Resources
 
@@ -1144,3 +1276,6 @@ Before releasing your add-on, verify:
 - [REST API Documentation](development.md#rest-api) – API endpoints
 - [AI Organizer Source](https://github.com/soderlind/vmfa-ai-organizer) – Reference implementation
 - [Rules Engine Source](https://github.com/soderlind/vmfa-rules-engine) – Reference implementation
+- [Editorial Workflow Source](https://github.com/soderlind/vmfa-editorial-workflow) – Reference implementation
+- [Media Cleanup Source](https://github.com/soderlind/vmfa-media-cleanup) – Reference implementation
+- [Smart Folders Source](https://github.com/soderlind/vmfa-smart-folders) – Reference implementation

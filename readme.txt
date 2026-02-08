@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.6.8
+Stable tag: 1.7.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -122,6 +122,14 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.7.0 =
+* Added: Subtab navigation system for add-on settings integration
+* Added: Parent plugin now renders subtab nav when add-ons register subtabs array
+* Added: CSS spacing fix for tabs without subtab navigation
+* Added: Enhanced addon-development.md documentation for subtab system
+* Changed: Add-on tabs can now include optional `subtabs` array for secondary navigation
+* Changed: Improved settings page architecture for better add-on UX
 
 = 1.6.8 =
 * Fixed: Removed Media Folders metabox from attachment edit screen (folders are managed via the media library sidebar)
