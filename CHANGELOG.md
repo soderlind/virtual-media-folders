@@ -5,6 +5,20 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2026-02-09
+
+### Fixed
+
+- Version constant `VMFO_VERSION` now reflects actual plugin version (was hardcoded to 1.3.8)
+- Added ABSPATH guards to RestApi.php, Editor.php, and Settings.php
+- Sanitize `$_GET['orderby']` in Taxonomy.php with `sanitize_key()`
+
+### Changed
+
+- Extracted inline JavaScript from Admin.php to a separate enqueued script file
+- Extracted inline CSS from Settings.php to a separate enqueued stylesheet
+- Added phpcs.xml for WordPress Coding Standards linting
+
 ## [1.7.0] - 2026-02-07
 
 ### Added

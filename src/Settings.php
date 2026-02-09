@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace VirtualMediaFolders;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Settings handler.
  */
@@ -512,43 +514,15 @@ final class Settings {
 
 		$base_url = admin_url( 'upload.php?page=' . self::PAGE_SLUG );
 
+		// Enqueue subtab navigation styles.
+		wp_enqueue_style(
+			'vmfo-settings-subtabs',
+			VMFO_URL . 'src/css/settings-subtabs.css',
+			[],
+			VMFO_VERSION
+		);
+
 		?>
-		<style>
-			.vmfo-subtab-nav {
-				display: flex;
-				gap: 0;
-				margin: 0;
-				padding: 0;
-				background: #f0f0f1;
-				border-bottom: 1px solid #c3c4c7;
-			}
-
-			.vmfo-subtab-link {
-				display: inline-block;
-				padding: 8px 16px;
-				text-decoration: none;
-				color: #50575e;
-				font-size: 13px;
-				border-bottom: 2px solid transparent;
-				margin-bottom: -1px;
-				transition: color 0.1s ease-in-out, border-color 0.1s ease-in-out;
-			}
-
-			.vmfo-subtab-link:hover {
-				color: #135e96;
-			}
-
-			.vmfo-subtab-link.is-active {
-				color: #1d2327;
-				border-bottom-color: #3582c4;
-				background: #fff;
-			}
-
-			/* Add spacing when no subtab nav is present */
-			.vmfo-nav-tabs+.vmfo-tab-content {
-				margin-top: 20px;
-			}
-		</style>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<?php settings_errors( 'vmfo_messages' ); ?>
