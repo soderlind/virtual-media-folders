@@ -1,0 +1,45 @@
+/**
+ * Subtab navigation styles for the settings page.
+ *
+ * @package VirtualMediaFolders
+ * @since 1.7.1
+ */
+
+.vmfo-nav-tabs .nav-tab-active {
+	background: #ffffff;
+}
+
+.vmfo-subtab-nav {
+	display: flex;
+	gap: 0;
+	margin: 0;
+	padding: 0;
+	background: #ffffff;
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.vmfo-subtab-link {
+	display: inline-block;
+	padding: 8px 16px;
+	text-decoration: none;
+	color: #50575e;
+	font-size: 13px;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -1px;
+	transition: color 0.1s ease-in-out, border-color 0.1s ease-in-out;
+}
+
+.vmfo-subtab-link:hover {
+	color: #135e96;
+}
+
+.vmfo-subtab-link.is-active {
+	color: #1d2327;
+	border-bottom-color: #3582c4;
+	background: #ffffff;
+}
+
+/* Add spacing when no subtab nav is present */
+.vmfo-nav-tabs+.vmfo-tab-content {
+	margin-top: 20px;
+}

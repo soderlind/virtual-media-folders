@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace VirtualMediaFolders;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Editor integration handler.
  */

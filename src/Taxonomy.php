@@ -87,7 +87,7 @@ class Taxonomy {
 		}
 
 		// Allow explicit sorting by other columns (e.g. count) when requested.
-		if ( isset( $_GET[ 'orderby' ] ) && $_GET[ 'orderby' ] !== '' && $_GET[ 'orderby' ] !== 'name' ) {
+		if ( isset( $_GET[ 'orderby' ] ) && sanitize_key( wp_unslash( $_GET[ 'orderby' ] ) ) !== '' && sanitize_key( wp_unslash( $_GET[ 'orderby' ] ) ) !== 'name' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $pieces;
 		}
 

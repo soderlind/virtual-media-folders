@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<ruleset name="Virtual Media Folders Coding Standards">
+	<description>Coding standards for Virtual Media Folders plugin.</description>
+
+	<!-- What to scan -->
+	<file>./virtual-media-folders.php</file>
+	<file>./src</file>
+	<file>./tests</file>
+
+	<!-- Exclude vendor and node_modules -->
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/build/*</exclude-pattern>
+
+	<!-- Show progress and sniff codes in all reports -->
+	<arg value="ps"/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="8"/>
+
+	<!-- Use WordPress Coding Standards -->
+	<rule ref="WordPress">
+		<!-- Allow short array syntax -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+	</rule>
+
+	<!-- WordPress-Extra -->
+	<rule ref="WordPress-Extra">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+	</rule>
+
+	<!-- WordPress-Docs -->
+	<rule ref="WordPress-Docs"/>
+
+	<!-- PHPCompatibility -->
+	<config name="testVersion" value="8.3-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Allow short array syntax -->
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+	<!-- Text domain -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="virtual-media-folders"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Prefix checks -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="vmfo"/>
+				<element value="VirtualMediaFolders"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Minimum WordPress version -->
+	<config name="minimum_wp_version" value="6.8"/>
+
+	<!-- Test files -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedNamespaceFound">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+</ruleset>
