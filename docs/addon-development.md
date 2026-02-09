@@ -70,9 +70,11 @@ Virtual Media Folders is designed to be extensible. Add-ons can:
 
 ## Existing Add-ons
 
-Two official add-ons are available as reference implementations:
+Four official add-ons are available as reference implementations:
 
 - **[AI Organizer](https://github.com/soderlind/vmfa-ai-organizer)** – Uses AI vision models to automatically suggest folders for images
+- **[Editorial Workflow](https://github.com/soderlind/vmfa-editorial-workflow)** – Role-based folder access, move restrictions, and Inbox workflow
+- **[Media Cleanup](https://github.com/soderlind/vmfa-media-cleanup)** – Tools to identify and clean up unused or duplicate media files
 - **[Rules Engine](https://github.com/soderlind/vmfa-rules-engine)** – Rule-based automatic folder assignment based on metadata
 
 ## Prerequisites
