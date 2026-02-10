@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.7.1
+Stable tag: 1.7.2
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -122,6 +122,13 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.7.2 =
+* NOTE: The plugin updater for add-ons is still in early stages and may not be fully reliable. Pleas update add-ons manually from their GitHub repositories for now.
+* Added: Add-on version checker displays admin notices when installed add-ons need updates
+* Added: New AddonChecker class monitors vmfa-ai-organizer, vmfa-rules-engine, vmfa-editorial-workflow, and vmfa-media-cleanup versions
+* Added: Notices only appear on Media Library pages
+* Added: PHPUnit tests for AddonChecker class
 
 = 1.7.1 =
 * Fixed: Version constant now reflects actual plugin version (was hardcoded to 1.3.8)

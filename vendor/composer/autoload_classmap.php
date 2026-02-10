@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'VirtualMediaFolders\\AddonChecker' => $baseDir . '/src/AddonChecker.php',
     'VirtualMediaFolders\\Admin' => $baseDir . '/src/Admin.php',
     'VirtualMediaFolders\\Editor' => $baseDir . '/src/Editor.php',
     'VirtualMediaFolders\\RestApi' => $baseDir . '/src/RestApi.php',

@@ -5,6 +5,15 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.2] - 2026-02-10
+
+### Added
+
+- Add-on version checker displays admin notices when installed add-ons need updates
+- New `AddonChecker` class monitors vmfa-ai-organizer, vmfa-rules-engine, vmfa-editorial-workflow, and vmfa-media-cleanup versions
+- Notices only appear on Media Library pages (upload.php, media-new.php)
+- PHPUnit tests for AddonChecker class
+
 ## [1.7.1] - 2026-02-09
 
 ### Fixed
