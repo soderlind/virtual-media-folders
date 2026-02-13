@@ -26,7 +26,7 @@ Virtual Media Folders brings virtual folder organization to your WordPress Media
 
 = Free add-ons =
 
-[Add-On Manager](https://github.com/soderlind/vmfa) lets you easily install and manage add-ons that extend Virtual Media Folders with powerful new features:
+[**Add-On Manager**](https://github.com/soderlind/vmfa) lets you easily install and manage add-ons that extend Virtual Media Folders with powerful new features:
 
 * [**AI Organizer**](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders. This is add-on functionality requiring an API key from a supported AI service provider, or a local LLM.
 * [**Editorial Workflow**](https://github.com/soderlind/vmfa-editorial-workflow) – Role-based folder access, move restrictions, and Inbox workflow.
