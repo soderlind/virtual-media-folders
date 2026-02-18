@@ -78,6 +78,9 @@ When inserting media from a block (Image, Gallery, etc.):
 * [Add-on Development](https://github.com/soderlind/virtual-media-folders/blob/main/docs/addon-development.md) – Guide to building add-on plugins
 
 = Free add-ons =
+
+Use the [**add-on manager**](https://github.com/soderlind/vmfa) to easily install and manage add-ons that extend Virtual Media Folders with powerful new features:
+
 * [Virtual Media Folders - AI Organizer](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders.
 * [Virtual Media Folders - Editorial Workflow](https://github.com/soderlind/vmfa-editorial-workflow) – Role-based folder access, move restrictions, and Inbox workflow.
 * [Virtual Media Folders - Folder Exporter](https://github.com/soderlind/vmfa-folder-exporter) – Export folders (or subtrees) as ZIP archives with optional CSV manifests.
