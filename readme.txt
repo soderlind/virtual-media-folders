@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.7.2
+Stable tag: 1.8.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -129,6 +129,20 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.8.0 =
+* Changed: Sidebar preference stored server-side in user meta instead of localStorage
+* Changed: Folder toggle button is PHP-rendered instead of JS-injected
+* Changed: View switching (grid/list/folder) handled entirely server-side via mode URL parameter
+* Changed: Sidebar defaults to visible on plugin activation
+* Added: REST endpoint POST /vmfo/v1/preferences for sidebar preference
+* Added: vmfo_is_sidebar_visible() helper function
+* Added: Activation hook sets sidebar visible for activating user
+* Fixed: Folder sidebar no longer disappears after browser cache clearing
+* Fixed: Grid/list view switching now works reliably (no async race condition)
+* Fixed: Folder icon always appears on Media Library page after activation
+* Removed: folder-button.js (replaced by PHP output)
+* Removed: localStorage dependency for sidebar state
 
 = 1.7.2 =
 * NOTE: The plugin updater for add-ons is still in early stages and may not be fully reliable. Pleas update add-ons manually from their GitHub repositories for now.

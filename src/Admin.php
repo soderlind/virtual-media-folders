@@ -41,13 +41,49 @@ class Admin {
 		add_action( 'admin_head-upload.php', [ static::class, 'add_help_tab' ] );
 		add_action( 'admin_enqueue_scripts', [ static::class, 'add_critical_css' ] );
 		add_action( 'admin_footer-upload.php', [ static::class, 'render_folder_button_script' ] );
+		add_action( 'load-upload.php', [ static::class, 'sync_sidebar_preference' ] );
+	}
+
+	/**
+	 * Synchronize the sidebar preference from the mode URL parameter.
+	 *
+	 * WordPress view-switch links already navigate to upload.php?mode=grid
+	 * or upload.php?mode=list. Our folder button navigates to mode=folder.
+	 * This fires early on load-upload.php so the user meta is updated
+	 * before enqueue_scripts reads it — fully server-side, no JS needed.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @return void
+	 */
+	public static function sync_sidebar_preference(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only preference toggle, no state mutation beyond the user's own display preference.
+		if ( ! isset( $_GET[ 'mode' ] ) ) {
+			return;
+		}
+
+		$user_id = get_current_user_id();
+		if ( $user_id <= 0 ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$mode = sanitize_key( $_GET[ 'mode' ] );
+
+		if ( 'folder' === $mode ) {
+			update_user_meta( $user_id, 'vmfo_sidebar_visible', '1' );
+		} elseif ( in_array( $mode, [ 'grid', 'list' ], true ) ) {
+			update_user_meta( $user_id, 'vmfo_sidebar_visible', '0' );
+		}
 	}
 
 	/**
 	 * Add critical inline CSS to prevent layout shift.
 	 *
 	 * Uses wp_add_inline_style to add minimal CSS rules to reserve space
-	 * for the folder sidebar before the main stylesheet loads.
+	 * for the folder sidebar before the main stylesheet loads. When the
+	 * user's server-side preference is "visible", we add classes eagerly
+	 * so the sidebar space is reserved before JS boots.
 	 *
 	 * @param string $hook_suffix The current admin page hook suffix.
 	 * @return void
@@ -79,6 +115,19 @@ class Admin {
 				margin-left: 220px !important;
 			}
 		';
+
+		// When the server-side preference says "visible", reserve sidebar
+		// space eagerly via a body class so the layout doesn't jump.
+		if ( vmfo_is_sidebar_visible() ) {
+			$critical_css .= '
+				body.vmf-folder-view-server .attachments-browser .attachments {
+					margin-left: 220px !important;
+				}
+			';
+			add_action( 'admin_body_class', static function ( string $classes ): string {
+				return $classes . ' vmf-folder-view-server';
+			} );
+		}
 
 		wp_add_inline_style( 'vmfo-admin', $critical_css );
 	}
@@ -394,10 +443,13 @@ class Admin {
 			'var vmfData = ' . wp_json_encode( [
 				'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
 				'nonce'                 => wp_create_nonce( 'vmfo_move_media' ),
+				'restNonce'             => wp_create_nonce( 'wp_rest' ),
+				'restUrl'               => rest_url( 'vmfo/v1/' ),
 				'jumpToFolderAfterMove' => (bool) Settings::get( 'jump_to_folder_after_move', false ),
 				'showAllMedia'          => $show_all_media,
 				'showUncategorized'     => (bool) Settings::get( 'show_uncategorized', true ),
 				'folderViewUrl'         => $folder_view_url,
+				'folderViewEnabled'     => vmfo_is_sidebar_visible(),
 				'folders'               => self::get_preloaded_folders(),
 			] ) . ';',
 			'before'
@@ -466,10 +518,17 @@ class Admin {
 	}
 
 	/**
-	 * Enqueue the folder toggle button script in the upload.php footer.
+	 * Render the folder toggle button directly in the upload.php footer as HTML.
 	 *
-	 * This ensures the folder button has the correct href based on server-side settings,
-	 * avoiding any JavaScript timing issues with vmfData availability.
+	 * By rendering the button server-side we eliminate the dependency on the
+	 * `.view-switch` DOM element existing (which WordPress may not always
+	 * render), and avoid the MutationObserver / timeout fragility.
+	 *
+	 * The button is positioned via CSS next to the existing view-switch icons
+	 * and includes an inline script that inserts it before `.view-switch`
+	 * once available, falling back to absolute positioning if not.
+	 *
+	 * @since 1.8.0
 	 *
 	 * @return void
 	 */
@@ -479,22 +538,48 @@ class Admin {
 			? admin_url( 'upload.php?mode=folder' )
 			: admin_url( 'upload.php?mode=folder&vmfo_folder=uncategorized' );
 
-		wp_enqueue_script(
-			'vmfo-folder-button',
-			VMFO_URL . 'src/js/folder-button.js',
-			[],
-			VMFO_VERSION,
-			[ 'in_footer' => true ]
-		);
+		$is_active    = vmfo_is_sidebar_visible();
+		$active_class = $is_active ? ' is-active' : '';
 
-		wp_add_inline_script(
-			'vmfo-folder-button',
-			'var vmfoFolderButton = ' . wp_json_encode( [
-				'folderUrl'        => esc_url_raw( $folder_url ),
-				'title'            => esc_attr__( 'Show Folders', 'virtual-media-folders' ),
-				'screenReaderText' => esc_html__( 'Show Folders', 'virtual-media-folders' ),
-			] ) . ';',
-			'before'
-		);
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- all values escaped individually.
+		?>
+		<a id="vmf-folder-toggle" href="<?php echo esc_url( $folder_url ); ?>"
+			class="vmf-folder-toggle-button<?php echo esc_attr( $active_class ); ?>"
+			title="<?php echo esc_attr__( 'Show Folders', 'virtual-media-folders' ); ?>" style="display:none">
+			<span class="screen-reader-text"><?php echo esc_html__( 'Show Folders', 'virtual-media-folders' ); ?></span>
+			<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+				aria-hidden="true" focusable="false">
+				<path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7.5l-2-2H4z" />
+			</svg>
+		</a>
+		<script>
+			(function () {
+				var btn = document.getElementById('vmf-folder-toggle');
+				if (!btn) return;
+				function place() {
+					var vs = document.querySelector('.view-switch');
+					if (vs && vs.parentNode) {
+						vs.parentNode.insertBefore(btn, vs);
+					}
+					btn.style.display = '';
+				}
+				if (document.querySelector('.view-switch')) {
+					place();
+				} else {
+					// Fallback: show in place and try to move once view-switch appears.
+					btn.style.display = '';
+					var obs = new MutationObserver(function () {
+						if (document.querySelector('.view-switch')) {
+							place();
+							obs.disconnect();
+						}
+					});
+					obs.observe(document.body, { childList: true, subtree: true });
+					setTimeout(function () { obs.disconnect(); }, 10000);
+				}
+			})();
+		</script>
+		<?php
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }

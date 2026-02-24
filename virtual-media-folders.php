@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name: Virtual Media Folders
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 1.7.2
+ * Version: 1.8.0
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Per Soderlind
@@ -55,7 +55,7 @@ if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 /*
  * Define plugin constants.
  */
-define( 'VMFO_VERSION', '1.7.2' );
+define( 'VMFO_VERSION', '1.8.0' );
 define( 'VMFO_FILE', __FILE__ );
 define( 'VMFO_PATH', __DIR__ . '/' );
 define( 'VMFO_URL', plugin_dir_url( __FILE__ ) );
@@ -64,6 +64,50 @@ define( 'VMFO_URL', plugin_dir_url( __FILE__ ) );
  * Load Composer autoloader.
  */
 require_once VMFO_PATH . 'vendor/autoload.php';
+
+/**
+ * Activation hook – set the sidebar visible by default for the activating user.
+ *
+ * If the user has never toggled the sidebar before (no existing user meta),
+ * default to visible so the folder tree is immediately discoverable.
+ *
+ * @since 1.8.0
+ */
+register_activation_hook( __FILE__, static function (): void {
+	$user_id = get_current_user_id();
+	if ( $user_id > 0 ) {
+		$existing = get_user_meta( $user_id, 'vmfo_sidebar_visible', true );
+		if ( $existing === '' ) {
+			update_user_meta( $user_id, 'vmfo_sidebar_visible', '1' );
+		}
+	}
+} );
+
+/**
+ * Get the sidebar visibility preference for the current user.
+ *
+ * Returns true (visible) by default for users who have never toggled the sidebar,
+ * ensuring the folder tree is discoverable on first use.
+ *
+ * @since 1.8.0
+ *
+ * @return bool Whether the folder sidebar should be visible.
+ */
+function vmfo_is_sidebar_visible(): bool {
+	$user_id = get_current_user_id();
+	if ( $user_id <= 0 ) {
+		return true;
+	}
+
+	$value = get_user_meta( $user_id, 'vmfo_sidebar_visible', true );
+
+	// Default to visible if the user has never set a preference.
+	if ( $value === '' ) {
+		return true;
+	}
+
+	return $value === '1';
+}
 
 /**
  * Migrate taxonomy from old 'media_folder' to new 'vmfo_folder'.

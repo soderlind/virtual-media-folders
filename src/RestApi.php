@@ -326,6 +326,27 @@ final class RestApi extends WP_REST_Controller {
 				],
 			]
 		);
+
+		// User preferences endpoint (sidebar visibility).
+		register_rest_route(
+			$this->namespace,
+			'/preferences',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'update_preferences' ],
+					'permission_callback' => [ $this, 'preferences_permissions_check' ],
+					'args'                => [
+						'sidebar_visible' => [
+							'required'          => true,
+							'type'              => 'boolean',
+							'description'       => __( 'Whether the folder sidebar is visible.', 'virtual-media-folders' ),
+							'sanitize_callback' => 'rest_sanitize_boolean',
+						],
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -366,6 +387,42 @@ final class RestApi extends WP_REST_Controller {
 	 */
 	public function delete_folder_permissions_check( WP_REST_Request $request ) {
 		return $this->check_capability( 'manage_categories', __( 'You do not have permission to delete folders.', 'virtual-media-folders' ) );
+	}
+
+	/**
+	 * Check if current user can update their preferences.
+	 *
+	 * Any authenticated user who can upload files should be able to
+	 * toggle the folder sidebar on/off.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return bool|WP_Error
+	 */
+	public function preferences_permissions_check( WP_REST_Request $request ) {
+		return $this->check_capability( 'upload_files', __( 'You do not have permission to update preferences.', 'virtual-media-folders' ) );
+	}
+
+	/**
+	 * Update user preferences (sidebar visibility).
+	 *
+	 * Persists the folder sidebar visibility state to user meta so it
+	 * survives browser cache clears and works across devices.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response
+	 */
+	public function update_preferences( WP_REST_Request $request ): WP_REST_Response {
+		$sidebar_visible = (bool) $request->get_param( 'sidebar_visible' );
+		$user_id         = get_current_user_id();
+
+		update_user_meta( $user_id, 'vmfo_sidebar_visible', $sidebar_visible ? '1' : '0' );
+
+		return new WP_REST_Response(
+			[
+				'sidebar_visible' => $sidebar_visible,
+			],
+			200
+		);
 	}
 
 	/**

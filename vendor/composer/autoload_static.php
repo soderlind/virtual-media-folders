@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInit9da11f50a84c12ea0f2b8e42c40880be
 {
     public static $prefixLengthsPsr4 = array (
-        'V' => 
+        'V' =>
         array (
             'VirtualMediaFolders\\' => 20,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'VirtualMediaFolders\\' => 
+        'VirtualMediaFolders\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
@@ -22,13 +22,6 @@ class ComposerStaticInit9da11f50a84c12ea0f2b8e42c40880be
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'VirtualMediaFolders\\AddonChecker' => __DIR__ . '/../..' . '/src/AddonChecker.php',
-        'VirtualMediaFolders\\Admin' => __DIR__ . '/../..' . '/src/Admin.php',
-        'VirtualMediaFolders\\Editor' => __DIR__ . '/../..' . '/src/Editor.php',
-        'VirtualMediaFolders\\RestApi' => __DIR__ . '/../..' . '/src/RestApi.php',
-        'VirtualMediaFolders\\Settings' => __DIR__ . '/../..' . '/src/Settings.php',
-        'VirtualMediaFolders\\Suggestions' => __DIR__ . '/../..' . '/src/Suggestions.php',
-        'VirtualMediaFolders\\Taxonomy' => __DIR__ . '/../..' . '/src/Taxonomy.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

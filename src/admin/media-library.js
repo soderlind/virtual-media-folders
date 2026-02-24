@@ -10,10 +10,37 @@ import { SlotFillProvider, Popover } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import FolderTree from './components/FolderTree';
 
-// Track folder view state
+// Track folder view state — initialize from server-side preference.
 let folderViewActive = false;
 let folderTreeRoot = null;
 let currentBrowser = null;
+
+/**
+ * Persist the sidebar visibility preference to the server via REST API.
+ * Fire-and-forget — UI already updated optimistically.
+ *
+ * @param {boolean} visible Whether the sidebar should be visible.
+ */
+function saveSidebarPreference( visible ) {
+	const { restUrl, restNonce } = window.vmfData || {};
+	if ( ! restUrl || ! restNonce ) {
+		return;
+	}
+
+	try {
+		fetch( restUrl + 'preferences', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': restNonce,
+			},
+			credentials: 'same-origin',
+			body: JSON.stringify( { sidebar_visible: visible } ),
+		} );
+	} catch ( e ) {
+		// Best-effort; preference will fall back to server value on next load.
+	}
+}
 
 /**
  * If the user lands on upload.php with mode=folder, WordPress may still render
@@ -37,7 +64,8 @@ function ensureGridModeForFolderView() {
 	}
 
 	const wantsFolderMode = urlParams.get('mode') === 'folder' || urlParams.has('vmfo_folder');
-	if (!wantsFolderMode) {
+	const serverPrefVisible = window.vmfData?.folderViewEnabled;
+	if (!wantsFolderMode && !serverPrefVisible) {
 		return;
 	}
 
@@ -57,12 +85,7 @@ function ensureGridModeForFolderView() {
 		// Ignore storage errors.
 	}
 
-	// Ensure folder view is enabled once we reach grid mode.
-	try {
-		localStorage.setItem('vmfo_folder_view', '1');
-	} catch (e) {
-		// Ignore storage errors.
-	}
+	// No need to set localStorage — the server-side preference is already saved.
 
 	const url = new URL(window.location.href);
 	url.searchParams.set('mode', 'grid');
@@ -81,7 +104,7 @@ if (document.readyState === 'loading') {
  */
 function hideFolderView() {
 	folderViewActive = false;
-	localStorage.setItem('vmfo_folder_view', '0');
+	saveSidebarPreference( false );
 	
 	const $container = jQuery('#vmf-folder-tree');
 	const $toggle = jQuery('.vmf-folder-toggle-button');
@@ -123,28 +146,10 @@ function hideFolderView() {
 	jQuery('.view-switch a.view-grid').addClass('current');
 }
 
-// Listen for clicks on view switcher at document level (before page load completes)
-// Namespace the handler to avoid duplicate bindings if scripts re-run.
-// IMPORTANT: Only handle actual view-switch links, not the folder toggle button
-jQuery(document).off('click.vmfo', '.view-switch a').on('click.vmfo', '.view-switch a', function(e) {
-	// Don't hide folder view if clicking on our folder toggle button
-	if (jQuery(this).hasClass('vmf-folder-toggle-button')) {
-		return;
-	}
-	// Only respond to actual view switch links (list/grid icons)
-	if (!jQuery(this).hasClass('view-list') && !jQuery(this).hasClass('view-grid')) {
-		return;
-	}
-	
-	// Prevent default navigation - we'll handle it ourselves
-	e.preventDefault();
-	
-	hideFolderView();
-	
-	// Navigate to clean grid or list URL without folder parameters
-	const mode = jQuery(this).hasClass('view-grid') ? 'grid' : 'list';
-	window.location.href = 'upload.php?mode=' + mode;
-});
+// View-switch clicks (grid/list) are handled entirely server-side.
+// WordPress links already navigate to upload.php?mode=grid or mode=list,
+// and PHP sync_sidebar_preference() reads the mode param to toggle the
+// sidebar preference — no JS interception needed.
 
 // When "Add Media File" button is clicked, ensure uploader is visible
 jQuery(document).off('click.vmfo', '.page-title-action').on('click.vmfo', '.page-title-action', function() {
@@ -172,14 +177,11 @@ function updateFolderToggleButtonState() {
 		return;
 	}
 	
-	// Check if folder view should be active on load
-	const savedPref = localStorage.getItem('vmfo_folder_view');
+	// Use server-side preference as source of truth.
 	const urlParams = new URLSearchParams(window.location.search);
-	
-	let shouldBeActive = urlParams.has('vmfo_folder') || urlParams.get('mode') === 'folder';
-	if (!shouldBeActive && savedPref !== null) {
-		shouldBeActive = savedPref === '1';
-	}
+	const shouldBeActive = window.vmfData?.folderViewEnabled ||
+		urlParams.has('vmfo_folder') ||
+		urlParams.get('mode') === 'folder';
 	
 	if (shouldBeActive) {
 		$existingButton.addClass('is-active');
@@ -590,8 +592,8 @@ function toggleFolderView(browser, show) {
 		jQuery('.view-switch a.view-grid').addClass('current');
 	}
 	
-	// Save preference
-	localStorage.setItem('vmfo_folder_view', show ? '1' : '0');
+	// Persist preference to server (fire-and-forget).
+	saveSidebarPreference( show );
 }
 
 /**
@@ -603,11 +605,13 @@ function addFolderToggleButton(browser) {
 	// Store the browser reference for later use
 	currentBrowser = browser;
 	
-	// Button is created by PHP - we just need to check if folder view should be active
-	// Check saved preference or URL param and apply
-	const savedPref = localStorage.getItem('vmfo_folder_view');
+	// Use server-side preference as the primary source of truth.
 	const urlParams = new URLSearchParams(window.location.search);
-	if (savedPref === '1' || urlParams.has('vmfo_folder') || urlParams.get('mode') === 'folder') {
+	const shouldActivate = window.vmfData?.folderViewEnabled ||
+		urlParams.has('vmfo_folder') ||
+		urlParams.get('mode') === 'folder';
+
+	if (shouldActivate) {
 		toggleFolderView(browser, true);
 	}
 }
@@ -636,10 +640,9 @@ function injectFolderTree(browser) {
 	// If it's detached (orphaned), we need to recreate it
 	const sidebarIsAttached = existingSidebar && document.body.contains(existingSidebar);
 	
-	// Check if folder view should be active
-	const savedPref = localStorage.getItem('vmfo_folder_view');
+	// Check if folder view should be active — server preference is source of truth.
 	const urlParams = new URLSearchParams(window.location.search);
-	const shouldBeVisible = savedPref === '1' || urlParams.has('vmfo_folder') || urlParams.get('mode') === 'folder' || folderViewActive;
+	const shouldBeVisible = window.vmfData?.folderViewEnabled || urlParams.has('vmfo_folder') || urlParams.get('mode') === 'folder' || folderViewActive;
 
 	// Find the best insertion point - we want the sidebar next to attachments,
 	// not overlapping the uploader

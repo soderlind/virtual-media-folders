@@ -5,6 +5,27 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-02-24
+
+### Changed
+
+- Sidebar preference is now stored server-side in user meta instead of localStorage
+- Folder toggle button is PHP-rendered instead of JS-injected via MutationObserver
+- View switching (grid/list/folder) is handled entirely server-side via the `mode` URL parameter
+- Sidebar defaults to visible on plugin activation (no manual cache clearing needed)
+- Added REST endpoint `POST /vmfo/v1/preferences` for sidebar preference updates
+- Added `vmfo_is_sidebar_visible()` helper function for server-side preference checks
+- Added activation hook that sets sidebar visible for the activating user
+- Removed `folder-button.js` (replaced by PHP output in `render_folder_button_script()`)
+- Removed localStorage dependency for sidebar state
+- Removed JS click interception on grid/list view-switch links
+
+### Fixed
+
+- Folder sidebar no longer disappears after browser cache clearing
+- Grid/list view switching now works reliably (no async race condition)
+- Folder icon always appears on the Media Library page after activation
+
 ## [1.7.2] - 2026-02-10
 
 ### Added

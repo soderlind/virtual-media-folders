@@ -64,8 +64,11 @@ This document tracks the evolving design of the Media Manager plugin.
   - Consistent UI with Media Library folder tree.
 
 - **UI/UX Improvements**:
-  - Folder toggle button: Shows folders (on only), positioned before view switcher.
-  - Grid icon click hides folder sidebar (document-level event handler).
+  - Folder toggle button: PHP-rendered `<a>` linking to `upload.php?mode=folder`, positioned before view switcher.
+  - View switching handled server-side: PHP reads `$_GET['mode']` on `load-upload.php` to toggle sidebar preference in user meta.
+  - Sidebar preference stored in `vmfo_sidebar_visible` user meta (replaces localStorage).
+  - Activation hook defaults sidebar to visible for the activating user.
+  - REST endpoint `POST /vmfo/v1/preferences` for programmatic preference updates.
   - Auto-expand parent folders when child folder is selected.
   - Smooth loading transitions when switching folders (opacity fade).
   - Empty folder handling with min-height to prevent sidebar collapse.
