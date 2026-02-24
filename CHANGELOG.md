@@ -5,6 +5,14 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] - 2026-02-24
+
+### Added
+
+- `vmfo_upload_folder` filter for controlling folder assignment on upload (3 args: folder_id, attachment_id, metadata)
+- Moved `assign_default_folder` from `add_attachment` action to `wp_generate_attachment_metadata` filter so attachment metadata is available to callbacks
+- Returning 0 from the filter skips folder assignment; add-ons can override the default folder
+
 ## [1.8.0] - 2026-02-24
 
 ### Changed

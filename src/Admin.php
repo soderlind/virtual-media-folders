@@ -37,7 +37,7 @@ class Admin {
 		add_action( 'admin_enqueue_scripts', [ static::class, 'enqueue_scripts' ] );
 		add_action( 'wp_ajax_vmfo_move_to_folder', [ static::class, 'ajax_move_to_folder' ] );
 		add_action( 'wp_ajax_vmfo_bulk_move_to_folder', [ static::class, 'ajax_bulk_move_to_folder' ] );
-		add_action( 'add_attachment', [ static::class, 'assign_default_folder' ] );
+		add_filter( 'wp_generate_attachment_metadata', [ static::class, 'assign_default_folder' ], 10, 3 );
 		add_action( 'admin_head-upload.php', [ static::class, 'add_help_tab' ] );
 		add_action( 'admin_enqueue_scripts', [ static::class, 'add_critical_css' ] );
 		add_action( 'admin_footer-upload.php', [ static::class, 'render_folder_button_script' ] );
@@ -189,21 +189,59 @@ class Admin {
 	}
 
 	/**
-	 * Assign new uploads to the default folder if configured.
+	 * Assign new uploads to a folder.
 	 *
-	 * @param int $attachment_id The newly uploaded attachment ID.
-	 * @return void
+	 * Hooked to 'wp_generate_attachment_metadata' so that attachment metadata
+	 * (dimensions, EXIF, etc.) is available to filter callbacks.
+	 *
+	 * The folder is determined by:
+	 * 1. The 'vmfo_upload_folder' filter (add-ons / custom code can override)
+	 * 2. The "Default folder for uploads" setting as fallback
+	 *
+	 * Returning 0 or false from the filter skips folder assignment.
+	 *
+	 * @since 1.8.1
+	 *
+	 * @param array  $metadata      Attachment metadata.
+	 * @param int    $attachment_id The attachment post ID.
+	 * @param string $context       Context: 'create' for new uploads.
+	 * @return array Unmodified metadata (this is a filter).
 	 */
-	public static function assign_default_folder( int $attachment_id ): void {
-		$default_folder = Settings::get( 'default_folder', 0 );
-
-		if ( $default_folder > 0 ) {
-			// Verify the folder exists
-			$term = get_term( $default_folder, Taxonomy::TAXONOMY );
-			if ( $term && ! is_wp_error( $term ) ) {
-				wp_set_object_terms( $attachment_id, [ $default_folder ], Taxonomy::TAXONOMY );
-			}
+	public static function assign_default_folder( array $metadata, int $attachment_id, string $context ): array {
+		// Only process new uploads.
+		if ( 'create' !== $context ) {
+			return $metadata;
 		}
+
+		$default_folder = (int) Settings::get( 'default_folder', 0 );
+
+		/**
+		 * Filter the folder term ID to assign to a newly uploaded attachment.
+		 *
+		 * Returning 0 or false skips folder assignment.
+		 * Returning an int assigns that folder term ID.
+		 *
+		 * @since 1.8.1
+		 *
+		 * @param int   $folder_id     The folder term ID (from settings, or 0).
+		 * @param int   $attachment_id The attachment post ID.
+		 * @param array $metadata      Attachment metadata (dimensions, EXIF, etc.).
+		 */
+		$folder_id = (int) apply_filters( 'vmfo_upload_folder', $default_folder, $attachment_id, $metadata );
+
+		if ( $folder_id <= 0 ) {
+			return $metadata;
+		}
+
+		// Verify the folder exists.
+		$term = get_term( $folder_id, Taxonomy::TAXONOMY );
+		if ( ! $term || is_wp_error( $term ) ) {
+			return $metadata;
+		}
+
+		wp_set_object_terms( $attachment_id, [ $folder_id ], Taxonomy::TAXONOMY );
+
+		return $metadata;
 	}
 
 	/**

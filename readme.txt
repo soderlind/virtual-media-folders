@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.8.0
+Stable tag: 1.8.1
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -129,6 +129,11 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 1.8.1 =
+* Added: `vmfo_upload_folder` filter for controlling folder assignment on upload
+* Added: Attachment metadata now available to upload-folder filter callbacks
+* Added: Add-ons can override the default folder by hooking `vmfo_upload_folder`
 
 = 1.8.0 =
 * Changed: Sidebar preference stored server-side in user meta instead of localStorage

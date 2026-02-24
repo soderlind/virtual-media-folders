@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInit9da11f50a84c12ea0f2b8e42c40880be
 {
     public static $prefixLengthsPsr4 = array (
-        'V' =>
+        'V' => 
         array (
             'VirtualMediaFolders\\' => 20,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'VirtualMediaFolders\\' =>
+        'VirtualMediaFolders\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
