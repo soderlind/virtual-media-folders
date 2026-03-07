@@ -3,7 +3,7 @@
         'name' => 'soderlind/virtual-media-folders',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'e40a6cf8998cda8449db7589fa16769da50f1dd5',
+        'reference' => 'd9b6c3a9232b1ce517b65b5a6a5f3c27d40c8841',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'soderlind/virtual-media-folders' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'e40a6cf8998cda8449db7589fa16769da50f1dd5',
+            'reference' => 'd9b6c3a9232b1ce517b65b5a6a5f3c27d40c8841',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

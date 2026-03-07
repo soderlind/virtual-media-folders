@@ -5,6 +5,16 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.2] - 2026-03-07
+
+### Changed
+
+- Tested up to WordPress 7.0
+
+### Fixed
+
+- Folder icon alignment in media toolbar on WordPress 7.0 (flex container compatibility)
+
 ## [1.8.1] - 2026-02-24
 
 ### Added
