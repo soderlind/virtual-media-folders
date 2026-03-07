@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Tested up to WordPress 7.0
 
+### Fixed
+
+- Folder icon alignment in media toolbar on WordPress 7.0 (flex container compatibility)
+
 ## [1.8.1] - 2026-02-24
 
 ### Added

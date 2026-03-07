@@ -19,6 +19,9 @@
 	box-sizing: border-box;
 	border-radius: 4px;
 	transition: color 0.1s, box-shadow 0.1s;
+	/* WP 7.0+: .media-toolbar-secondary is now display:flex;
+	   vertical-align has no effect in flex containers, use align-self instead. */
+	align-self: center;
 }
 
 .vmf-folder-toggle-button:hover {

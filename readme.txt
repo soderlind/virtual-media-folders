@@ -132,6 +132,7 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 = 1.8.2 =
 * Changed: Tested up to WordPress 7.0
+* Fixed: Folder icon alignment in media toolbar on WordPress 7.0
 
 = 1.8.1 =
 * Added: `vmfo_upload_folder` filter for controlling folder assignment on upload
