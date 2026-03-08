@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 7.0
-Stable tag: 1.8.2
+Stable tag: 1.8.3
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -130,9 +130,12 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 == Changelog ==
 
+= 1.8.3 =
+* Security: Updated npm and Composer dependencies to address dependabot alerts
+* Fixed: Folder icon alignment in media toolbar on WordPress 7.0
+
 = 1.8.2 =
 * Changed: Tested up to WordPress 7.0
-* Fixed: Folder icon alignment in media toolbar on WordPress 7.0
 
 = 1.8.1 =
 * Added: `vmfo_upload_folder` filter for controlling folder assignment on upload

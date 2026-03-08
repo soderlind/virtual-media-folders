@@ -5,6 +5,17 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.3] - 2026-03-07
+
+### Security
+
+- Updated npm dependencies to address dependabot alerts (svgo, minimatch, rollup, basic-ftp, serialize-javascript, immutable, webpack-dev-server)
+- Updated PHPUnit to 11.5.55 to fix unsafe deserialization vulnerability (PHPT code coverage handling)
+
+### Fixed
+
+- Folder icon alignment in media toolbar on WordPress 7.0
+
 ## [1.8.2] - 2026-03-07
 
 ### Changed
