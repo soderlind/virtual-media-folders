@@ -5,6 +5,14 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-03-14
+
+### Added
+
+- Add-on base classes: `AbstractPlugin`, `AbstractSettingsTab`, and `ActionSchedulerLoader` in `VirtualMediaFolders\Addon` namespace
+- Shared WP 7.0+ compatibility CSS (`wp7-compat-base.css`) for add-on settings tabs
+- Comprehensive add-on development documentation (`docs/addon-development.md`)
+
 ## [1.9.0] - 2026-03-10
 
 ### Added
