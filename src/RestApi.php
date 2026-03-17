@@ -827,6 +827,16 @@ final class RestApi extends WP_REST_Controller {
 			return $result;
 		}
 
+		/**
+		 * Fires after a media item has been removed from a folder.
+		 *
+		 * @since 2.0.1
+		 *
+		 * @param int $media_id  The attachment ID.
+		 * @param int $folder_id The folder term ID.
+		 */
+		do_action( 'vmfo_folder_removed', $media_id, $folder_id );
+
 		return new WP_REST_Response(
 			[
 				'success'   => true,
@@ -872,6 +882,24 @@ final class RestApi extends WP_REST_Controller {
 			foreach ( $terms as $term ) {
 				$counts[ (int) $term->term_id ] = (int) $term->count;
 			}
+
+			// Add distinct categorized total so clients can compute uncategorized
+			// without inflating when media belongs to multiple folders.
+			global $wpdb;
+			$categorized_total = (int) $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(DISTINCT tr.object_id)
+					FROM {$wpdb->term_relationships} tr
+					INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+					INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id
+					WHERE tt.taxonomy = %s
+					AND p.post_type = 'attachment'
+					AND p.post_status = 'inherit'",
+					Taxonomy::TAXONOMY
+				)
+			);
+			$counts['_categorized_total'] = $categorized_total;
+
 			return new WP_REST_Response( $counts, 200 );
 		}
 
@@ -947,6 +975,19 @@ final class RestApi extends WP_REST_Controller {
 				}
 			}
 		}
+
+		// Add distinct categorized total for the filtered mime types.
+		$cat_sql = "SELECT COUNT(DISTINCT p.ID)\n" .
+			"FROM {$wpdb->term_relationships} tr\n" .
+			"INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id\n" .
+			"INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id\n" .
+			"WHERE tt.taxonomy = %s\n" .
+			"AND p.post_type = 'attachment'\n" .
+			"AND p.post_status = 'inherit'\n" .
+			"AND p.post_mime_type IN ({$placeholders})";
+
+		$cat_params                   = array_merge( [ Taxonomy::TAXONOMY ], $mime_types );
+		$totals['_categorized_total'] = (int) $wpdb->get_var( $wpdb->prepare( $cat_sql, $cat_params ) );
 
 		return new WP_REST_Response( $totals, 200 );
 	}
@@ -1215,6 +1256,17 @@ final class RestApi extends WP_REST_Controller {
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
+
+		/**
+		 * Fires after a media item has been added to a folder via the REST API.
+		 *
+		 * @since 2.0.1
+		 *
+		 * @param int   $media_id  The attachment ID.
+		 * @param int   $folder_id The folder term ID.
+		 * @param array $result    The result from wp_set_object_terms.
+		 */
+		do_action( 'vmfo_folder_assigned', $media_id, $folder_id, $result );
 
 		delete_post_meta( $media_id, '_vmfo_folder_suggestions' );
 		delete_post_meta( $media_id, '_vmfo_suggestions_dismissed' );

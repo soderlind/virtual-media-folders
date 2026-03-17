@@ -149,7 +149,7 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 	/**
 	 * Fetch uncategorized count in background.
 	 */
-	const fetchUncategorizedCount = useCallback(async (typeFilter, foldersWithCounts) => {
+	const fetchUncategorizedCount = useCallback(async (typeFilter, foldersWithCounts, countsResponse = null) => {
 		try {
 			const normalizedType = normalizeMediaType(typeFilter);
 			let mediaPath = '/wp/v2/media?per_page=1';
@@ -164,10 +164,17 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 			
 			const totalCount = parseInt(totalResponse.headers.get('X-WP-Total'), 10) || 0;
 
-			let categorizedCount = 0;
-			foldersWithCounts.forEach((folder) => {
-				categorizedCount += folder.count || 0;
-			});
+			// Prefer _categorized_total from counts endpoint (accurate with multi-folder).
+			// Falls back to summing per-folder counts for backward compatibility.
+			let categorizedCount;
+			if (countsResponse && typeof countsResponse._categorized_total === 'number') {
+				categorizedCount = countsResponse._categorized_total;
+			} else {
+				categorizedCount = 0;
+				foldersWithCounts.forEach((folder) => {
+					categorizedCount += folder.count || 0;
+				});
+			}
 
 			setUncategorizedCount(Math.max(0, totalCount - categorizedCount));
 		} catch (error) {
@@ -202,9 +209,10 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 
 			// Fetch filtered counts in background (if media type filter active)
 			let finalFolders = freshFolders;
+			let countsResponse = null;
 			if (typeFilter) {
 				try {
-					const filteredCounts = await apiFetch({
+					countsResponse = await apiFetch({
 						path: `/vmfo/v1/folders/counts?media_type=${encodeURIComponent(typeFilter)}`,
 					});
 					
@@ -213,16 +221,25 @@ export default function useFolderData({ trackUrl = false, onFolderSelect, mediaT
 					
 					finalFolders = freshFolders.map((f) => ({
 						...f,
-						count: filteredCounts[f.id] ?? f.count,
+						count: countsResponse[f.id] ?? f.count,
 					}));
 					applyFolderData(finalFolders);
 				} catch (countError) {
 					// Use default counts
 				}
+			} else {
+				// Unfiltered: fetch counts to get _categorized_total
+				try {
+					countsResponse = await apiFetch({
+						path: '/vmfo/v1/folders/counts',
+					});
+				} catch (countError) {
+					// Fall back to summing folder counts
+				}
 			}
 
 			// Fetch uncategorized count in background
-			fetchUncategorizedCount(typeFilter, finalFolders);
+			fetchUncategorizedCount(typeFilter, finalFolders, countsResponse);
 		} catch (error) {
 			console.error('Error fetching folders:', error);
 		} finally {
