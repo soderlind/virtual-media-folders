@@ -91,7 +91,7 @@ Permission model:
 
 WordPress MCP adapter (default server) example:
 
-```bash
+`
 # Endpoint:
 # /wp-json/mcp/mcp-adapter-default-server
 
@@ -112,7 +112,7 @@ curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
 	-u "username:application-password" \
 	-H "Content-Type: application/json" \
 	-d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/add-to-folder","parameters":{"folder_id":2285,"attachment_ids":[101,205,309]}}}}'
-```
+`
 
 = Documentation =
 
