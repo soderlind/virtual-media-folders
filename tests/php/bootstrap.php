@@ -127,5 +127,41 @@ if ( ! function_exists( 'rest_authorization_required_code' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_register_ability' ) ) {
+	/**
+	 * Minimal abilities API registration stub for tests.
+	 *
+	 * @param string $name Ability name.
+	 * @param array  $args Ability registration args.
+	 * @return array{name: string, args: array}
+	 */
+	function wp_register_ability( string $name, array $args ): array {
+		$GLOBALS['vmfo_registered_abilities'][ $name ] = $args;
+
+		return [
+			'name' => $name,
+			'args' => $args,
+		];
+	}
+}
+
+if ( ! function_exists( 'wp_register_ability_category' ) ) {
+	/**
+	 * Minimal abilities category registration stub for tests.
+	 *
+	 * @param string $slug Category slug.
+	 * @param array  $args Category args.
+	 * @return array{slug: string, args: array}
+	 */
+	function wp_register_ability_category( string $slug, array $args ): array {
+		$GLOBALS['vmfo_registered_ability_categories'][ $slug ] = $args;
+
+		return [
+			'slug' => $slug,
+			'args' => $args,
+		];
+	}
+}
+
 // Load plugin classes needed in tests.
 // With PSR-4 autoloading, classes are loaded automatically via Composer.

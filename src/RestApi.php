@@ -1209,7 +1209,7 @@ final class RestApi extends WP_REST_Controller {
 	 * @param int $folder_id Folder term ID.
 	 * @return array|WP_Error
 	 */
-	private function assign_media_to_folder( int $media_id, int $folder_id, string $message = '' ) {
+	public function assign_media_to_folder( int $media_id, int $folder_id, string $message = '' ) {
 		$result = wp_set_object_terms( $media_id, [ $folder_id ], Taxonomy::TAXONOMY, true );
 
 		if ( is_wp_error( $result ) ) {

@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 7.0
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -71,6 +71,49 @@ When inserting media from a block (Image, Gallery, etc.):
 2. Use the folder sidebar to filter
 3. Select your media as usual
 
+**AI Abilities**
+
+Virtual Media Folders exposes Abilities API tools that can be used by AI agents and MCP adapters:
+
+* **`vmfo/list-folders`** (read-only) – Lists folders with `id`, `name`, `parent_id`, `path`, and `count`.
+* **`vmfo/add-to-folder`** (write) – Adds one or more attachments to a folder using `folder_id` and `attachment_ids`.
+
+Recommended AI flow:
+
+1. Call `vmfo/list-folders` to resolve folder names/paths to a stable `id`.
+2. Call `vmfo/add-to-folder` with that `folder_id` and one or more `attachment_ids`.
+
+This avoids ambiguity when duplicate folder names exist.
+
+Permission model:
+
+* Both abilities require the `upload_files` capability.
+
+WordPress MCP adapter (default server) example:
+
+```bash
+# Endpoint:
+# /wp-json/mcp/mcp-adapter-default-server
+
+# List tools
+curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+	-u "username:application-password" \
+	-H "Content-Type: application/json" \
+	-d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+# Resolve folder id via gateway
+curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+	-u "username:application-password" \
+	-H "Content-Type: application/json" \
+	-d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/list-folders","parameters":{"search":"travel","hide_empty":false}}}}'
+
+# Add attachments to folder via gateway
+curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+	-u "username:application-password" \
+	-H "Content-Type: application/json" \
+	-d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/add-to-folder","parameters":{"folder_id":2285,"attachment_ids":[101,205,309]}}}}'
+```
+
 = Documentation =
 
 * [Accessibility](https://github.com/soderlind/virtual-media-folders/blob/main/docs/a11y.md) – Keyboard navigation and screen reader support
@@ -129,6 +172,13 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 2.0.1 =
+* Added: Abilities API integration with `vmfo/list-folders` and `vmfo/add-to-folder`
+* Added: MCP adapter smoke test script for development and CI (`scripts/mcp-adapter-smoke-test.sh`)
+* Changed: MCP adapter examples now use gateway execution via `mcp-adapter-execute-ability`
+* Changed: Documentation examples standardized to use `https://example.com`
+* Changed: Excluded `scripts/` from WordPress.org distribution package
 
 = 2.0.0 =
 * Added: Add-on base classes (`AbstractPlugin`, `AbstractSettingsTab`, `ActionSchedulerLoader`) in `VirtualMediaFolders\Addon` namespace

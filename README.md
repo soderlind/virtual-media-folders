@@ -82,6 +82,58 @@ When inserting media from a block:
 2. Use the folder sidebar to filter
 3. Select your media
 
+### AI Abilities
+
+Virtual Media Folders exposes Abilities API tools that can be used by AI agents and MCP adapters.
+
+- **`vmfo/list-folders`** (read-only): Lists folders with `id`, `name`, `parent_id`, `path`, and `count`.
+- **`vmfo/add-to-folder`** (write): Adds one or more attachments to a folder using `folder_id` and `attachment_ids`.
+
+Recommended flow for AI clients:
+
+1. Call `vmfo/list-folders` to resolve folder names and paths to a stable `id`.
+2. Call `vmfo/add-to-folder` with that `folder_id` and one or more `attachment_ids`.
+
+This avoids ambiguity when folder names are duplicated under different parents.
+
+Permission model:
+
+- Both abilities require the `upload_files` capability.
+
+WordPress MCP adapter (default server) example:
+
+```bash
+# Endpoint:
+# /wp-json/mcp/mcp-adapter-default-server
+
+# List tools
+curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+	-u "username:application-password" \
+	-H "Content-Type: application/json" \
+	-d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+# Resolve folder id via gateway
+curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+	-u "username:application-password" \
+	-H "Content-Type: application/json" \
+	-d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/list-folders","parameters":{"search":"travel","hide_empty":false}}}}'
+
+# Add attachments to folder via gateway
+curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+	-u "username:application-password" \
+	-H "Content-Type: application/json" \
+	-d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/add-to-folder","parameters":{"folder_id":2285,"attachment_ids":[101,205,309]}}}}'
+```
+
+Smoke test:
+
+```bash
+MCP_BASE_URL="https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+MCP_USER="per" \
+MCP_APP_PASS="xxxx xxxx xxxx xxxx xxxx xxxx" \
+./scripts/mcp-adapter-smoke-test.sh
+```
+
 ## Documentation
 
 - [Accessibility](docs/a11y.md) – Keyboard navigation and screen reader support
