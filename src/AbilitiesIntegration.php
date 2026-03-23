@@ -413,9 +413,9 @@ final class AbilitiesIntegration {
 	 * Validate the target folder.
 	 *
 	 * @param int $folder_id Folder term ID.
-	 * @return true|WP_Error
+	 * @return bool|WP_Error
 	 */
-	private static function validate_folder( int $folder_id ): true|WP_Error {
+	private static function validate_folder( int $folder_id ): bool|WP_Error {
 		$folder = get_term( $folder_id, Taxonomy::TAXONOMY );
 
 		if ( is_wp_error( $folder ) ) {
@@ -437,9 +437,9 @@ final class AbilitiesIntegration {
 	 * Validate attachments before mutation.
 	 *
 	 * @param array<int, int> $attachment_ids Attachment IDs.
-	 * @return true|WP_Error
+	 * @return bool|WP_Error
 	 */
-	private static function validate_attachments( array $attachment_ids ): true|WP_Error {
+	private static function validate_attachments( array $attachment_ids ): bool|WP_Error {
 		foreach ( $attachment_ids as $attachment_id ) {
 			$attachment = get_post( $attachment_id );
 

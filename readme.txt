@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 7.0
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -172,6 +172,9 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 2.0.2 =
+* Fixed: Updated ability validator return type hints to `bool|WP_Error` for broader parser compatibility in release/pre-commit environments
 
 = 2.0.1 =
 * Added: Abilities API integration with `vmfo/list-folders` and `vmfo/add-to-folder`
