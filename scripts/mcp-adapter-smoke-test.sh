@@ -13,6 +13,9 @@ set -euo pipefail
 #   VMFO_SEARCH_TERM          Default: ""
 #   VMFO_TEST_ATTACHMENT_ID   Default: 101
 #   VMFO_EXPECT_DIRECT_TOOLS  Default: 0 (set 1 if your server exposes vmfo/* as direct MCP tools)
+#   VMFO_RUN_MUTATING_TESTS   Default: 0 (set 1 to run create-folder mutation test)
+#   VMFO_CREATE_FOLDER_NAME   Default: "MCP Smoke Test <timestamp>"
+#   VMFO_CREATE_PARENT_ID     Default: 0
 
 fail() {
     echo "[FAIL] $1" >&2
@@ -37,6 +40,9 @@ require_var "MCP_APP_PASS"
 VMFO_SEARCH_TERM="${VMFO_SEARCH_TERM:-}"
 VMFO_TEST_ATTACHMENT_ID="${VMFO_TEST_ATTACHMENT_ID:-101}"
 VMFO_EXPECT_DIRECT_TOOLS="${VMFO_EXPECT_DIRECT_TOOLS:-0}"
+VMFO_RUN_MUTATING_TESTS="${VMFO_RUN_MUTATING_TESTS:-0}"
+VMFO_CREATE_PARENT_ID="${VMFO_CREATE_PARENT_ID:-0}"
+VMFO_CREATE_FOLDER_NAME="${VMFO_CREATE_FOLDER_NAME:-MCP Smoke Test $(date +%s)}"
 AUTH="${MCP_USER}:${MCP_APP_PASS}"
 
 INIT_HEADERS="$(mktemp)"
@@ -74,6 +80,7 @@ pass "tools/list includes mcp-adapter-execute-ability"
 
 if [[ "$VMFO_EXPECT_DIRECT_TOOLS" == "1" ]]; then
     [[ "$TOOLS_LIST" == *"vmfo/list-folders"* ]] || fail "Expected direct vmfo/list-folders tool in tools/list"
+    [[ "$TOOLS_LIST" == *"vmfo/create-folder"* ]] || fail "Expected direct vmfo/create-folder tool in tools/list"
     [[ "$TOOLS_LIST" == *"vmfo/add-to-folder"* ]] || fail "Expected direct vmfo/add-to-folder tool in tools/list"
     pass "tools/list includes direct vmfo tools"
 else
@@ -103,6 +110,22 @@ ADD_CALL="$(curl -sS -X POST "$MCP_BASE_URL" \
 [[ "$ADD_CALL" == *"\"result\""* ]] || fail "vmfo/add-to-folder gateway call did not return result envelope"
 [[ "$ADD_CALL" == *"isError"* ]] || fail "vmfo/add-to-folder negative test did not return isError"
 pass "vmfo/add-to-folder gateway path executed (safe negative validation)"
+
+# 5) create-folder via gateway tool (optional mutating test)
+if [[ "$VMFO_RUN_MUTATING_TESTS" == "1" ]]; then
+    CREATE_PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":5,\"method\":\"tools/call\",\"params\":{\"name\":\"mcp-adapter-execute-ability\",\"arguments\":{\"ability_name\":\"vmfo/create-folder\",\"parameters\":{\"name\":\"${VMFO_CREATE_FOLDER_NAME}\",\"parent_id\":${VMFO_CREATE_PARENT_ID}}}}}"
+    CREATE_CALL="$(curl -sS -X POST "$MCP_BASE_URL" \
+        -u "$AUTH" \
+        -H "Content-Type: application/json" \
+        -H "Mcp-Session-Id: $SESSION_ID" \
+        -d "$CREATE_PAYLOAD")"
+
+    [[ "$CREATE_CALL" == *"\"result\""* ]] || fail "vmfo/create-folder gateway call did not return result"
+    [[ "$CREATE_CALL" == *"$VMFO_CREATE_FOLDER_NAME"* ]] || fail "vmfo/create-folder response does not include folder name"
+    pass "vmfo/create-folder gateway path executed (mutating mode)"
+else
+    pass "mutating create-folder test skipped (set VMFO_RUN_MUTATING_TESTS=1 to enable)"
+fi
 
 echo
 pass "MCP adapter smoke test completed"

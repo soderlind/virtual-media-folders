@@ -87,18 +87,21 @@ When inserting media from a block:
 Virtual Media Folders exposes Abilities API tools that can be used by AI agents and MCP adapters.
 
 - **`vmfo/list-folders`** (read-only): Lists folders with `id`, `name`, `parent_id`, `path`, and `count`.
+- **`vmfo/create-folder`** (write): Creates a folder with `name` and optional `parent_id`.
 - **`vmfo/add-to-folder`** (write): Adds one or more attachments to a folder using `folder_id` and `attachment_ids`.
 
 Recommended flow for AI clients:
 
 1. Call `vmfo/list-folders` to resolve folder names and paths to a stable `id`.
-2. Call `vmfo/add-to-folder` with that `folder_id` and one or more `attachment_ids`.
+2. If needed, call `vmfo/create-folder` to create the target folder.
+3. Call `vmfo/add-to-folder` with that `folder_id` and one or more `attachment_ids`.
 
 This avoids ambiguity when folder names are duplicated under different parents.
 
 Permission model:
 
-- Both abilities require the `upload_files` capability.
+- `vmfo/list-folders` and `vmfo/add-to-folder` require the `upload_files` capability.
+- `vmfo/create-folder` requires the `manage_categories` capability.
 
 WordPress MCP adapter (default server) example:
 
@@ -123,6 +126,12 @@ curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
 	-u "username:application-password" \
 	-H "Content-Type: application/json" \
 	-d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/add-to-folder","parameters":{"folder_id":2285,"attachment_ids":[101,205,309]}}}}'
+
+# Create folder via gateway
+curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+	-u "username:application-password" \
+	-H "Content-Type: application/json" \
+	-d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/create-folder","parameters":{"name":"Travel","parent_id":0}}}}'
 ```
 
 [Smoke test](./scripts/mcp-adapter-smoke-test.sh):
@@ -139,6 +148,7 @@ MCP_APP_PASS="xxxx xxxx xxxx xxxx xxxx xxxx" \
 - [Accessibility](docs/a11y.md) – Keyboard navigation and screen reader support
 - [Development](docs/development.md) – Setup, API reference, hooks, and contributing
 - [Add-on Development](docs/addon-development.md) – Guide to building add-on plugins
+- [MCP Integration](docs/mcp.md) – Upload, find/create folder, and assign media via MCP
 
 ## License
 

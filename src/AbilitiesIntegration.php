@@ -29,6 +29,11 @@ final class AbilitiesIntegration {
 	private const ADD_TO_FOLDER_ABILITY = 'vmfo/add-to-folder';
 
 	/**
+	 * Ability name for creating folders.
+	 */
+	private const CREATE_FOLDER_ABILITY = 'vmfo/create-folder';
+
+	/**
 	 * Read-only ability for folder discovery.
 	 */
 	private const LIST_FOLDERS_ABILITY = 'vmfo/list-folders';
@@ -229,6 +234,59 @@ final class AbilitiesIntegration {
 				],
 			]
 		);
+
+		wp_register_ability(
+			self::CREATE_FOLDER_ABILITY,
+			[
+				'label'               => __( 'Create Folder', 'virtual-media-folders' ),
+				'description'         => __( 'Creates a Virtual Media Folders folder with an optional parent.', 'virtual-media-folders' ),
+				'category'            => self::CATEGORY_SLUG,
+				'input_schema'        => [
+					'type'                 => 'object',
+					'properties'           => [
+						'name'      => [
+							'type'        => 'string',
+							'minLength'   => 1,
+							'description' => __( 'Folder name to create.', 'virtual-media-folders' ),
+						],
+						'parent_id' => [
+							'type'        => 'integer',
+							'minimum'     => 0,
+							'default'     => 0,
+							'description' => __( 'Optional parent folder ID.', 'virtual-media-folders' ),
+						],
+					],
+					'required'             => [ 'name' ],
+					'additionalProperties' => false,
+				],
+				'output_schema'       => [
+					'type'                 => 'object',
+					'properties'           => [
+						'id'        => [ 'type' => 'integer' ],
+						'name'      => [ 'type' => 'string' ],
+						'parent_id' => [ 'type' => 'integer' ],
+						'path'      => [ 'type' => 'string' ],
+						'count'     => [ 'type' => 'integer' ],
+					],
+					'required'             => [ 'id', 'name', 'parent_id', 'path', 'count' ],
+					'additionalProperties' => false,
+				],
+				'execute_callback'    => [ self::class, 'execute_create_folder' ],
+				'permission_callback' => [ self::class, 'can_create_folder' ],
+				'meta'                => [
+					'show_in_rest' => true,
+					'mcp'          => [
+						'public' => true,
+						'type'   => 'tool',
+					],
+					'annotations'  => [
+						'readonly'    => false,
+						'destructive' => false,
+						'idempotent'  => false,
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -267,6 +325,26 @@ final class AbilitiesIntegration {
 		return new WP_Error(
 			'rest_forbidden',
 			__( 'You are not allowed to view folders.', 'virtual-media-folders' ),
+			[ 'status' => rest_authorization_required_code() ]
+		);
+	}
+
+	/**
+	 * Check whether the current user can create folders.
+	 *
+	 * @param array<string, mixed>|null $input Ability input.
+	 * @return bool|WP_Error
+	 */
+	public static function can_create_folder( ?array $input = null ): bool|WP_Error {
+		unset( $input );
+
+		if ( current_user_can( 'manage_categories' ) ) {
+			return true;
+		}
+
+		return new WP_Error(
+			'rest_forbidden',
+			__( 'You are not allowed to create folders.', 'virtual-media-folders' ),
 			[ 'status' => rest_authorization_required_code() ]
 		);
 	}
@@ -330,6 +408,84 @@ final class AbilitiesIntegration {
 		return [
 			'folders' => $folders,
 			'total'   => count( $folders ),
+		];
+	}
+
+	/**
+	 * Execute create-folder ability.
+	 *
+	 * @param array<string, mixed> $input Ability input.
+	 * @return array<string, mixed>|WP_Error
+	 */
+	public static function execute_create_folder( array $input ): array|WP_Error {
+		$name      = isset( $input['name'] ) ? trim( (string) $input['name'] ) : '';
+		$parent_id = absint( $input['parent_id'] ?? 0 );
+
+		if ( '' === $name ) {
+			return new WP_Error(
+				'ability_invalid_input',
+				__( 'A non-empty folder name is required.', 'virtual-media-folders' )
+			);
+		}
+
+		if ( $parent_id > 0 ) {
+			$parent_validation = self::validate_folder( $parent_id );
+			if ( is_wp_error( $parent_validation ) ) {
+				return new WP_Error(
+					'parent_not_exists',
+					__( 'Parent folder does not exist.', 'virtual-media-folders' ),
+					[ 'status' => 400 ]
+				);
+			}
+		}
+
+		$result = wp_insert_term(
+			$name,
+			Taxonomy::TAXONOMY,
+			[
+				'parent' => $parent_id,
+			]
+		);
+
+		if ( is_wp_error( $result ) ) {
+			$error_code = $result->get_error_code();
+
+			$error_messages = [
+				'term_exists'       => __( 'A folder with this name already exists.', 'virtual-media-folders' ),
+				'empty_term_name'   => __( 'Folder name cannot be empty.', 'virtual-media-folders' ),
+				'invalid_term'      => __( 'Invalid folder.', 'virtual-media-folders' ),
+				'invalid_taxonomy'  => __( 'Invalid folder taxonomy.', 'virtual-media-folders' ),
+				'parent_not_exists' => __( 'Parent folder does not exist.', 'virtual-media-folders' ),
+			];
+
+			$message = $error_messages[ $error_code ] ?? $result->get_error_message();
+
+			return new WP_Error(
+				$error_code,
+				$message,
+				[ 'status' => 400 ]
+			);
+		}
+
+		$folder = get_term( $result['term_id'], Taxonomy::TAXONOMY );
+		if ( is_wp_error( $folder ) || ! $folder ) {
+			return new WP_Error(
+				'rest_folder_not_found',
+				__( 'Folder not found.', 'virtual-media-folders' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		$term_cache = [
+			(int) $folder->term_id => $folder,
+		];
+
+		return [
+			'id'        => (int) $folder->term_id,
+			'name'      => (string) $folder->name,
+			'parent_id' => (int) $folder->parent,
+			'path'      => self::build_folder_path( $folder, $term_cache ),
+			'count'     => (int) $folder->count,
 		];
 	}
 

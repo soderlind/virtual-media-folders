@@ -135,15 +135,17 @@ curl "https://example.com/wp-json/vmfo/v1/folders" \
 
 ## AI Abilities API
 
-Virtual Media Folders exposes two Abilities API tools for AI/MCP integrations:
+Virtual Media Folders exposes three Abilities API tools for AI/MCP integrations:
 
 - `vmfo/list-folders` (read-only)
+- `vmfo/create-folder` (write)
 - `vmfo/add-to-folder` (write)
 
 Recommended flow:
 
 1. Call `vmfo/list-folders` to resolve a folder name/path to a stable `id`.
-2. Call `vmfo/add-to-folder` with that `folder_id` and one or more `attachment_ids`.
+2. If no match exists, call `vmfo/create-folder`.
+3. Call `vmfo/add-to-folder` with that `folder_id` and one or more `attachment_ids`.
 
 ### Request/Response Examples
 
@@ -229,7 +231,10 @@ Recommended flow:
 }
 ```
 
-Both abilities require the `upload_files` capability.
+- `vmfo/list-folders` and `vmfo/add-to-folder` require the `upload_files` capability.
+- `vmfo/create-folder` requires the `manage_categories` capability.
+
+For full end-to-end examples (including image upload and editor client setup), see [mcp.md](mcp.md).
 
 ### WordPress MCP Adapter Examples
 
@@ -297,6 +302,29 @@ curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
     }'
 ```
 
+Call `vmfo/create-folder` via the gateway tool (`mcp-adapter-execute-ability`):
+
+```bash
+curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
+    -u "username:application-password" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "jsonrpc": "2.0",
+        "id": 4,
+        "method": "tools/call",
+        "params": {
+            "name": "mcp-adapter-execute-ability",
+            "arguments": {
+                "ability_name": "vmfo/create-folder",
+                "parameters": {
+                    "name": "Travel",
+                    "parent_id": 0
+                }
+            }
+        }
+    }'
+```
+
 In practice, the AI flow is:
 
 1. `tools/call` -> `mcp-adapter-execute-ability` with `ability_name = vmfo/list-folders`
@@ -321,6 +349,7 @@ What it checks:
 2. `tools/list` includes `mcp-adapter-execute-ability`
 3. `vmfo/list-folders` executes via gateway and returns folder data
 4. `vmfo/add-to-folder` executes via gateway in safe negative mode (no data mutation)
+5. Optional: `vmfo/create-folder` executes via gateway in mutating mode
 
 ## Hooks & Filters
 
