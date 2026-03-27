@@ -5,6 +5,19 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2026-03-27
+
+### Added
+
+- `vmfo/create-folder` MCP ability with `name` and optional `parent_id` input, full folder payload output
+- MCP integration guide (`docs/mcp.md`): client configuration (Claude, GitHub Copilot, Cursor), upload-to-folder flow, troubleshooting
+- Agent skill for content-based image foldering (`.github/skills/add-photo-to-folder/SKILL.md`)
+
+### Changed
+
+- Smoke test script extended with optional mutating step (`VMFO_RUN_MUTATING_TESTS=1`) to cover `vmfo/create-folder`
+- `readme.txt` AI Abilities section updated to reflect three abilities and new permission model
+
 ## [2.0.2] - 2026-03-23
 
 ### Fixed

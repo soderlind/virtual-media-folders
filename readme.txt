@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 7.0
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -76,48 +76,29 @@ When inserting media from a block (Image, Gallery, etc.):
 Virtual Media Folders exposes Abilities API tools that can be used by AI agents and MCP adapters:
 
 * **`vmfo/list-folders`** (read-only) – Lists folders with `id`, `name`, `parent_id`, `path`, and `count`.
+* **`vmfo/create-folder`** (write) – Creates a folder with `name` and optional `parent_id`.
 * **`vmfo/add-to-folder`** (write) – Adds one or more attachments to a folder using `folder_id` and `attachment_ids`.
 
 Recommended AI flow:
 
 1. Call `vmfo/list-folders` to resolve folder names/paths to a stable `id`.
-2. Call `vmfo/add-to-folder` with that `folder_id` and one or more `attachment_ids`.
+2. If needed, call `vmfo/create-folder` to create the target folder.
+3. Call `vmfo/add-to-folder` with that `folder_id` and one or more `attachment_ids`.
 
 This avoids ambiguity when duplicate folder names exist.
 
 Permission model:
 
-* Both abilities require the `upload_files` capability.
+* `vmfo/list-folders` and `vmfo/add-to-folder` require the `upload_files` capability.
+* `vmfo/create-folder` requires the `manage_categories` capability.
 
-WordPress MCP adapter (default server) example:
-
-`
-# Endpoint:
-# /wp-json/mcp/mcp-adapter-default-server
-
-# List tools
-curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
-	-u "username:application-password" \
-	-H "Content-Type: application/json" \
-	-d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
-
-# Resolve folder id via gateway
-curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
-	-u "username:application-password" \
-	-H "Content-Type: application/json" \
-	-d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/list-folders","parameters":{"search":"travel","hide_empty":false}}}}'
-
-# Add attachments to folder via gateway
-curl -X POST "https://example.com/wp-json/mcp/mcp-adapter-default-server" \
-	-u "username:application-password" \
-	-H "Content-Type: application/json" \
-	-d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"mcp-adapter-execute-ability","arguments":{"ability_name":"vmfo/add-to-folder","parameters":{"folder_id":2285,"attachment_ids":[101,205,309]}}}}'
-`
+See the [MCP Integration guide](https://github.com/soderlind/virtual-media-folders/blob/main/docs/mcp.md) for client configuration (Claude, GitHub Copilot, Cursor) and a full usage walkthrough.
 
 = Documentation =
 
 * [Accessibility](https://github.com/soderlind/virtual-media-folders/blob/main/docs/a11y.md) – Keyboard navigation and screen reader support
 * [Development](https://github.com/soderlind/virtual-media-folders/blob/main/docs/development.md) – Setup, API reference, hooks, and contributing
+* [MCP Integration](https://github.com/soderlind/virtual-media-folders/blob/main/docs/mcp.md) – MCP client configuration, upload flow, and AI agent usage
 * [Add-on Development](https://github.com/soderlind/virtual-media-folders/blob/main/docs/addon-development.md) – Guide to building add-on plugins
 
 = Free add-ons =
@@ -172,6 +153,12 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 2.0.3 =
+* Added: `vmfo/create-folder` MCP ability (requires `manage_categories` capability)
+* Added: MCP integration guide (`docs/mcp.md`) with client configs for Claude, GitHub Copilot, and Cursor
+* Added: Agent skill for content-based image foldering (`.github/skills/add-photo-to-folder/SKILL.md`)
+* Changed: Smoke test script extended with optional mutating step (`VMFO_RUN_MUTATING_TESTS=1`)
 
 = 2.0.2 =
 * Fixed: Updated ability validator return type hints to `bool|WP_Error` for broader parser compatibility in release/pre-commit environments

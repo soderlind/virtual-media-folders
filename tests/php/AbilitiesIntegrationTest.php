@@ -82,6 +82,7 @@ class AbilitiesIntegrationTest extends TestCase {
 		AbilitiesIntegration::register_abilities();
 
 		$this->assertArrayHasKey( 'vmfo/list-folders', $GLOBALS['vmfo_registered_abilities'] );
+		$this->assertArrayHasKey( 'vmfo/create-folder', $GLOBALS['vmfo_registered_abilities'] );
 		$this->assertArrayHasKey( 'vmfo/add-to-folder', $GLOBALS['vmfo_registered_abilities'] );
 
 		$list_args = $GLOBALS['vmfo_registered_abilities']['vmfo/list-folders'];
@@ -93,6 +94,17 @@ class AbilitiesIntegrationTest extends TestCase {
 		$this->assertTrue( $list_args['meta']['annotations']['readonly'] );
 		$this->assertIsCallable( $list_args['execute_callback'] );
 		$this->assertIsCallable( $list_args['permission_callback'] );
+
+		$create_args = $GLOBALS['vmfo_registered_abilities']['vmfo/create-folder'];
+
+		$this->assertSame( 'vmfo-folder-management', $create_args['category'] );
+		$this->assertTrue( $create_args['meta']['show_in_rest'] );
+		$this->assertTrue( $create_args['meta']['mcp']['public'] );
+		$this->assertSame( 'tool', $create_args['meta']['mcp']['type'] );
+		$this->assertFalse( $create_args['meta']['annotations']['readonly'] );
+		$this->assertFalse( $create_args['meta']['annotations']['idempotent'] );
+		$this->assertIsCallable( $create_args['execute_callback'] );
+		$this->assertIsCallable( $create_args['permission_callback'] );
 
 		$args = $GLOBALS['vmfo_registered_abilities']['vmfo/add-to-folder'];
 
@@ -130,6 +142,94 @@ class AbilitiesIntegrationTest extends TestCase {
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
 		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+	}
+
+	/**
+	 * Test create-folder permission success.
+	 */
+	public function test_can_create_folder_allows_category_managers(): void {
+		Functions\expect( 'current_user_can' )
+			->once()
+			->with( 'manage_categories' )
+			->andReturn( true );
+
+		$this->assertTrue( AbilitiesIntegration::can_create_folder() );
+	}
+
+	/**
+	 * Test create-folder permission failure.
+	 */
+	public function test_can_create_folder_returns_wp_error_when_capability_missing(): void {
+		Functions\expect( 'current_user_can' )
+			->once()
+			->with( 'manage_categories' )
+			->andReturn( false );
+
+		$result = AbilitiesIntegration::can_create_folder();
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+	}
+
+	/**
+	 * Test successful folder creation.
+	 */
+	public function test_execute_create_folder_returns_folder_payload(): void {
+		Functions\when( 'get_term' )->alias(
+			static function ( int $term_id, string $taxonomy ) {
+				if ( 9 === $term_id ) {
+					return (object) [
+						'term_id'  => 9,
+						'taxonomy' => $taxonomy,
+						'name'     => 'Travel',
+						'parent'   => 0,
+						'count'    => 0,
+					];
+				}
+
+				return null;
+			}
+		);
+		Functions\when( 'wp_insert_term' )->alias(
+			static fn( string $name, string $taxonomy, array $args ) => [
+				'term_id'          => 9,
+				'term_taxonomy_id' => 9,
+			]
+		);
+
+		$result = AbilitiesIntegration::execute_create_folder(
+			[
+				'name'      => 'Travel',
+				'parent_id' => 0,
+			]
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 9, $result['id'] );
+		$this->assertSame( 'Travel', $result['name'] );
+		$this->assertSame( 0, $result['parent_id'] );
+		$this->assertSame( 'Travel', $result['path'] );
+		$this->assertSame( 0, $result['count'] );
+	}
+
+	/**
+	 * Test create-folder duplicate mapping.
+	 */
+	public function test_execute_create_folder_maps_term_exists_error(): void {
+		Functions\when( 'wp_insert_term' )->justReturn(
+			new \WP_Error( 'term_exists', 'Term exists.' )
+		);
+
+		$result = AbilitiesIntegration::execute_create_folder(
+			[
+				'name'      => 'Travel',
+				'parent_id' => 0,
+			]
+		);
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'term_exists', $result->get_error_code() );
+		$this->assertSame( 'A folder with this name already exists.', $result->get_error_message() );
 	}
 
 	/**
