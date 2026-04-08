@@ -312,7 +312,7 @@ add_action( 'vmfo_settings_enqueue_scripts', function ( string $tab, string $sub
 
 ## Rules Engine
 
-*Plugin: vmfa-rules-engine*
+*Plugin: [vmfa-rules-engine](https://github.com/soderlind/vmfa-rules-engine)*
 
 ### Rules Engine Filters
 
@@ -403,7 +403,7 @@ add_action( 'vmfa_rules_engine_folder_assigned', function ( int $attachment_id, 
 
 ## AI Organizer
 
-*Plugin: vmfa-ai-organizer*
+*Plugin: [vmfa-ai-organizer](https://github.com/soderlind/vmfa-ai-organizer)*
 
 ### AI Organizer Actions
 
@@ -468,7 +468,7 @@ add_action( 'vmfo_media_moved', function ( int $attachment_id, int $folder_id, a
 
 ## Editorial Workflow
 
-*Plugin: vmfa-editorial-workflow*
+*Plugin: [vmfa-editorial-workflow](https://github.com/soderlind/vmfa-editorial-workflow)*
 
 ### Editorial Workflow Actions
 
@@ -536,7 +536,7 @@ Fires after an attachment is approved in the editorial workflow.
 
 ## Media Cleanup
 
-*Plugin: vmfa-media-cleanup*
+*Plugin: [vmfa-media-cleanup](https://github.com/soderlind/vmfa-media-cleanup)*
 
 ### Media Cleanup Filters
 
@@ -838,7 +838,7 @@ Fires when a full cleanup scan finishes.
 
 ## Folder Exporter
 
-*Plugin: vmfa-folder-exporter*
+*Plugin: [vmfa-folder-exporter](https://github.com/soderlind/vmfa-folder-exporter)*
 
 ### Folder Exporter Filters
 
@@ -889,7 +889,7 @@ add_filter( 'vmfa_export_manifest_columns', function ( array $columns ): array {
 
 ## Migrate
 
-*Plugin: vmfa-migrate*
+*Plugin: [vmfa-migrate](https://github.com/soderlind/vmfa-migrate)*
 
 ### Migrate Filters
 
