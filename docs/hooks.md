@@ -14,13 +14,14 @@ All actions and filters provided by Virtual Media Folders and its add-ons.
   - [Actions](#ai-organizer-actions)
 - [Editorial Workflow](#editorial-workflow)
   - [Actions](#editorial-workflow-actions)
-- [Smart Folders](#smart-folders)
-  - [Actions](#smart-folders-actions)
 - [Media Cleanup](#media-cleanup)
   - [Filters](#media-cleanup-filters)
   - [Actions](#media-cleanup-actions)
 - [Folder Exporter](#folder-exporter)
   - [Filters](#folder-exporter-filters)
+- [Migrate](#migrate)
+  - [Filters](#migrate-filters)
+  - [Actions](#migrate-actions)
 
 ---
 
@@ -439,6 +440,32 @@ Fires when an AI scan batch completes.
 
 ---
 
+#### `vmfo_media_moved`
+
+Fires when AI Organizer assigns media to a folder. Uses the `vmfo_` prefix for compatibility with core VMF folder-assignment hooks.
+
+| Property | Value |
+|----------|-------|
+| **File** | `src/php/Services/AIAnalysisService.php` |
+
+**Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `$attachment_id` | `int` | Attachment ID. |
+| `$folder_id` | `int` | Folder term ID. |
+| `$result` | `array` | Term IDs returned by `wp_set_object_terms()`. |
+
+**Example:**
+
+```php
+add_action( 'vmfo_media_moved', function ( int $attachment_id, int $folder_id, array $result ): void {
+    error_log( sprintf( 'AI Organizer moved attachment %d to folder %d', $attachment_id, $folder_id ) );
+}, 10, 3 );
+```
+
+---
+
 ## Editorial Workflow
 
 *Plugin: vmfa-editorial-workflow*
@@ -504,39 +531,6 @@ Fires after an attachment is approved in the editorial workflow.
 |-------|------|-------------|
 | `$attachment_id` | `int` | Attachment ID. |
 | `$folder_id` | `int` | Destination folder term ID. |
-
----
-
-## Smart Folders
-
-*Plugin: vmfa-smart-folders*
-
-### Smart Folders Actions
-
-#### `vmfasf_smart_folders_registered`
-
-Fires after all predefined smart folders are registered. Use to add custom smart folders.
-
-| Property | Value |
-|----------|-------|
-| **File** | `src/Plugin.php` |
-
-**Parameters:**
-
-| Param | Type | Description |
-|-------|------|-------------|
-| `$registry` | `SmartFolderRegistry` | The registry instance. |
-
-**Example:**
-
-```php
-add_action( 'vmfasf_smart_folders_registered', function ( $registry ): void {
-    $registry->register( 'recent-week', [
-        'label' => __( 'Last 7 Days', 'my-plugin' ),
-        'query' => [ 'date_query' => [ [ 'after' => '1 week ago' ] ] ],
-    ] );
-} );
-```
 
 ---
 
@@ -893,6 +887,68 @@ add_filter( 'vmfa_export_manifest_columns', function ( array $columns ): array {
 
 ---
 
+## Migrate
+
+*Plugin: vmfa-migrate*
+
+### Migrate Filters
+
+#### `vmfa_migrate_drivers`
+
+Filter the list of migration driver classes. Add custom drivers to support additional media folder plugins.
+
+| Property | Value |
+|----------|-------|
+| **Since** | 0.1.0 |
+| **File** | `src/php/Services/DetectorService.php` |
+
+**Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `$driver_classes` | `array<int, class-string<DriverInterface>>` | List of driver class names. |
+
+**Return:** `array`
+
+**Example — add a custom driver:**
+
+```php
+add_filter( 'vmfa_migrate_drivers', function ( array $drivers ): array {
+    $drivers[] = MyPlugin\Drivers\CustomFolderDriver::class;
+    return $drivers;
+} );
+```
+
+---
+
+### Migrate Actions
+
+#### `vmfa_migrate_process_batch`
+
+Scheduled via Action Scheduler to process migration assignments in batches. Each invocation processes one batch and re-schedules itself until all assignments are migrated.
+
+| Property | Value |
+|----------|-------|
+| **Since** | 0.1.0 |
+| **File** | `src/php/Services/MigrationService.php` |
+
+**Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `$job_id` | `string` | Unique migration job identifier. |
+| `$offset` | `int` | Current batch offset. |
+
+**Example — log batch progress:**
+
+```php
+add_action( 'vmfa_migrate_process_batch', function ( string $job_id, int $offset ): void {
+    error_log( sprintf( 'Migration %s processing batch at offset %d', $job_id, $offset ) );
+}, 5, 2 );
+```
+
+---
+
 ## Quick Reference
 
 ### All Hooks by Plugin
@@ -913,10 +969,10 @@ add_filter( 'vmfa_export_manifest_columns', function ( array $columns ): array {
 | `vmfa_rules_engine_folder_assigned` | action | Rules Engine |
 | `vmfa_cached_results_applied` | action | AI Organizer |
 | `vmfa_scan_completed` | action | AI Organizer |
+| `vmfo_media_moved` | action | AI Organizer |
 | `vmfa_inbox_assigned` | action | Editorial Workflow |
 | `vmfa_marked_needs_review` | action | Editorial Workflow |
 | `vmfa_approved` | action | Editorial Workflow |
-| `vmfasf_smart_folders_registered` | action | Smart Folders |
 | `vmfa_cleanup_is_unused` | filter | Media Cleanup |
 | `vmfa_cleanup_oversized_thresholds` | filter | Media Cleanup |
 | `vmfa_cleanup_archive_folder_name` | filter | Media Cleanup |
@@ -934,3 +990,5 @@ add_filter( 'vmfa_export_manifest_columns', function ( array $columns ): array {
 | `vmfa_cleanup_scan_complete` | action | Media Cleanup |
 | `vmfa_export_dir` | filter | Folder Exporter |
 | `vmfa_export_manifest_columns` | filter | Folder Exporter |
+| `vmfa_migrate_drivers` | filter | Migrate |
+| `vmfa_migrate_process_batch` | action | Migrate |
