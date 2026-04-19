@@ -135,7 +135,7 @@ curl "https://example.com/wp-json/vmfo/v1/folders" \
 
 ## AI Abilities API
 
-Virtual Media Folders exposes three Abilities API tools for AI/MCP integrations:
+The [AI Ability add-on](https://github.com/soderlind/vmfa-ai-ability) exposes three Abilities API tools for AI/MCP integrations:
 
 - `vmfo/list-folders` (read-only)
 - `vmfo/create-folder` (write)
@@ -234,7 +234,7 @@ Recommended flow:
 - `vmfo/list-folders` and `vmfo/add-to-folder` require the `upload_files` capability.
 - `vmfo/create-folder` requires the `manage_categories` capability.
 
-For full end-to-end examples (including image upload and editor client setup), see [mcp.md](mcp.md).
+For full end-to-end examples (including image upload and editor client setup), see the [MCP Integration Guide](https://github.com/soderlind/vmfa-ai-ability/blob/main/docs/mcp.md) in the AI Ability add-on.
 
 ### WordPress MCP Adapter Examples
 
