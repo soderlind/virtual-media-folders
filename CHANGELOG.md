@@ -5,6 +5,13 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-04-19
+
+### Removed
+
+- **BREAKING:** Abilities API integration (`AbilitiesIntegration.php`) extracted to separate add-on `vmfa-ai-ability`
+- MCP tools (`vmfo/list-folders`, `vmfo/create-folder`, `vmfo/add-to-folder`) now require `vmfa-ai-ability` add-on
+
 ## [2.0.3] - 2026-03-27
 
 ### Added

@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 7.0
-Stable tag: 2.0.3
+Stable tag: 2.1.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -155,6 +155,10 @@ Only the folder organization is removed. Your media files are not deleted.
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
 == Changelog ==
+
+= 2.1.0 =
+* **BREAKING:** Abilities API integration extracted to separate add-on `vmfa-ai-ability`
+* Removed: MCP tools (`vmfo/list-folders`, `vmfo/create-folder`, `vmfo/add-to-folder`) - install `vmfa-ai-ability` for MCP support
 
 = 2.0.3 =
 * Added: `vmfo/create-folder` MCP ability (requires `manage_categories` capability)
