@@ -28,6 +28,7 @@ Virtual Media Folders brings virtual folder organization to your WordPress Media
 
 [**Add-On Manager**](https://github.com/soderlind/vmfa) lets you easily install and manage add-ons that extend Virtual Media Folders with powerful new features:
 
+* [**AI Ability**](https://github.com/soderlind/vmfa-ai-ability) – Registers MCP tools for AI agents via the WordPress Abilities API.
 * [**AI Organizer**](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders. This is add-on functionality requiring an API key from a supported AI service provider, or a local LLM.
 * [**Editorial Workflow**](https://github.com/soderlind/vmfa-editorial-workflow) – Role-based folder access, move restrictions, and Inbox workflow.
 * [**Folder Exporter**](https://github.com/soderlind/vmfa-folder-exporter) – Export folders (or subtrees) as ZIP archives with optional CSV manifests.
@@ -106,6 +107,7 @@ See the [MCP Integration guide](https://github.com/soderlind/virtual-media-folde
 
 Use the [**add-on manager**](https://github.com/soderlind/vmfa) to easily install and manage add-ons that extend Virtual Media Folders with powerful new features:
 
+* [Virtual Media Folders - AI Ability](https://github.com/soderlind/vmfa-ai-ability) – Registers MCP tools for AI agents via the WordPress Abilities API.
 * [Virtual Media Folders - AI Organizer](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders.
 * [Virtual Media Folders - Editorial Workflow](https://github.com/soderlind/vmfa-editorial-workflow) – Role-based folder access, move restrictions, and Inbox workflow.
 * [Virtual Media Folders - Folder Exporter](https://github.com/soderlind/vmfa-folder-exporter) – Export folders (or subtrees) as ZIP archives with optional CSV manifests.

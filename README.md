@@ -26,6 +26,7 @@ Virtual Media Folders brings folder organization to your WordPress Media Library
 ### Free add-ons
 Use the [**add-on manager**](https://github.com/soderlind/vmfa) to install and manage add-ons that extend Virtual Media Folders from a dedicated admin screen:
 
+- [**AI Ability**](https://github.com/soderlind/vmfa-ai-ability) – Registers MCP tools for AI agents via the WordPress Abilities API.
 - [**AI Organizer**](https://github.com/soderlind/vmfa-ai-organizer) – Uses vision-capable AI models to analyze actual image content and automatically organize your media library into virtual folders. This is add-on functionality requiring an API key from a supported AI service provider.
 - [**Editorial Workflow**](https://github.com/soderlind/vmfa-editorial-workflow) – Role-based folder access, move restrictions, and Inbox workflow.
 - [**Folder Exporter**](https://github.com/soderlind/vmfa-folder-exporter) – Export folders (or subtrees) as ZIP archives with optional CSV manifests.
