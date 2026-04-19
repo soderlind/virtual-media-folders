@@ -86,7 +86,7 @@ When inserting media from a block:
 
 ### AI Abilities
 
-Virtual Media Folders exposes Abilities API tools that can be used by AI agents and MCP adapters.
+With the [AI Ability add-on](https://github.com/soderlind/vmfa-ai-ability) installed, the following Abilities API tools are available for AI agents and MCP adapters:
 
 - **`vmfo/list-folders`** (read-only): Lists folders with `id`, `name`, `parent_id`, `path`, and `count`.
 - **`vmfo/create-folder`** (write): Creates a folder with `name` and optional `parent_id`.
