@@ -94,13 +94,13 @@ Permission model:
 * `vmfo/list-folders` and `vmfo/add-to-folder` require the `upload_files` capability.
 * `vmfo/create-folder` requires the `manage_categories` capability.
 
-See the [MCP Integration guide](https://github.com/soderlind/virtual-media-folders/blob/main/docs/mcp.md) for client configuration (Claude, GitHub Copilot, Cursor) and a full usage walkthrough.
+See the [MCP Integration guide](https://github.com/soderlind/vmfa-ai-ability/blob/main/docs/mcp.md) for client configuration (Claude, GitHub Copilot, Cursor) and a full usage walkthrough.
 
 = Documentation =
 
 * [Accessibility](https://github.com/soderlind/virtual-media-folders/blob/main/docs/a11y.md) – Keyboard navigation and screen reader support
 * [Development](https://github.com/soderlind/virtual-media-folders/blob/main/docs/development.md) – Setup, API reference, hooks, and contributing
-* [MCP Integration](https://github.com/soderlind/virtual-media-folders/blob/main/docs/mcp.md) – MCP client configuration, upload flow, and AI agent usage
+* [MCP Integration](https://github.com/soderlind/vmfa-ai-ability/blob/main/docs/mcp.md) – MCP client configuration, upload flow, and AI agent usage using the [AI Ability](https://github.com/soderlind/vmfa-ai-ability) add-on
 * [Add-on Development](https://github.com/soderlind/virtual-media-folders/blob/main/docs/addon-development.md) – Guide to building add-on plugins
 
 = Free add-ons =
