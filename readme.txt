@@ -156,6 +156,10 @@ Only the folder organization is removed. Your media files are not deleted.
 
 Virtual Media Folders works entirely within the WordPress admin. It doesn't affect your front-end theme.
 
+= Does this .. ? =
+
+If you are missing a feature and the add-ons don't cover it, please [open a feature request](https://github.com/soderlind/virtual-media-folders/issues/new).
+
 == Changelog ==
 
 = 2.1.0 =
