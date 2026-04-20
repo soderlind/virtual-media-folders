@@ -160,7 +160,7 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 If you are missing a feature and the [add-ons](https://github.com/soderlind/vmfa/) don't cover it, please [open a feature request](https://github.com/soderlind/virtual-media-folders/issues/new) :)
 
-The Migrate add-on was created in response to a user request for migration from Enhanced Media Library, but it also supports FileBird, Real Media Library, HappyFiles, WP Media Folder, Media Library Assistant, and CatFolders.
+The [Migrate](https://github.com/soderlind/vmfa-migrate) add-on was created in response to a user request for migration from Enhanced Media Library, but it also supports FileBird, Real Media Library, HappyFiles, WP Media Folder, Media Library Assistant, and CatFolders.
 
 == Changelog ==
 
