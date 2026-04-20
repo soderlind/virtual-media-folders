@@ -158,7 +158,7 @@ Virtual Media Folders works entirely within the WordPress admin. It doesn't affe
 
 = Does this .. ? =
 
-If you are missing a feature and the [add-ons](https://github.com/soderlind/vmfa/) don't cover it, please [open a feature request](https://github.com/soderlind/virtual-media-folders/issues/new).
+If you are missing a feature and the [add-ons](https://github.com/soderlind/vmfa/) don't cover it, please [open a feature request](https://github.com/soderlind/virtual-media-folders/issues/new) :)
 
 == Changelog ==
 
