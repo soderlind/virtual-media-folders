@@ -100,6 +100,12 @@ function initGutenbergIntegration() {
 	wp.media.view.AttachmentsBrowser.prototype.render = function () {
 		originalRender.apply(this, arguments);
 
+		const mediaState = this.controller?.state?.();
+		const mediaStateId = mediaState?.id || mediaState?.get?.('id');
+		if (mediaStateId === 'gallery-edit') {
+			return this;
+		}
+
 		// Only add sidebar if not already present
 		if (!this.$el.find('.vmf-editor-folder-sidebar').length) {
 			// Find the attachments container
