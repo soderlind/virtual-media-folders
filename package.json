@@ -15,7 +15,7 @@
 	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/react": "^14.0.0",
+		"@testing-library/react": "^16.3.2",
 		"@testing-library/user-event": "^14.6.1",
 		"@vitejs/plugin-react": "^5.1.2",
 		"@wordpress/scripts": "^32.6.0",
