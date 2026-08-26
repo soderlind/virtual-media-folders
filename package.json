@@ -17,7 +17,7 @@
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^14.0.0",
 		"@testing-library/user-event": "^14.6.1",
-		"@vitejs/plugin-react": "^5.1.2",
+		"@vitejs/plugin-react": "^6.0.5",
 		"@wordpress/scripts": "^32.6.0",
 		"jsdom": "^24.0.0",
 		"react": "^18.3.1",
