@@ -1165,9 +1165,13 @@ Use WordPress Design System (`--wpds-*`) tokens instead of hardcoded colors. Wor
 | Border | `--wpds-color-stroke-surface-neutral` | `#dcdcde` |
 | Light border | `--wpds-color-stroke-surface-neutral-weak` | `#f0f0f1` |
 | Input border | `--wpds-color-stroke-interactive-neutral` | `#8c8f94` |
-| Success text / background | `--wpds-color-foreground-content-success-weak` / `--wpds-color-background-surface-success-weak` | `#00a32a` / `#edfaef` |
+| Progress track | `--wpds-color-background-track-neutral` | `#dcdcde` |
+| Success text / background / border | `--wpds-color-foreground-content-success-weak` / `--wpds-color-background-surface-success-weak` / `--wpds-color-stroke-surface-success-strong` | `#00a32a` / `#edfaef` / `#00a32a` |
+| Strong success text (on success background) | `--wpds-color-foreground-content-success` | `#007017` |
 | Warning text / background / border | `--wpds-color-foreground-content-warning-weak` / `--wpds-color-background-surface-warning-weak` / `--wpds-color-stroke-surface-warning-strong` | `#996800` / `#fff8e5` / `#dba617` |
 | Error text / background / border | `--wpds-color-foreground-content-error-weak` / `--wpds-color-background-surface-error-weak` / `--wpds-color-stroke-surface-error-strong` | `#d63638` / `#fcf0f1` / `#d63638` |
+| Strong error text (e.g. hover) | `--wpds-color-foreground-content-error` | `#8a2424` |
+| Error badge background / text | `--wpds-color-background-interactive-error-strong` / `--wpds-color-foreground-interactive-error-strong` | `#d63638` / `#fff` |
 | Radius | `--wpds-border-radius-sm` / `-md` / `-lg` | `2px` / `4px` / `8px` |
 | Elevation | `--wpds-elevation-md` / `-lg` | Subtle / overlay shadow |
 | Primary action (accent) | `var(--wp-admin-theme-color, #2271b1)` | Follows the admin color scheme |

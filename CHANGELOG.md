@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Classic WP 6.x fallbacks for six more design tokens used by the add-ons: `foreground-content-success`, `foreground-content-error`, `foreground-interactive-error-strong`, `background-interactive-error-strong`, `background-track-neutral` and `stroke-surface-success-strong`. On WordPress 6.8–6.9, add-on success/error badges, notices and progress tracks now match the classic admin palette.
+
 ## [2.2.0] - 2026-10-26
 
 ### Changed
