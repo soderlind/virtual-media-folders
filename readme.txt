@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 7.1
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -130,6 +130,9 @@ If you are missing a feature and the [add-ons](https://github.com/soderlind/vmfa
 The [Migrate](https://github.com/soderlind/vmfa-migrate) add-on was created in response to a user request for migration from Enhanced Media Library, but it also supports FileBird, Real Media Library, HappyFiles, WP Media Folder, Media Library Assistant, and CatFolders.
 
 == Changelog ==
+
+= 2.2.1 =
+* Added: Classic WordPress 6.8–6.9 fallbacks for six more design tokens used by the add-ons, so success/error badges, notices and progress tracks match the classic admin palette.
 
 = 2.2.0 =
 * Changed: Styles use WordPress Design System (`--wpds-*`) tokens, so the UI follows WordPress 7.0+ styling automatically; WordPress 6.8–6.9 gets a bundled fallback with the classic admin palette.

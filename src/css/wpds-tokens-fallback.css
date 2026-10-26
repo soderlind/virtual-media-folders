@@ -28,13 +28,16 @@
 	--wpds-color-foreground-content-neutral: #1e1e1e;
 	/* #646970 keeps WCAG AA contrast (5.15:1) on the #f6f7f7 surface. */
 	--wpds-color-foreground-content-neutral-weak: #646970;
+	--wpds-color-foreground-content-success: #007017;
 	--wpds-color-foreground-content-success-weak: #00a32a;
 	--wpds-color-foreground-content-warning-weak: #996800;
+	--wpds-color-foreground-content-error: #8a2424;
 	--wpds-color-foreground-content-error-weak: #d63638;
 
 	/* Foreground: interactive */
 	--wpds-color-foreground-interactive-neutral-weak: #50575e;
 	--wpds-color-foreground-interactive-brand-strong: #fff;
+	--wpds-color-foreground-interactive-error-strong: #fff;
 
 	/* Background: surfaces */
 	--wpds-color-background-surface-neutral-strong: #fff;
@@ -45,10 +48,15 @@
 
 	/* Background: interactive */
 	--wpds-color-background-interactive-neutral-weak-active: #e0e0e0;
+	--wpds-color-background-interactive-error-strong: #d63638;
+
+	/* Background: track */
+	--wpds-color-background-track-neutral: #dcdcde;
 
 	/* Stroke */
 	--wpds-color-stroke-surface-neutral: #dcdcde;
 	--wpds-color-stroke-surface-neutral-weak: #f0f0f1;
+	--wpds-color-stroke-surface-success-strong: #00a32a;
 	--wpds-color-stroke-surface-warning-strong: #dba617;
 	--wpds-color-stroke-surface-error-strong: #d63638;
 	--wpds-color-stroke-interactive-neutral: #8c8f94;
