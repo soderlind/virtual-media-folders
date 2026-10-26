@@ -1,0 +1,63 @@
+/**
+ * WordPress Design System (WPDS) token fallback.
+ *
+ * WordPress 7.0+ ships the `--wpds-*` design tokens in the core `wp-theme`
+ * stylesheet. Older WordPress versions do not, so this file defines the
+ * subset of tokens used by Virtual Media Folders (and its add-ons) with the
+ * classic WP 6.x admin palette.
+ *
+ * The `:where(:root)` selector has zero specificity, so whenever core (or the
+ * Gutenberg plugin) defines a token, core's value wins regardless of load
+ * order. This file only fills the gaps.
+ *
+ * Token names follow the canonical `@wordpress/theme` set, which core loads
+ * from wp-includes/css/dist/theme/design-tokens.css. `npm run lint:tokens`
+ * verifies every name here against the package and (when available) core.
+ * The elevation tokens are not shipped by core 7.1 yet, so the values below
+ * are always used there until core adds them.
+ *
+ * Brand/accent colours are intentionally NOT defined here: plugin CSS uses
+ * `--wp-admin-theme-color`, which follows the user's admin colour scheme.
+ *
+ * @package VirtualMediaFolders
+ * @since   2.2.0
+ */
+
+:where(:root) {
+	/* Foreground: content */
+	--wpds-color-foreground-content-neutral: #1e1e1e;
+	--wpds-color-foreground-content-neutral-weak: #757575;
+	--wpds-color-foreground-content-success-weak: #00a32a;
+	--wpds-color-foreground-content-warning-weak: #996800;
+	--wpds-color-foreground-content-error-weak: #d63638;
+
+	/* Foreground: interactive */
+	--wpds-color-foreground-interactive-neutral-weak: #50575e;
+	--wpds-color-foreground-interactive-brand-strong: #fff;
+
+	/* Background: surfaces */
+	--wpds-color-background-surface-neutral-strong: #fff;
+	--wpds-color-background-surface-neutral-weak: #f6f7f7;
+	--wpds-color-background-surface-success-weak: #edfaef;
+	--wpds-color-background-surface-warning-weak: #fff8e5;
+	--wpds-color-background-surface-error-weak: #fcf0f1;
+
+	/* Background: interactive */
+	--wpds-color-background-interactive-neutral-weak-active: #e0e0e0;
+
+	/* Stroke */
+	--wpds-color-stroke-surface-neutral: #dcdcde;
+	--wpds-color-stroke-surface-neutral-weak: #f0f0f1;
+	--wpds-color-stroke-surface-warning-strong: #dba617;
+	--wpds-color-stroke-surface-error-strong: #d63638;
+	--wpds-color-stroke-interactive-neutral: #8c8f94;
+
+	/* Border radius */
+	--wpds-border-radius-sm: 2px;
+	--wpds-border-radius-md: 4px;
+	--wpds-border-radius-lg: 8px;
+
+	/* Elevation */
+	--wpds-elevation-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+	--wpds-elevation-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

@@ -55,7 +55,7 @@
 /* Neutral surface — section headers, hover states, thumbnails */
 [class*="vmfa-"][class*="__header"],
 [class*="vmfa-"][class*="-summary"] {
-	background: #f0f0f0;
+	background: var(--wpds-color-background-surface-neutral-weak);
 }
 
 /* Consistent border color */
@@ -64,16 +64,16 @@
 [class*="vmfa-"][class*="-group"],
 .vmfa-tab-content table th,
 .vmfa-tab-content table td {
-	border-color: #ddd;
+	border-color: var(--wpds-color-stroke-surface-neutral);
 }
 
 /* Progress bar track */
 [class*="vmfa-"][class*="__progress-bar"],
 [class*="vmfa-"][class*="__bar-wrapper"] {
-	background: #f0f0f0;
+	background: var(--wpds-color-background-surface-neutral-weak);
 }
 
 /* Stat card borders */
 [class*="vmfa-"][class*="__stat-card"] {
-	border-color: #ddd;
+	border-color: var(--wpds-color-stroke-surface-neutral);
 }

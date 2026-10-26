@@ -5,9 +5,7 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		admin: path.resolve(__dirname, 'src/admin/index.js'),
-		'admin-wp7': path.resolve(__dirname, 'src/admin/wp7-compat.js'),
 		editor: path.resolve(__dirname, 'src/editor/index.js'),
-		'editor-wp7': path.resolve(__dirname, 'src/editor/wp7-compat.js'),
 		settings: path.resolve(__dirname, 'src/admin/settings.js'),
 		shared: path.resolve(__dirname, 'src/shared/index.js'),
 	},

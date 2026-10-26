@@ -129,16 +129,6 @@ class Admin {
 			} );
 		}
 
-		// On WP 7.0+, override the sidebar background to match the new gray scale.
-		if ( vmfo_is_wp7() ) {
-			$critical_css .= '
-				.vmf-folder-tree-sidebar {
-					background: #f0f0f0;
-					border-right-color: #ddd;
-				}
-			';
-		}
-
 		wp_add_inline_style( 'vmfo-admin', $critical_css );
 	}
 
@@ -475,24 +465,9 @@ class Admin {
 		wp_enqueue_style(
 			'vmfo-admin',
 			VMFO_URL . 'build/admin.css',
-			[ 'wp-components' ],
+			[ 'wp-components', DesignTokens::HANDLE ],
 			$asset[ 'version' ] ?? VMFO_VERSION
 		);
-
-		// Enqueue WP 7.0+ compatibility overrides.
-		if ( vmfo_is_wp7() ) {
-			$wp7_asset_file = VMFO_PATH . 'build/admin-wp7.asset.php';
-			$wp7_version    = file_exists( $wp7_asset_file )
-				? ( include $wp7_asset_file )['version'] ?? VMFO_VERSION
-				: VMFO_VERSION;
-
-			wp_enqueue_style(
-				'vmfo-admin-wp7',
-				VMFO_URL . 'build/admin-wp7.css',
-				[ 'vmfo-admin', 'wp-base-styles' ],
-				$wp7_version
-			);
-		}
 
 		// Determine the folder view URL based on showAllMedia setting.
 		$show_all_media  = (bool) Settings::get( 'show_all_media' );

@@ -70,24 +70,9 @@ final class Editor {
 		wp_enqueue_style(
 			self::SCRIPT_HANDLE,
 			VMFO_URL . 'build/editor.css',
-			[ 'wp-components' ],
+			[ 'wp-components', DesignTokens::HANDLE ],
 			$asset[ 'version' ]
 		);
-
-		// Enqueue WP 7.0+ compatibility overrides.
-		if ( vmfo_is_wp7() ) {
-			$wp7_asset_file = VMFO_PATH . 'build/editor-wp7.asset.php';
-			$wp7_version    = file_exists( $wp7_asset_file )
-				? ( include $wp7_asset_file )['version'] ?? VMFO_VERSION
-				: VMFO_VERSION;
-
-			wp_enqueue_style(
-				'vmfo-editor-wp7',
-				VMFO_URL . 'build/editor-wp7.css',
-				[ self::SCRIPT_HANDLE, 'wp-base-styles' ],
-				$wp7_version
-			);
-		}
 
 		// Pass folder data to JavaScript.
 		wp_add_inline_script(

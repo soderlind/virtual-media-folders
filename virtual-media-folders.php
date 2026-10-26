@@ -194,6 +194,10 @@ add_action( 'plugins_loaded', static function () {
 
 	\VirtualMediaFolders\Taxonomy::init();
 
+	if ( class_exists( 'VirtualMediaFolders\\DesignTokens' ) ) {
+		\VirtualMediaFolders\DesignTokens::init();
+	}
+
 	// Run taxonomy migration after taxonomy is registered.
 	add_action( 'init', 'vmfo_maybe_migrate_taxonomy', 20 );
 
