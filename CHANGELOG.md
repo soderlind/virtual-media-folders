@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-10-26
+
 ### Changed
 
 - Styles now use WordPress Design System (`--wpds-*`) tokens, so the folder sidebar, editor modal and settings UI follow WordPress 7.0+ styling automatically. WordPress 6.8–6.9 gets a bundled token fallback (`vmfo-tokens` style handle) with the classic admin palette.

@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: media, ai, organization, media library, folders
 Requires at least: 6.8
 Tested up to: 7.1
-Stable tag: 2.1.5
+Stable tag: 2.2.0
 Requires PHP: 8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -130,6 +130,13 @@ If you are missing a feature and the [add-ons](https://github.com/soderlind/vmfa
 The [Migrate](https://github.com/soderlind/vmfa-migrate) add-on was created in response to a user request for migration from Enhanced Media Library, but it also supports FileBird, Real Media Library, HappyFiles, WP Media Folder, Media Library Assistant, and CatFolders.
 
 == Changelog ==
+
+= 2.2.0 =
+* Changed: Styles use WordPress Design System (`--wpds-*`) tokens, so the UI follows WordPress 7.0+ styling automatically; WordPress 6.8–6.9 gets a bundled fallback with the classic admin palette.
+* Changed: Accent colors follow the admin color scheme on all supported WordPress versions.
+* Changed: More readable warning text in the add-on UI; editor modal folder header matches the Media Library sidebar.
+* Removed: Separate WordPress 7 admin/editor override stylesheets.
+* Developer: New `vmfo-tokens` style handle (dependency for stylesheets using `--wpds-*` tokens) and `npm run lint:tokens` check.
 
 = 2.1.5 =
 * Added: Block inserter "Media" tab now lists your top-level virtual folders as image sources, so you can insert images straight from a folder alongside Images and Openverse.
