@@ -5,6 +5,26 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [2.2.0] - 2026-10-26
+
+### Changed
+
+- Styles now use WordPress Design System (`--wpds-*`) tokens, so the folder sidebar, editor modal and settings UI follow WordPress 7.0+ styling automatically. WordPress 6.8–6.9 gets a bundled token fallback (`vmfo-tokens` style handle) with the classic admin palette.
+- Accent colors follow the admin color scheme on all supported WordPress versions.
+- Warning text in the shared add-on UI uses a darker, more readable amber.
+- The editor media modal folder header matches the Media Library sidebar header.
+
+### Removed
+
+- Separate WordPress 7 admin/editor override stylesheets (`build/admin-wp7.css`, `build/editor-wp7.css`); the base styles now cover WP 7.
+
+### Developer
+
+- New `vmfo-tokens` style handle; add it as a dependency of any stylesheet that uses `--wpds-*` tokens. `AbstractSettingsTab::get_style_deps()` includes it by default.
+- New `npm run lint:tokens` check.
+
 ## [2.1.5] - 2026-08-26
 
 ### Added

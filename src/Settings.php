@@ -164,7 +164,7 @@ final class Settings {
 		wp_enqueue_style(
 			'vmfo-shared',
 			VMFO_URL . 'build/shared.css',
-			[ 'wp-components' ],
+			[ 'wp-components', DesignTokens::HANDLE ],
 			$asset[ 'version' ]
 		);
 	}
@@ -533,7 +533,7 @@ final class Settings {
 		wp_enqueue_style(
 			'vmfo-settings-subtabs',
 			VMFO_URL . 'src/css/settings-subtabs.css',
-			[],
+			[ DesignTokens::HANDLE ],
 			VMFO_VERSION
 		);
 

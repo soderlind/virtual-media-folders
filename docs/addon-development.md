@@ -219,7 +219,8 @@ final class Plugin extends AbstractPlugin {
 The base class handles:
 - Loading `build/{entry}.asset.php` for dependency/version info
 - Enqueuing JS, CSS, and script translations
-- WP 7+ design-token compat CSS (shared `wp7-compat-base.css` from VMF core + plugin-specific `build/wp7-compat.css`)
+- Design tokens: the main style depends on `vmfo-tokens` (`--wpds-*` tokens with a WP < 7 fallback)
+- WP 7+ compat CSS (shared `wp7-compat-base.css` from VMF core + plugin-specific `build/wp7-compat.css`)
 - Fallback standalone admin menu under Media when the parent plugin doesn't support tabs
 
 **Minimal example:**
@@ -1148,22 +1149,35 @@ $tabs['media-cleanup'] = [
 ];
 ```
 
-### Color Palette
+### Color Palette (Design Tokens)
 
-Use WordPress admin colors for consistency:
+Use WordPress Design System (`--wpds-*`) tokens instead of hardcoded colors. WordPress 7.0+ provides them via the core `wp-theme` stylesheet. On older versions, VMF's `vmfo-tokens` style handle provides a fallback with the classic WP 6.x palette. `AbstractSettingsTab::get_style_deps()` already includes `vmfo-tokens`; if you enqueue styles yourself, add `'vmfo-tokens'` to the dependencies.
 
-| Purpose | Color | Usage |
-|---------|-------|-------|
-| Primary text | `#1d2327` | Headings, important text |
-| Secondary text | `#646970` | Descriptions, help text |
-| Muted text | `#a7aaad` | Disabled, placeholders |
-| Border | `#c3c4c7` | Card borders |
-| Light border | `#f0f0f1` | Internal dividers |
-| Background | `#f6f7f7` | Expandable headers, hover states |
-| Primary action | `#2271b1` | Links, icons, primary buttons |
-| Success | `#00a32a` | Success states, approved |
-| Warning | `#dba617` | Warnings, pending |
-| Error | `#d63638` | Errors, needs attention |
+| Purpose | Token | WP 6.x fallback |
+|---------|-------|-----------------|
+| Primary text | `--wpds-color-foreground-content-neutral` | `#1e1e1e` |
+| Secondary text | `--wpds-color-foreground-content-neutral-weak` | `#646970` |
+| Secondary icons / links | `--wpds-color-foreground-interactive-neutral-weak` | `#50575e` |
+| Text on brand background | `--wpds-color-foreground-interactive-brand-strong` | `#fff` |
+| Surface (cards) | `--wpds-color-background-surface-neutral-strong` | `#fff` |
+| Background (headers) | `--wpds-color-background-surface-neutral-weak` | `#f6f7f7` |
+| Hover / active background | `--wpds-color-background-interactive-neutral-weak-active` | `#e0e0e0` |
+| Border | `--wpds-color-stroke-surface-neutral` | `#dcdcde` |
+| Light border | `--wpds-color-stroke-surface-neutral-weak` | `#f0f0f1` |
+| Input border | `--wpds-color-stroke-interactive-neutral` | `#8c8f94` |
+| Success text / background | `--wpds-color-foreground-content-success-weak` / `--wpds-color-background-surface-success-weak` | `#00a32a` / `#edfaef` |
+| Warning text / background / border | `--wpds-color-foreground-content-warning-weak` / `--wpds-color-background-surface-warning-weak` / `--wpds-color-stroke-surface-warning-strong` | `#996800` / `#fff8e5` / `#dba617` |
+| Error text / background / border | `--wpds-color-foreground-content-error-weak` / `--wpds-color-background-surface-error-weak` / `--wpds-color-stroke-surface-error-strong` | `#d63638` / `#fcf0f1` / `#d63638` |
+| Radius | `--wpds-border-radius-sm` / `-md` / `-lg` | `2px` / `4px` / `8px` |
+| Elevation | `--wpds-elevation-md` / `-lg` | Subtle / overlay shadow |
+| Primary action (accent) | `var(--wp-admin-theme-color, #2271b1)` | Follows the admin color scheme |
+
+Notes:
+
+- Don't add fallback values to `--wpds-*` tokens (`var(--wpds-…, #fff)`); the fallback file handles that.
+- Use `--wp-admin-theme-color` (with a hex fallback) for accent colors. It follows the user's admin color scheme; the `--wpds-*` brand tokens do not.
+- Only tokens defined in VMF's `src/css/wpds-tokens-fallback.css` are guaranteed on WP < 7. Need another token? Add it there (`npm run lint:tokens` validates it).
+- A few values core itself hardcodes (for example `#c3c4c7` nav-tab borders, `#a7aaad` view-switch icons) can stay literal.
 
 ### Statistics Card
 
@@ -1213,15 +1227,15 @@ const stats = [
     grid-template-columns: repeat(4, 1fr);
     padding: 24px 20px;
     text-align: center;
-    background: #fff;
-    border: 1px solid #c3c4c7;
+    background: var(--wpds-color-background-surface-neutral-strong);
+    border: 1px solid var(--wpds-color-stroke-surface-neutral);
     border-radius: 4px;
     margin-bottom: 20px;
 }
 
 .my-addon-stat-item {
     padding: 0 16px;
-    border-right: 1px solid #f0f0f1;
+    border-right: 1px solid var(--wpds-color-stroke-surface-neutral-weak);
 }
 
 .my-addon-stat-item:last-child {
@@ -1232,12 +1246,12 @@ const stats = [
     font-size: 32px;
     font-weight: 600;
     line-height: 1.2;
-    color: #1d2327;
+    color: var(--wpds-color-foreground-content-neutral);
 }
 
 .my-addon-stat-label {
     font-size: 13px;
-    color: #646970;
+    color: var(--wpds-color-foreground-content-neutral-weak);
     margin-top: 4px;
 }
 
@@ -1273,8 +1287,8 @@ Use card containers for grouping related settings:
 
 ```css
 .my-addon-card {
-    background: #fff;
-    border: 1px solid #c3c4c7;
+    background: var(--wpds-color-background-surface-neutral-strong);
+    border: 1px solid var(--wpds-color-stroke-surface-neutral);
     border-radius: 4px;
     margin-bottom: 20px;
 }
@@ -1284,14 +1298,14 @@ Use card containers for grouping related settings:
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 1px solid #f0f0f1;
+    border-bottom: 1px solid var(--wpds-color-stroke-surface-neutral-weak);
 }
 
 .my-addon-card-header h3 {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #1d2327;
+    color: var(--wpds-color-foreground-content-neutral);
 }
 
 .my-addon-card-body {
@@ -1300,7 +1314,7 @@ Use card containers for grouping related settings:
 
 .my-addon-card-description {
     margin: 0 0 20px;
-    color: #646970;
+    color: var(--wpds-color-foreground-content-neutral-weak);
 }
 ```
 
@@ -1314,7 +1328,7 @@ For complex data like permissions or rules:
     align-items: center;
     width: 100%;
     padding: 12px 16px;
-    background: #f6f7f7;
+    background: var(--wpds-color-background-surface-neutral-weak);
     border: none;
     cursor: pointer;
     text-align: left;
@@ -1323,23 +1337,23 @@ For complex data like permissions or rules:
 }
 
 .my-addon-expandable-header:hover {
-    background: #f0f0f1;
+    background: var(--wpds-color-background-interactive-neutral-weak-active);
 }
 
 .my-addon-toggle-icon {
     margin-right: 8px;
-    color: #50575e;
+    color: var(--wpds-color-foreground-interactive-neutral-weak);
 }
 
 .my-addon-item-name {
     flex: 1;
     font-weight: 500;
-    color: #1d2327;
+    color: var(--wpds-color-foreground-content-neutral);
 }
 
 .my-addon-item-count {
     font-size: 12px;
-    color: #646970;
+    color: var(--wpds-color-foreground-content-neutral-weak);
 }
 ```
 
@@ -1368,7 +1382,7 @@ import { Button } from '@wordpress/components';
 .my-addon-actions {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid #dcdcde;
+    border-top: 1px solid var(--wpds-color-stroke-surface-neutral);
 }
 ```
 

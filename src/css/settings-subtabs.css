@@ -6,7 +6,7 @@
  */
 
 .vmfo-nav-tabs .nav-tab-active {
-	background: #ffffff;
+	background: var(--wpds-color-background-surface-neutral-strong);
 }
 
 .vmfo-subtab-nav {
@@ -14,7 +14,8 @@
 	gap: 0;
 	margin: 0;
 	padding: 0;
-	background: #ffffff;
+	background: var(--wpds-color-background-surface-neutral-strong);
+	/* Literal to match core .nav-tab borders, which are not tokenised. */
 	border-bottom: 1px solid #c3c4c7;
 }
 
@@ -22,7 +23,7 @@
 	display: inline-block;
 	padding: 8px 16px;
 	text-decoration: none;
-	color: #50575e;
+	color: var(--wpds-color-foreground-interactive-neutral-weak);
 	font-size: 13px;
 	border-bottom: 2px solid transparent;
 	margin-bottom: -1px;
@@ -30,13 +31,13 @@
 }
 
 .vmfo-subtab-link:hover {
-	color: #135e96;
+	color: var(--wp-admin-theme-color-darker-20, #135e96);
 }
 
 .vmfo-subtab-link.is-active {
-	color: #1d2327;
-	border-bottom-color: #3582c4;
-	background: #ffffff;
+	color: var(--wpds-color-foreground-content-neutral);
+	border-bottom-color: var(--wp-admin-theme-color, #3582c4);
+	background: var(--wpds-color-background-surface-neutral-strong);
 }
 
 /* Add spacing when no subtab nav is present */

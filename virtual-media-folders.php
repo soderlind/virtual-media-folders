@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name: Virtual Media Folders
  * Description: Virtual folder organization and smart management for the WordPress Media Library.
- * Version: 2.1.5
+ * Version: 2.2.0
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Per Soderlind
@@ -55,7 +55,7 @@ if ( version_compare( get_bloginfo( 'version' ), '6.8', '<' ) ) {
 /*
  * Define plugin constants.
  */
-define( 'VMFO_VERSION', '2.1.5' );
+define( 'VMFO_VERSION', '2.2.0' );
 define( 'VMFO_FILE', __FILE__ );
 define( 'VMFO_PATH', __DIR__ . '/' );
 define( 'VMFO_URL', plugin_dir_url( __FILE__ ) );
@@ -193,6 +193,10 @@ function vmfo_maybe_migrate_taxonomy(): void {
 add_action( 'plugins_loaded', static function () {
 
 	\VirtualMediaFolders\Taxonomy::init();
+
+	if ( class_exists( 'VirtualMediaFolders\\DesignTokens' ) ) {
+		\VirtualMediaFolders\DesignTokens::init();
+	}
 
 	// Run taxonomy migration after taxonomy is registered.
 	add_action( 'init', 'vmfo_maybe_migrate_taxonomy', 20 );

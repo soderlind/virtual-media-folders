@@ -23,6 +23,7 @@ composer.lock
 phpcs.xml
 phpcs.xml.dist
 i18n-map.json
+.stylelintrc.tokens.mjs
 
 # Source JavaScript/CSS files (compiled versions are in build/)
 src/admin/

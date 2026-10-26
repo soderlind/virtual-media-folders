@@ -105,12 +105,15 @@ abstract class AbstractSettingsTab {
 	}
 
 	/**
-	 * Extra CSS style-sheet dependencies for the main style. Default: ['wp-components'].
+	 * Extra CSS style-sheet dependencies for the main style.
+	 *
+	 * Default: ['wp-components', 'vmfo-tokens']. Keep 'vmfo-tokens' when
+	 * overriding if the add-on CSS uses `--wpds-*` design tokens.
 	 *
 	 * @return string[]
 	 */
 	protected function get_style_deps(): array {
-		return [ 'wp-components' ];
+		return [ 'wp-components', \VirtualMediaFolders\DesignTokens::HANDLE ];
 	}
 
 	/**
@@ -344,7 +347,7 @@ abstract class AbstractSettingsTab {
 				wp_register_style(
 					$base_handle,
 					$vmf_url,
-					[ 'wp-base-styles' ],
+					[ 'wp-base-styles', \VirtualMediaFolders\DesignTokens::HANDLE ],
 					(string) filemtime( $vmf_css )
 				);
 			}
