@@ -26,7 +26,8 @@
 :where(:root) {
 	/* Foreground: content */
 	--wpds-color-foreground-content-neutral: #1e1e1e;
-	--wpds-color-foreground-content-neutral-weak: #757575;
+	/* #646970 keeps WCAG AA contrast (5.15:1) on the #f6f7f7 surface. */
+	--wpds-color-foreground-content-neutral-weak: #646970;
 	--wpds-color-foreground-content-success-weak: #00a32a;
 	--wpds-color-foreground-content-warning-weak: #996800;
 	--wpds-color-foreground-content-error-weak: #d63638;

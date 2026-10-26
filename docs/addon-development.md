@@ -1156,7 +1156,7 @@ Use WordPress Design System (`--wpds-*`) tokens instead of hardcoded colors. Wor
 | Purpose | Token | WP 6.x fallback |
 |---------|-------|-----------------|
 | Primary text | `--wpds-color-foreground-content-neutral` | `#1e1e1e` |
-| Secondary text | `--wpds-color-foreground-content-neutral-weak` | `#757575` |
+| Secondary text | `--wpds-color-foreground-content-neutral-weak` | `#646970` |
 | Secondary icons / links | `--wpds-color-foreground-interactive-neutral-weak` | `#50575e` |
 | Text on brand background | `--wpds-color-foreground-interactive-brand-strong` | `#fff` |
 | Surface (cards) | `--wpds-color-background-surface-neutral-strong` | `#fff` |
