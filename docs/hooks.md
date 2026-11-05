@@ -113,6 +113,34 @@ add_filter( 'vmfo_include_child_folders', '__return_true' );
 
 ---
 
+#### `vmfo_folder_query_suppress_filters`
+
+Control whether folder-filtered media modal queries run with `suppress_filters`. Suppressing filters keeps the folder grid from coming back empty when another plugin's query filters interfere, but it also switches off SQL clause filters (`posts_where`, `posts_join`, `posts_clauses`) that plugins such as WPML use to filter media by language.
+
+| Property | Value |
+|----------|-------|
+| **Since** | 2.3.0 |
+| **File** | `src/Editor.php` |
+
+**Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `$suppress` | `bool` | Default `true`. |
+| `$query_args` | `array` | Attachment query arguments. |
+| `$view` | `string` | `folder` for a single folder, `uncategorized` for media without a folder. |
+
+**Return:** `bool`
+
+**Example:**
+
+```php
+// Keep WPML's language filter active in folder views.
+add_filter( 'vmfo_folder_query_suppress_filters', '__return_false' );
+```
+
+---
+
 #### `vmfo_default_settings`
 
 Override the default plugin settings before they are stored.
@@ -957,6 +985,7 @@ add_action( 'vmfa_migrate_process_batch', function ( string $job_id, int $offset
 |------|------|--------|
 | `vmfo_upload_folder` | filter | Core |
 | `vmfo_include_child_folders` | filter | Core |
+| `vmfo_folder_query_suppress_filters` | filter | Core |
 | `vmfo_default_settings` | filter | Core |
 | `vmfo_setting_{$key}` | filter | Core |
 | `vmfo_settings` | filter | Core |

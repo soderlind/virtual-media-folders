@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace VirtualMediaFolders\Tests;
 
 use Brain\Monkey;
+use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use VirtualMediaFolders\Editor;
 use PHPUnit\Framework\TestCase;
@@ -106,9 +107,9 @@ class EditorTest extends TestCase {
 			->with( '5' )
 			->andReturn( 5 );
 
-		Functions\expect( 'apply_filters' )
+		Filters\expectApplied( 'vmfo_include_child_folders' )
 			->once()
-			->with( 'vmfo_include_child_folders', false, 5 )
+			->with( false, 5 )
 			->andReturn( false );
 
 		$query_args = [ 'post_type' => 'attachment' ];
@@ -166,6 +167,55 @@ class EditorTest extends TestCase {
 		$this->assertTrue( $result[ 'suppress_filters' ] );
 
 		unset( $_REQUEST[ 'query' ] );
+	}
+
+	/**
+	 * Test the folder query can keep query filters active.
+	 */
+	public function test_filter_ajax_query_args_folder_can_keep_filters(): void {
+		$_REQUEST[ 'query' ][ 'vmfo_folder' ] = '5';
+
+		Functions\when( 'taxonomy_exists' )->justReturn( true );
+		Functions\when( 'sanitize_text_field' )->returnArg();
+		Functions\when( 'wp_unslash' )->returnArg();
+		Functions\when( 'absint' )->alias( 'intval' );
+
+		Filters\expectApplied( 'vmfo_folder_query_suppress_filters' )
+			->once()
+			->with( true, \Mockery::type( 'array' ), 'folder' )
+			->andReturn( false );
+
+		$result = Editor::filter_ajax_query_args( [ 'post_type' => 'attachment' ] );
+
+		unset( $_REQUEST[ 'query' ] );
+
+		$this->assertFalse( $result[ 'suppress_filters' ] );
+		$this->assertSame( [ 5 ], $result[ 'tax_query' ][ 0 ][ 'terms' ] );
+	}
+
+	/**
+	 * Test the uncategorized query can keep query filters active.
+	 */
+	public function test_filter_ajax_query_args_uncategorized_can_keep_filters(): void {
+		$_REQUEST[ 'query' ][ 'vmfo_folder_exclude' ] = 'all';
+
+		Functions\when( 'taxonomy_exists' )->justReturn( true );
+		Functions\when( 'sanitize_text_field' )->returnArg();
+		Functions\when( 'wp_unslash' )->returnArg();
+		Functions\when( 'get_terms' )->justReturn( [ 1, 2, 3 ] );
+		Functions\when( 'is_wp_error' )->justReturn( false );
+
+		Filters\expectApplied( 'vmfo_folder_query_suppress_filters' )
+			->once()
+			->with( true, \Mockery::type( 'array' ), 'uncategorized' )
+			->andReturn( false );
+
+		$result = Editor::filter_ajax_query_args( [ 'post_type' => 'attachment' ] );
+
+		unset( $_REQUEST[ 'query' ] );
+
+		$this->assertFalse( $result[ 'suppress_filters' ] );
+		$this->assertSame( 'NOT IN', $result[ 'tax_query' ][ 0 ][ 'operator' ] );
 	}
 
 	/**
