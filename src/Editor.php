@@ -108,6 +108,8 @@ final class Editor {
 		$folder_list  = [];
 
 		if ( ! is_wp_error( $folders ) && is_array( $folders ) ) {
+			$counts = Taxonomy::filter_folder_counts( wp_list_pluck( $folders, 'count', 'term_id' ) );
+
 			foreach ( $folders as $folder ) {
 				$order = get_term_meta( $folder->term_id, 'vmfo_order', true );
 
@@ -116,7 +118,7 @@ final class Editor {
 					'name'       => $folder->name,
 					'slug'       => $folder->slug,
 					'parent'     => $folder->parent,
-					'count'      => $folder->count,
+					'count'      => $counts[ $folder->term_id ] ?? $folder->count,
 					'imageCount' => $image_counts[ $folder->term_id ] ?? 0,
 					'order'      => ( '' === $order ) ? null : (int) $order,
 				];
@@ -169,7 +171,7 @@ final class Editor {
 			}
 		}
 
-		return $counts;
+		return Taxonomy::filter_folder_counts( $counts, 'image' );
 	}
 
 	/**

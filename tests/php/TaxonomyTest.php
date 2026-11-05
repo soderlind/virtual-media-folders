@@ -99,4 +99,26 @@ class TaxonomyTest extends TestCase {
 
 		$this->assertTrue( true ); // Expectation verified by Brain\Monkey
 	}
+
+	public function test_filter_folder_counts_returns_counts_unchanged_by_default(): void {
+		$this->assertSame( [ 1 => 4, 2 => 0 ], Taxonomy::filter_folder_counts( [ 1 => 4, 2 => 0 ] ) );
+	}
+
+	public function test_filter_folder_counts_applies_filtered_values(): void {
+		Monkey\Filters\expectApplied( 'vmfo_folder_counts' )
+			->once()
+			->with( [ 1 => 4, 2 => 6, 3 => 1 ], 'image' )
+			->andReturn( [ 1 => '2', 2 => -5, 99 => 7 ] );
+
+		$counts = Taxonomy::filter_folder_counts( [ 1 => 4, 2 => 6, 3 => 1 ], 'image' );
+
+		// Cast to int, clamped at zero, missing folders keep their count, unknown folders ignored.
+		$this->assertSame( [ 1 => 2, 2 => 0, 3 => 1 ], $counts );
+	}
+
+	public function test_filter_folder_counts_ignores_non_array_return(): void {
+		Monkey\Filters\expectApplied( 'vmfo_folder_counts' )->once()->andReturn( null );
+
+		$this->assertSame( [ 1 => 4 ], Taxonomy::filter_folder_counts( [ 1 => 4 ] ) );
+	}
 }
