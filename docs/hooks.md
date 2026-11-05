@@ -113,6 +113,53 @@ add_filter( 'vmfo_include_child_folders', '__return_true' );
 
 ---
 
+#### `vmfo_folder_counts`
+
+Filter the number of attachments directly assigned to each folder. Use it to make folder counts match what the media grid shows, for example counting only media in the current language on a multilingual site. Applies to the Media Library sidebar, the block editor folder data and inserter image counts, and the `vmfo/v1/folders` and `vmfo/v1/folders/counts` REST endpoints.
+
+Counts are direct and don't include child folders. Where a total including child folders is needed, VMF adds them up after this filter. Folders left out of the returned array keep their original count.
+
+| Property | Value |
+|----------|-------|
+| **Since** | 2.3.0 |
+| **File** | `src/Taxonomy.php` |
+
+**Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `$counts` | `array<int, int>` | Direct counts keyed by folder term ID. |
+| `$post_mime_type` | `string` | MIME types counted, in the format `WP_Query`'s `post_mime_type` and `wp_post_mime_type_where()` accept: a media type such as `image`, or comma-separated MIME types. Empty for all. |
+
+**Return:** `array<int, int>`
+
+**Example — count with WP_Query, so language filters from multilingual plugins apply:**
+
+```php
+add_filter( 'vmfo_folder_counts', function ( array $counts, string $post_mime_type ): array {
+    foreach ( array_keys( $counts ) as $folder_id ) {
+        $query = new WP_Query( [
+            'post_type'      => 'attachment',
+            'post_status'    => 'inherit',
+            'post_mime_type' => $post_mime_type,
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'tax_query'      => [
+                [
+                    'taxonomy'         => 'vmfo_folder',
+                    'terms'            => $folder_id,
+                    'include_children' => false,
+                ],
+            ],
+        ] );
+        $counts[ $folder_id ] = $query->found_posts;
+    }
+    return $counts;
+}, 10, 2 );
+```
+
+---
+
 #### `vmfo_default_settings`
 
 Override the default plugin settings before they are stored.
@@ -957,6 +1004,7 @@ add_action( 'vmfa_migrate_process_batch', function ( string $job_id, int $offset
 |------|------|--------|
 | `vmfo_upload_folder` | filter | Core |
 | `vmfo_include_child_folders` | filter | Core |
+| `vmfo_folder_counts` | filter | Core |
 | `vmfo_default_settings` | filter | Core |
 | `vmfo_setting_{$key}` | filter | Core |
 | `vmfo_settings` | filter | Core |

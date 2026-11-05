@@ -232,4 +232,55 @@ class RestApiTest extends TestCase {
 			$data
 		);
 	}
+
+	/**
+	 * Test folder counts take the filtered path and still include child folders.
+	 */
+	public function test_get_folder_counts_applies_counts_filter_and_pads(): void {
+		Functions\when( 'is_wp_error' )->justReturn( false );
+		Functions\expect( 'get_terms' )
+			->once()
+			->with( \Mockery::on( fn ( $args ) => false === $args[ 'pad_counts' ] ) )
+			->andReturn( [
+				new \WP_Term( [ 'term_id' => 1, 'parent' => 0, 'count' => 10 ] ),
+				new \WP_Term( [ 'term_id' => 2, 'parent' => 1, 'count' => 5 ] ),
+			] );
+
+		add_filter( 'vmfo_folder_counts', '__return_empty_array' );
+		Monkey\Filters\expectApplied( 'vmfo_folder_counts' )
+			->once()
+			->with( [ 1 => 10, 2 => 5 ], '' )
+			->andReturn( [ 1 => 3, 2 => 2 ] );
+
+		$response = $this->api->get_folder_counts( new \WP_REST_Request() );
+
+		$this->assertSame( [ 1 => 5, 2 => 2 ], $response->get_data() );
+	}
+
+	/**
+	 * Test folder counts keep the padded fast path when nothing filters counts.
+	 */
+	public function test_get_folder_counts_fast_path_without_filter(): void {
+		Functions\when( 'is_wp_error' )->justReturn( false );
+		Functions\expect( 'get_terms' )
+			->once()
+			->with( \Mockery::on( fn ( $args ) => true === $args[ 'pad_counts' ] ) )
+			->andReturn( [ new \WP_Term( [ 'term_id' => 1, 'count' => 15 ] ) ] );
+
+		$response = $this->api->get_folder_counts( new \WP_REST_Request() );
+
+		$this->assertSame( [ 1 => 15 ], $response->get_data() );
+	}
+
+	/**
+	 * Test prepare_folder_for_response uses a given count over the term count.
+	 */
+	public function test_prepare_folder_for_response_uses_count_override(): void {
+		Functions\when( 'get_term_meta' )->justReturn( '' );
+
+		$method = ( new \ReflectionClass( $this->api ) )->getMethod( 'prepare_folder_for_response' );
+		$result = $method->invoke( $this->api, new \WP_Term( [ 'term_id' => 7, 'count' => 9 ] ), 4 );
+
+		$this->assertSame( 4, $result[ 'count' ] );
+	}
 }

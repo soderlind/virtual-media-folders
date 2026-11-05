@@ -199,4 +199,44 @@ class Taxonomy {
 
 		register_taxonomy( self::TAXONOMY, 'attachment', $args );
 	}
+
+	/**
+	 * Apply the `vmfo_folder_counts` filter to direct per-folder attachment counts.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array<int, int> $counts         Direct (non-recursive) counts keyed by folder term ID.
+	 * @param string          $post_mime_type MIME types counted, '' for all.
+	 * @return array<int, int> Filtered counts. Folders missing from the filtered array keep their original count.
+	 */
+	public static function filter_folder_counts( array $counts, string $post_mime_type = '' ): array {
+		/**
+		 * Filters the number of attachments directly assigned to each folder.
+		 *
+		 * Counts are direct, not including child folders; where a total including
+		 * child folders is needed, VMF adds them up after this filter. Use this to
+		 * make counts match what the media grid shows, for example counting only
+		 * media in the current language on a multilingual site.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array<int, int> $counts         Direct counts keyed by folder term ID.
+		 * @param string          $post_mime_type MIME types counted, in the format accepted by WP_Query's
+		 *                                        `post_mime_type` and wp_post_mime_type_where(): a media type
+		 *                                        such as 'image', or comma-separated MIME types. '' for all.
+		 */
+		$filtered = apply_filters( 'vmfo_folder_counts', $counts, $post_mime_type );
+
+		if ( ! is_array( $filtered ) ) {
+			return $counts;
+		}
+
+		foreach ( $counts as $term_id => $count ) {
+			if ( isset( $filtered[ $term_id ] ) ) {
+				$counts[ $term_id ] = max( 0, (int) $filtered[ $term_id ] );
+			}
+		}
+
+		return $counts;
+	}
 }
