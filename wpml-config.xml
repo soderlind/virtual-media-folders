@@ -1,0 +1,11 @@
+<wpml-config>
+	<taxonomies>
+		<!--
+			Folders organise files, not content, so they are shared by every
+			language. Translating them would give each language its own folder
+			terms with different IDs and break the folder tree.
+			Read by both WPML and Polylang.
+		-->
+		<taxonomy translate="0">vmfo_folder</taxonomy>
+	</taxonomies>
+</wpml-config>
