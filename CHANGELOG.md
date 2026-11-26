@@ -5,6 +5,20 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+Multilingual compatibility for Polylang and WPML ([#161](https://github.com/soderlind/virtual-media-folders/issues/161)). Thanks to [@jonathan-dejong](https://github.com/jonathan-dejong) for the report, analysis and PRs.
+
+### Added
+
+- `vmfo_folder_counts` filter for per-folder attachment counts in the Media Library sidebar, the block editor and the `vmfo/v1/folders` REST endpoints, so integrations can count only media in the current language ([#163](https://github.com/soderlind/virtual-media-folders/pull/163), [@jonathan-dejong](https://github.com/jonathan-dejong)).
+- `vmfo_folder_query_suppress_filters` filter to keep SQL clause filters (such as WPML's language filter) active on folder-filtered media modal queries ([#164](https://github.com/soderlind/virtual-media-folders/pull/164), [@jonathan-dejong](https://github.com/jonathan-dejong)).
+
+### Fixed
+
+- `vmfo_folder` is marked as not translatable in a new `wpml-config.xml`, so WPML and Polylang no longer offer to translate folders, which would break the folder tree ([#162](https://github.com/soderlind/virtual-media-folders/pull/162), [@jonathan-dejong](https://github.com/jonathan-dejong)).
+- Inserter image counts passed to `vmfo_folder_counts` now include folders without images, matching the other call sites.
+
 ## [2.2.1] - 2026-10-26
 
 ### Added

@@ -161,15 +161,29 @@ Counts are direct and don't include child folders. Where a total including child
 
 **Return:** `array<int, int>`
 
-**Example — count with WP_Query, so language filters from multilingual plugins apply:**
+**Pass the language explicitly.** Multilingual plugins don't always filter queries by language in every context VMF counts in. With Polylang, for example, `WP_Query` is language-filtered on admin pages but not in REST requests, and VMF's REST requests (such as the sidebar's `vmfo/v1/folders/counts` refresh) don't send a `lang` parameter. Resolve the language yourself and pass it to the query.
+
+**Example — count media in the current Polylang language:**
 
 ```php
 add_filter( 'vmfo_folder_counts', function ( array $counts, string $post_mime_type ): array {
+    if ( ! function_exists( 'pll_current_language' ) ) {
+        return $counts;
+    }
+
+    // Admin pages and requests with a `lang` param set the current language.
+    // Otherwise (VMF's REST requests), fall back to the admin language switcher.
+    $lang = pll_current_language() ?: get_user_meta( get_current_user_id(), 'pll_filter_content', true );
+    if ( ! $lang ) {
+        return $counts; // "Show all languages".
+    }
+
     foreach ( array_keys( $counts ) as $folder_id ) {
         $query = new WP_Query( [
             'post_type'      => 'attachment',
             'post_status'    => 'inherit',
             'post_mime_type' => $post_mime_type,
+            'lang'           => $lang,
             'fields'         => 'ids',
             'posts_per_page' => 1,
             'tax_query'      => [

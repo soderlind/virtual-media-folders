@@ -104,11 +104,13 @@ final class Editor {
 			]
 		);
 
-		$image_counts = Settings::get( 'inserter_media_folders' ) ? self::get_folder_image_counts() : [];
-		$folder_list  = [];
+		$folder_list = [];
 
 		if ( ! is_wp_error( $folders ) && is_array( $folders ) ) {
-			$counts = Taxonomy::filter_folder_counts( wp_list_pluck( $folders, 'count', 'term_id' ) );
+			$counts       = Taxonomy::filter_folder_counts( wp_list_pluck( $folders, 'count', 'term_id' ) );
+			$image_counts = Settings::get( 'inserter_media_folders' )
+				? self::get_folder_image_counts( array_map( 'intval', wp_list_pluck( $folders, 'term_id' ) ) )
+				: [];
 
 			foreach ( $folders as $folder ) {
 				$order = get_term_meta( $folder->term_id, 'vmfo_order', true );
@@ -141,9 +143,11 @@ final class Editor {
 	 * Used by the block inserter Media tab to register only folders whose
 	 * subtree contains at least one image (see inserter-media-categories.js).
 	 *
+	 * @param int[] $folder_ids All folder term IDs. Each starts at 0, so the
+	 *                          `vmfo_folder_counts` filter gets the full set.
 	 * @return array<int, int> Image count keyed by term id.
 	 */
-	private static function get_folder_image_counts(): array {
+	private static function get_folder_image_counts( array $folder_ids = [] ): array {
 		global $wpdb;
 
 		$rows = $wpdb->get_results(
@@ -163,7 +167,7 @@ final class Editor {
 			ARRAY_A
 		);
 
-		$counts = [];
+		$counts = array_fill_keys( $folder_ids, 0 );
 
 		if ( is_array( $rows ) ) {
 			foreach ( $rows as $row ) {

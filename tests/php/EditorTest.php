@@ -319,4 +319,39 @@ class EditorTest extends TestCase {
 
 		$this->assertSame( $query_args, $result );
 	}
+
+	/**
+	 * Test image counts include every folder, so the counts filter sees folders without images.
+	 */
+	public function test_get_folder_image_counts_seeds_all_folders(): void {
+		global $wpdb;
+
+		if ( ! defined( 'ARRAY_A' ) ) {
+			define( 'ARRAY_A', 'ARRAY_A' );
+		}
+		$wpdb = new class() {
+			public string $term_taxonomy      = 'wp_term_taxonomy';
+			public string $term_relationships = 'wp_term_relationships';
+			public string $posts              = 'wp_posts';
+			public function esc_like( string $text ): string {
+				return $text;
+			}
+			public function prepare( string $query, ...$args ): string {
+				return $query;
+			}
+			public function get_results( string $query, $output ): array {
+				return [ [ 'term_id' => '2', 'cnt' => '3' ] ];
+			}
+		};
+
+		Filters\expectApplied( 'vmfo_folder_counts' )
+			->once()
+			->with( [ 1 => 0, 2 => 3, 3 => 0 ], 'image' )
+			->andReturn( [ 1 => 0, 2 => 1, 3 => 0 ] );
+
+		$method = ( new \ReflectionClass( Editor::class ) )->getMethod( 'get_folder_image_counts' );
+		$result = $method->invoke( null, [ 1, 2, 3 ] );
+
+		$this->assertSame( [ 1 => 0, 2 => 1, 3 => 0 ], $result );
+	}
 }
