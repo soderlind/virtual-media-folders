@@ -464,9 +464,11 @@ final class RestApi extends WP_REST_Controller {
 			return strcasecmp( $a->name, $b->name );
 		} );
 
+		$counts = Taxonomy::filter_folder_counts( wp_list_pluck( $terms, 'count', 'term_id' ) );
+
 		$folders = [];
 		foreach ( $terms as $term ) {
-			$folders[] = $this->prepare_folder_for_response( $term );
+			$folders[] = $this->prepare_folder_for_response( $term, $counts[ $term->term_id ] ?? null );
 		}
 
 		return new WP_REST_Response( $folders, 200 );
@@ -486,7 +488,9 @@ final class RestApi extends WP_REST_Controller {
 			return $term;
 		}
 
-		return new WP_REST_Response( $this->prepare_folder_for_response( $term ), 200 );
+		$counts = Taxonomy::filter_folder_counts( [ (int) $term->term_id => (int) $term->count ] );
+
+		return new WP_REST_Response( $this->prepare_folder_for_response( $term, $counts[ $term->term_id ] ?? null ), 200 );
 	}
 
 	/**
@@ -850,13 +854,16 @@ final class RestApi extends WP_REST_Controller {
 		// Build mime type query based on media_type.
 		$mime_types = $this->get_mime_types_for_filter( $media_type );
 
+		// The fast path uses WP's padded term counts, which can't be filtered per folder.
+		$fast_path = empty( $mime_types ) && ! has_filter( 'vmfo_folder_counts' );
+
 		// Get all folders.
-		// When no filter is active, ask WP to pad counts for hierarchical taxonomies.
+		// On the fast path, ask WP to pad counts for hierarchical taxonomies.
 		$terms = get_terms(
 			[
 				'taxonomy'     => Taxonomy::TAXONOMY,
 				'hide_empty'   => false,
-				'pad_counts'   => empty( $mime_types ),
+				'pad_counts'   => $fast_path,
 				'number'       => 0,
 				'hierarchical' => true,
 			]
@@ -867,7 +874,7 @@ final class RestApi extends WP_REST_Controller {
 		}
 
 		// Fast path: use the (padded) term counts already computed by WP.
-		if ( empty( $mime_types ) ) {
+		if ( $fast_path ) {
 			$counts = [];
 			foreach ( $terms as $term ) {
 				$counts[ (int) $term->term_id ] = (int) $term->count;
@@ -875,28 +882,37 @@ final class RestApi extends WP_REST_Controller {
 			return new WP_REST_Response( $counts, 200 );
 		}
 
-		global $wpdb;
-
-		// Aggregate direct counts per term in a single query.
-		$placeholders = implode( ',', array_fill( 0, count( $mime_types ), '%s' ) );
-		$sql          = "SELECT tt.term_id, COUNT(DISTINCT p.ID) AS cnt\n" .
-			"FROM {$wpdb->term_relationships} tr\n" .
-			"INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id\n" .
-			"INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id\n" .
-			"WHERE tt.taxonomy = %s\n" .
-			"AND p.post_type = 'attachment'\n" .
-			"AND p.post_status = 'inherit'\n" .
-			"AND p.post_mime_type IN ({$placeholders})\n" .
-			"GROUP BY tt.term_id";
-
-		$params = array_merge( [ Taxonomy::TAXONOMY ], $mime_types );
-		$rows   = $wpdb->get_results( $wpdb->prepare( $sql, $params ), 'ARRAY_A' );
-
+		// Direct (non-padded) counts per folder.
 		$direct_counts = [];
-		foreach ( $rows as $row ) {
-			$term_id                   = (int) ( $row[ 'term_id' ] ?? 0 );
-			$direct_counts[ $term_id ] = (int) ( $row[ 'cnt' ] ?? 0 );
+		foreach ( $terms as $term ) {
+			$direct_counts[ (int) $term->term_id ] = empty( $mime_types ) ? (int) $term->count : 0;
 		}
+
+		if ( ! empty( $mime_types ) ) {
+			global $wpdb;
+
+			// Aggregate direct counts per term in a single query.
+			$placeholders = implode( ',', array_fill( 0, count( $mime_types ), '%s' ) );
+			$sql          = "SELECT tt.term_id, COUNT(DISTINCT p.ID) AS cnt\n" .
+				"FROM {$wpdb->term_relationships} tr\n" .
+				"INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id\n" .
+				"INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id\n" .
+				"WHERE tt.taxonomy = %s\n" .
+				"AND p.post_type = 'attachment'\n" .
+				"AND p.post_status = 'inherit'\n" .
+				"AND p.post_mime_type IN ({$placeholders})\n" .
+				"GROUP BY tt.term_id";
+
+			$params = array_merge( [ Taxonomy::TAXONOMY ], $mime_types );
+			$rows   = $wpdb->get_results( $wpdb->prepare( $sql, $params ), 'ARRAY_A' );
+
+			foreach ( $rows as $row ) {
+				$term_id                   = (int) ( $row[ 'term_id' ] ?? 0 );
+				$direct_counts[ $term_id ] = (int) ( $row[ 'cnt' ] ?? 0 );
+			}
+		}
+
+		$direct_counts = Taxonomy::filter_folder_counts( $direct_counts, implode( ',', $mime_types ) );
 
 		// Build parent/children maps from term hierarchy and pad counts (include children).
 		$children = [];
@@ -1232,10 +1248,11 @@ final class RestApi extends WP_REST_Controller {
 	/**
 	 * Prepare a folder term for API response.
 	 *
-	 * @param \WP_Term|object $term The term object.
+	 * @param \WP_Term|object $term  The term object.
+	 * @param int|null        $count Attachment count to report, or null for the term's own count.
 	 * @return array<string, mixed>
 	 */
-	private function prepare_folder_for_response( object $term ): array {
+	private function prepare_folder_for_response( object $term, ?int $count = null ): array {
 		$vmfo_order = get_term_meta( $term->term_id, 'vmfo_order', true );
 
 		return [
@@ -1244,7 +1261,7 @@ final class RestApi extends WP_REST_Controller {
 			'slug'        => $term->slug,
 			'description' => $term->description,
 			'parent'      => $term->parent,
-			'count'       => $term->count,
+			'count'       => $count ?? $term->count,
 			'vmfo_order'  => $vmfo_order !== '' ? (int) $vmfo_order : null,
 			'_links'      => [
 				'self'       => [

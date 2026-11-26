@@ -521,6 +521,8 @@ class Admin {
 		$term_ids = wp_list_pluck( $terms, 'term_id' );
 		\update_meta_cache( 'term', $term_ids );
 
+		$counts = Taxonomy::filter_folder_counts( wp_list_pluck( $terms, 'count', 'term_id' ) );
+
 		// Build folder list with order meta.
 		$folders = [];
 		foreach ( $terms as $term ) {
@@ -530,7 +532,7 @@ class Admin {
 				'name'       => $term->name,
 				'slug'       => $term->slug,
 				'parent'     => $term->parent,
-				'count'      => $term->count,
+				'count'      => $counts[ $term->term_id ] ?? $term->count,
 				'vmfo_order' => $order !== '' ? (int) $order : null,
 			];
 		}

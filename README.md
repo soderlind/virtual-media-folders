@@ -158,3 +158,13 @@ MCP_APP_PASS="xxxx xxxx xxxx xxxx xxxx xxxx" \
 Virtual Media Folders is free software licensed under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).
 
 Copyright 2025 Per Soderlind
+
+## AI Contribution Attribution
+
+When AI tools contribute to development, add an `Assisted-by` tag to the commit message:
+
+```
+Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]
+```
+
+`AGENT_NAME` is the AI tool or framework, `MODEL_VERSION` the model version, and the optional tools are specialized analysis tools (for example phpstan or phpcs). Don't list basic development tools such as git, editors or compilers.

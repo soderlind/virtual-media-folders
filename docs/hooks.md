@@ -141,6 +141,67 @@ add_filter( 'vmfo_folder_query_suppress_filters', '__return_false' );
 
 ---
 
+#### `vmfo_folder_counts`
+
+Filter the number of attachments directly assigned to each folder. Use it to make folder counts match what the media grid shows, for example counting only media in the current language on a multilingual site. Applies to the Media Library sidebar, the block editor folder data and inserter image counts, and the `vmfo/v1/folders` and `vmfo/v1/folders/counts` REST endpoints.
+
+Counts are direct and don't include child folders. Where a total including child folders is needed, VMF adds them up after this filter. Folders left out of the returned array keep their original count.
+
+| Property | Value |
+|----------|-------|
+| **Since** | 2.3.0 |
+| **File** | `src/Taxonomy.php` |
+
+**Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `$counts` | `array<int, int>` | Direct counts keyed by folder term ID. |
+| `$post_mime_type` | `string` | MIME types counted, in the format `WP_Query`'s `post_mime_type` and `wp_post_mime_type_where()` accept: a media type such as `image`, or comma-separated MIME types. Empty for all. |
+
+**Return:** `array<int, int>`
+
+**Pass the language explicitly.** Multilingual plugins don't always filter queries by language in every context VMF counts in. With Polylang, for example, `WP_Query` is language-filtered on admin pages but not in REST requests, and VMF's REST requests (such as the sidebar's `vmfo/v1/folders/counts` refresh) don't send a `lang` parameter. Resolve the language yourself and pass it to the query.
+
+**Example — count media in the current Polylang language:**
+
+```php
+add_filter( 'vmfo_folder_counts', function ( array $counts, string $post_mime_type ): array {
+    if ( ! function_exists( 'pll_current_language' ) ) {
+        return $counts;
+    }
+
+    // Admin pages and requests with a `lang` param set the current language.
+    // Otherwise (VMF's REST requests), fall back to the admin language switcher.
+    $lang = pll_current_language() ?: get_user_meta( get_current_user_id(), 'pll_filter_content', true );
+    if ( ! $lang ) {
+        return $counts; // "Show all languages".
+    }
+
+    foreach ( array_keys( $counts ) as $folder_id ) {
+        $query = new WP_Query( [
+            'post_type'      => 'attachment',
+            'post_status'    => 'inherit',
+            'post_mime_type' => $post_mime_type,
+            'lang'           => $lang,
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'tax_query'      => [
+                [
+                    'taxonomy'         => 'vmfo_folder',
+                    'terms'            => $folder_id,
+                    'include_children' => false,
+                ],
+            ],
+        ] );
+        $counts[ $folder_id ] = $query->found_posts;
+    }
+    return $counts;
+}, 10, 2 );
+```
+
+---
+
 #### `vmfo_default_settings`
 
 Override the default plugin settings before they are stored.
@@ -986,6 +1047,7 @@ add_action( 'vmfa_migrate_process_batch', function ( string $job_id, int $offset
 | `vmfo_upload_folder` | filter | Core |
 | `vmfo_include_child_folders` | filter | Core |
 | `vmfo_folder_query_suppress_filters` | filter | Core |
+| `vmfo_folder_counts` | filter | Core |
 | `vmfo_default_settings` | filter | Core |
 | `vmfo_setting_{$key}` | filter | Core |
 | `vmfo_settings` | filter | Core |
