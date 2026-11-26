@@ -216,7 +216,7 @@ final class Editor {
 		if ( $folder_value !== null && is_numeric( $folder_value ) ) {
 			$folder_id = absint( $folder_value );
 			if ( $folder_id > 0 ) {
-				$query_args[ 'suppress_filters' ] = true;
+				$query_args[ 'suppress_filters' ] = self::should_suppress_filters( $query_args, 'folder' );
 
 				if ( ! isset( $query_args[ 'tax_query' ] ) || ! is_array( $query_args[ 'tax_query' ] ) ) {
 					$query_args[ 'tax_query' ] = [];
@@ -255,7 +255,7 @@ final class Editor {
 			);
 
 			if ( ! is_wp_error( $all_folders ) && ! empty( $all_folders ) ) {
-				$query_args[ 'suppress_filters' ] = true;
+				$query_args[ 'suppress_filters' ] = self::should_suppress_filters( $query_args, 'uncategorized' );
 
 				if ( ! isset( $query_args[ 'tax_query' ] ) || ! is_array( $query_args[ 'tax_query' ] ) ) {
 					$query_args[ 'tax_query' ] = [];
@@ -272,5 +272,32 @@ final class Editor {
 		// phpcs:enable
 
 		return $query_args;
+	}
+
+	/**
+	 * Whether folder-filtered attachment queries should suppress query filters.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array<string, mixed> $query_args Attachment query arguments.
+	 * @param string               $view       'folder' or 'uncategorized'.
+	 * @return bool
+	 */
+	private static function should_suppress_filters( array $query_args, string $view ): bool {
+		/**
+		 * Filters whether folder-filtered media modal queries run with `suppress_filters`.
+		 *
+		 * Suppressing filters keeps the folder grid from coming back empty when another
+		 * plugin's query filters interfere (see #114). It also switches off SQL clause
+		 * filters that some plugins rely on, such as WPML's language filter, so
+		 * integrations can return false to keep those filters active.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param bool                 $suppress   Whether to suppress filters. Default true.
+		 * @param array<string, mixed> $query_args Attachment query arguments.
+		 * @param string               $view       'folder' for a single folder, 'uncategorized' for media without a folder.
+		 */
+		return (bool) apply_filters( 'vmfo_folder_query_suppress_filters', true, $query_args, $view );
 	}
 }
