@@ -5,7 +5,7 @@ All notable changes to Virtual Media Folders will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.3.0] - 2026-11-26
 
 Multilingual compatibility for Polylang and WPML ([#161](https://github.com/soderlind/virtual-media-folders/issues/161)). Thanks to [@jonathan-dejong](https://github.com/jonathan-dejong) for the report, analysis and PRs.
 
